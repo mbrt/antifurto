@@ -16,6 +16,7 @@ directory")
 # scripts
 configure_file(scripts/setup-sysroot.sh setup-sysroot.sh)
 configure_file(scripts/deploy.sh deploy.sh)
+configure_file(scripts/umount-sysroot.sh umount-sysroot.sh)
 
 # main exe
 include_directories(src)
