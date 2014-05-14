@@ -5,8 +5,8 @@ SET(CMAKE_SYSTEM_NAME Linux)
 SET(CMAKE_SYSTEM_VERSION 1)
 
 SET(TOOLCHAIN_PATH "/opt/raspberrypi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin" CACHE PATH "The path to toolchain bin directory")
-SET(DEVICE_ROOT_FS "/opt/toolchain/sysroots/cortexa9hf-vfp-neon-poky-linux-gnueabi" CACHE PATH "The path to the root filesystem")
-SET(TOOLCHAIN_PREFIX arm-poky-linux-gnueabi-)
+SET(DEVICE_ROOT_FS "/mnt/pi" CACHE PATH "The path to the root filesystem")
+SET(TOOLCHAIN_PREFIX arm-linux-gnueabihf-)
 SET(TOOLCHAIN ${TOOLCHAIN_PATH}/${TOOLCHAIN_PREFIX})
 
 # specify the cross compiler
