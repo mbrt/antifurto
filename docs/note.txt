@@ -1,0 +1,29 @@
+Libreria open per whatsapp: https://github.com/tgalal/yowsup
+Progetto telecamera con Raspberry PI http://www.codeproject.com/Articles/665518/Raspberry-Pi-as-low-cost-HD-surveillance-camera
+Raspberry PI camera: http://thepihut.com/pages/how-to-install-the-raspberry-pi-camera
+Streaming of motion jpeg with nodejs: https://github.com/rodowi/Paparazzo.js
+Elenco telecamere IP: http://aranzulla.tecnologia.virgilio.it/telecamere-ip-50282.html
+Standard controllo ip camera: VAPIX
+OpenCV con beaglebone: http://derekmolloy.ie/beaglebone/beaglebone-video-capture-and-image-processing-on-embedded-linux-using-opencv/
+
+OpenCV per diff
+    original: http://blog.cedric.ws/opencv-simple-motion-detection
+    concave hull opt: http://blog.cedric.ws/opencv-simple-motion-detection-concave-hull-optimization
+    source: https://github.com/cedricve/motion_detection
+    raspb pi + opencv: https://robidouille.wordpress.com/2013/10/19/raspberry-pi-camera-with-opencv/
+    web interface: http://blog.cedric.ws/raspberry-pi-opencv-create-a-security-system-web-interface
+
+Componenti:
+Raspberry PI IR camera: http://it.rs-online.com/web/p/modulo-video/7902811/
+Raspberry PI video camera: http://it.rs-online.com/web/p/modulo-video/7757731/
+
+Software:
+Cross compile Raspberry: http://stackoverflow.com/questions/19162072/installing-raspberry-pi-cross-compiler
+Sito statico: http://jekyllrb.com/
+Dropbox upload via script: https://github.com/andreafabrizi/Dropbox-Uploader
+
+Connettività:
+dns dinamico: http://dyndns.it/solutions/#
+invio sms
+    code sample: http://www.codeproject.com/Articles/387567/How-to-send-an-SMS-message-from-an-application
+    servizio: http://www.cardboardfish.com/products/personal/index.html
