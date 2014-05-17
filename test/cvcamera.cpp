@@ -58,7 +58,7 @@ void captureMotion()
         throw test_error("failed to open camera");
 
     cv::Mat prev, current, next, d1, d2, motion;
-    cv::namedWindow("diff", 1);
+    cv::namedWindow("motion", 1);
     captureGrayFrame(capture, prev);
     captureGrayFrame(capture, current);
     while (cv::waitKey(30) < 0)
@@ -86,7 +86,7 @@ void captureMotion()
         text << ndiff;
         cv::putText(motion, text.str().c_str(), cv::Point(30,30),
             CV_FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(200,200,250), 1, CV_AA);
-        cv::imshow("diff", motion);
+        cv::imshow("motion", motion);
 
         // swap frames
         std::swap(prev, next);
