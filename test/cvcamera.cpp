@@ -28,12 +28,48 @@ void videoCaptureTest()
     }
 }
 
+void captureGrayFrame(cv::VideoCapture& capture, cv::Mat& frame)
+{
+    capture >> frame;
+    cv::cvtColor(frame, frame, CV_RGB2GRAY);
+}
+
+void videoCaptureSaveTest()
+{
+    cv::VideoCapture capture(0);
+    if (!capture.isOpened())
+        throw test_error("failed to open camera");
+
+    cv::Mat prev, current, next, d1, d2, motion;
+    cv::namedWindow("diff", 1);
+    captureGrayFrame(capture, prev);
+    captureGrayFrame(capture, current);
+    while (cv::waitKey(30) < 0)
+    {
+        // current capture
+        captureGrayFrame(capture, next);
+
+        // compute diff
+        cv::absdiff(prev, current, d1);
+        cv::absdiff(current, next, d2);
+        cv::bitwise_and(d1, d2, motion);
+
+        // display diff
+        cv::imshow("diff", motion);
+
+        // swap frames
+        std::swap(prev, next);
+        std::swap(current, prev);
+    }
+}
+
 
 int main(int, char*[])
 {
     try
     {
-        videoCaptureTest();
+        //videoCaptureTest();
+        videoCaptureSaveTest();
         return EXIT_SUCCESS;
     }
     catch (std::exception& e)
