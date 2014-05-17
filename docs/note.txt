@@ -11,6 +11,7 @@ OpenCV per diff
     concave hull opt: http://blog.cedric.ws/opencv-simple-motion-detection-concave-hull-optimization
     source: https://github.com/cedricve/motion_detection
     raspb pi + opencv: https://robidouille.wordpress.com/2013/10/19/raspberry-pi-camera-with-opencv/
+        but, use this code: https://github.com/Jenselme/raspicam_cv
     web interface: http://blog.cedric.ws/raspberry-pi-opencv-create-a-security-system-web-interface
 
 Componenti:
