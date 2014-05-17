@@ -2,8 +2,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#define BOOST_TEST_MODULE cvtest
-#include <boost/test/included/unit_test.hpp>
 #include <stdexcept>
 #include <cassert>
 
@@ -11,7 +9,7 @@ struct test_error : public std::runtime_error
 { using std::runtime_error::runtime_error; };
 
 
-BOOST_AUTO_TEST_CASE(videoCaptureTest)
+void videoCaptureTest()
 {
     cv::VideoCapture cap(0); // open the default camera
     if (!cap.isOpened())  // check if we succeeded
@@ -31,16 +29,16 @@ BOOST_AUTO_TEST_CASE(videoCaptureTest)
 }
 
 
-//int main(int, char*[])
-//{
-//    try
-//    {
-//        videoCaptureTest();
-//        return EXIT_SUCCESS;
-//    }
-//    catch (std::exception& e)
-//    {
-//        std::cerr << "Exception caught: " << e.what() << std::endl;
-//        return EXIT_FAILURE;
-//    }
-//}
+int main(int, char*[])
+{
+    try
+    {
+        videoCaptureTest();
+        return EXIT_SUCCESS;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+}

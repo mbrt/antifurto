@@ -9,7 +9,10 @@ include_directories(.)
 add_executable(hello helloworld.cpp)
 
 # cv test
-add_executable(cvtest cvtest.cpp)
-target_link_libraries(cvtest
-    opencv_highgui opencv_core opencv_imgproc
-    ${Boost_LIBRARIES})
+add_executable(cvcamera cvcamera.cpp)
+target_link_libraries(cvcamera
+    opencv_highgui opencv_core opencv_imgproc)
+
+# unit test example
+add_executable(unit_test_example unit.cpp)
+target_link_libraries(unit_test_example ${Boost_LIBRARIES})
