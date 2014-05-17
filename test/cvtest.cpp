@@ -1,27 +1,26 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
+#define BOOST_TEST_MODULE cvtest
+#include <boost/test/included/unit_test.hpp>
+#include <stdexcept>
 #include <cassert>
 
+struct test_error : public std::runtime_error
+{ using std::runtime_error::runtime_error; };
 
-bool captureTest()
-{
-    CvCapture* camera = cvCaptureFromCAM(CV_CAP_ANY);
-    assert(camera);
-    return true;
-}
 
-bool videoCaptureTest()
+BOOST_AUTO_TEST_CASE(videoCaptureTest)
 {
     cv::VideoCapture cap(0); // open the default camera
-    if(!cap.isOpened())  // check if we succeeded
-        return -1;
+    if (!cap.isOpened())  // check if we succeeded
+        throw test_error("fail to open camera");
 
-    cv::Mat edges;
+    cv::Mat edges, frame;
     cv::namedWindow("edges",1);
-    for(;;)
+    for (;;)
     {
-        cv::Mat frame;
         cap >> frame; // get a new frame from camera
         cv::cvtColor(frame, edges, CV_BGR2GRAY);
         cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
@@ -29,13 +28,19 @@ bool videoCaptureTest()
         cv::imshow("edges", edges);
         if (cv::waitKey(30) >= 0) break;
     }
-    return 0;
 }
 
 
-int main()
-{
-    captureTest();
-    videoCaptureTest();
-    return 0;
-}
+//int main(int, char*[])
+//{
+//    try
+//    {
+//        videoCaptureTest();
+//        return EXIT_SUCCESS;
+//    }
+//    catch (std::exception& e)
+//    {
+//        std::cerr << "Exception caught: " << e.what() << std::endl;
+//        return EXIT_FAILURE;
+//    }
+//}
