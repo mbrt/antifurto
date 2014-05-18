@@ -6,7 +6,8 @@ namespace antifurto {
 CvCamera::CvCamera()
     : capture(cvCaptureFromCAM(CV_CAP_ANY))
 {
-    // TODO: Check not null
+    if (!capture)
+        throw CameraException("Cannot initialize camera");
 }
 
 void CvCamera::takePicture(Picture& p)

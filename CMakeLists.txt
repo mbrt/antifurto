@@ -45,6 +45,7 @@ set(ANTIFURTO_HPP
     src/Camera.hpp
     src/CvCamera.hpp
     src/Picture.hpp
+    src/Exception.hpp
 )
 
 add_executable(antifurto src/main.cpp ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})

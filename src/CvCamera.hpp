@@ -2,13 +2,15 @@
 
 #include "Picture.hpp"
 #include "Camera.hpp"
+#include "Exception.hpp"
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui_c.h>
 #include <memory>
 
 
 namespace antifurto {
 
+/// RAII For CvCapture resource
 class CvCaptureRAII
 {
 public:
@@ -31,6 +33,7 @@ private:
 };
 
 
+/// Camera implementation that use CvCapture resource
 class CvCamera : public Camera
 {
 public:
@@ -39,6 +42,11 @@ public:
 
 private:
     CvCaptureRAII capture;
+};
+
+struct CameraException : public Exception
+{
+    using Exception::Exception;
 };
 
 } // namespace antifurto
