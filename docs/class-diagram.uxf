@@ -8,7 +8,7 @@
       <w>280</w>
       <h>80</h>
     </coordinates>
-    <panel_attributes>AlarmDetection
+    <panel_attributes>MotionDetector
 --
 + examinePicture(p: Picture)
 + addObserver(o: AlarmObserver)

@@ -15,12 +15,12 @@ class CvCaptureRAII
 {
 public:
     CvCaptureRAII(CvCapture* capture)
-        : capture(capture, &releaseCapture)
+        : capture_(capture, &releaseCapture)
     { }
 
-    operator CvCapture*() { return capture.get(); }
-    operator CvCapture&() { return *capture; }
-    operator CvCapture const&() const { return *capture; }
+    operator CvCapture*() { return capture_.get(); }
+    operator CvCapture&() { return *capture_; }
+    operator CvCapture const&() const { return *capture_; }
 
 private:
     static void releaseCapture(CvCapture*& capture)
@@ -29,7 +29,7 @@ private:
     using Ptr = std::unique_ptr<
         CvCapture,
         decltype(&releaseCapture)>;
-    Ptr capture;
+    Ptr capture_;
 };
 
 
@@ -41,7 +41,7 @@ public:
     void takePicture(Picture& p) override;
 
 private:
-    CvCaptureRAII capture;
+    CvCaptureRAII capture_;
 };
 
 struct CameraException : public Exception

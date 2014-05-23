@@ -4,15 +4,15 @@
 namespace antifurto {
 
 CvCamera::CvCamera()
-    : capture(cvCaptureFromCAM(CV_CAP_ANY))
+    : capture_(cvCaptureFromCAM(CV_CAP_ANY))
 {
-    if (!capture)
+    if (!capture_)
         throw CameraException("Cannot initialize camera");
 }
 
 void CvCamera::takePicture(Picture& p)
 {
-    p = ::cvQueryFrame(capture);
+    p = ::cvQueryFrame(capture_);
 }
 
 } // namespace antifurto

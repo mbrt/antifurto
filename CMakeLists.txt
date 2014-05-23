@@ -40,12 +40,14 @@ endmacro()
 # main exe
 set(ANTIFURTO_CPP
     src/CvCamera.cpp
+    src/MotionDetector.cpp
 )
 set(ANTIFURTO_HPP
     src/Camera.hpp
     src/CvCamera.hpp
     src/Picture.hpp
     src/Exception.hpp
+    src/MotionDetector.hpp
 )
 
 add_executable(antifurto src/main.cpp ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})
