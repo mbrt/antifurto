@@ -20,11 +20,16 @@ Raspberry PI video camera: http://it.rs-online.com/web/p/modulo-video/7757731/
 
 Software:
 Cross compile Raspberry: http://stackoverflow.com/questions/19162072/installing-raspberry-pi-cross-compiler
-Sito statico: http://jekyllrb.com/
 Dropbox upload via script: https://github.com/andreafabrizi/Dropbox-Uploader
+Minidump linux: http://stackoverflow.com/questions/7470310/generating-mini-text-dump-linux
 
 Connettività:
 dns dinamico: http://dyndns.it/solutions/#
 invio sms
     code sample: http://www.codeproject.com/Articles/387567/How-to-send-an-SMS-message-from-an-application
     servizio: http://www.cardboardfish.com/products/personal/index.html
+
+Sito web:
+Sito statico: http://jekyllrb.com/
+Flask, web server python: http://flask.pocoo.org/
+Bootstrap, front-end framework cross device: http://getbootstrap.com/
