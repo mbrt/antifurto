@@ -28,14 +28,6 @@ if(NOT ${CROSS_COMPILE})
 endif()
 find_package(OpenCV REQUIRED core highgui imgproc)
 
-macro(ADD_PREFIX LIST_NAME PREFIX)
-    set(${LIST_NAME}_RESULT)
-    foreach(ELEMENT ${${LIST_NAME}})
-        list(APPEND ${LIST_NAME}_RESULT ${PREFIX}${ELEMENT})
-    endforeach()
-    set(${LIST_NAME} "${${LIST_NAME}_RESULT}")
-    unset(${LIST_NAME}_RESULT})
-endmacro()
 
 # main exe
 set(ANTIFURTO_CPP
@@ -50,8 +42,12 @@ set(ANTIFURTO_HPP
     src/MotionDetector.hpp
 )
 
+# main exe and libs
+add_library(antifurto_core STATIC ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})
+target_link_libraries(antifurto_core ${OpenCV_LIBS})
+
 add_executable(antifurto src/main.cpp ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})
-target_link_libraries(antifurto ${OpenCV_LIBS})
+target_link_libraries(antifurto antifurto_core)
 
 # tests
 add_subdirectory(test)

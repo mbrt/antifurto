@@ -21,19 +21,22 @@ public:
 
     // copy
     Picture(Picture const& p)
-        : data_(p.data_.clone()) { }
+    { p.data_.copyTo(data_); }
 
     Picture& operator =(Picture const& p)
-    { data_ = p.data_.clone(); return *this; }
+    { p.data_.copyTo(data_); return *this; }
 
     Picture& operator =(cv::Mat const& data)
-    { data_ = data; return *this; }
+    { data.copyTo(data_); return *this; }
 
     // conversion
     operator cv::Mat()
     { return data_; }
 
     operator cv::Mat() const
+    { return data_; }
+
+    operator cv::_InputArray const() const
     { return data_; }
 
 private:
