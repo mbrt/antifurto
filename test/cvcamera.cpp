@@ -94,14 +94,32 @@ void captureMotion()
     }
 }
 
-
-int main(int, char*[])
+void recordFromCamera(char const* outFile)
 {
+    std::cout << outFile << std::endl;
+}
+
+
+int main(int argc, char* argv[])
+{
+    std::string command = argc > 1
+            ? argv[1] : "motion";
+
     try
     {
-        capture();
-        captureEdges();
-        captureMotion();
+        if (command == "capture")
+            capture();
+        else if (command == "edges")
+            captureEdges();
+        else if (command == "motion")
+            captureMotion();
+        else if (command == "record")
+        {
+            if (argc > 2)
+                recordFromCamera(argv[2]);
+            else
+                recordFromCamera("/tmp/record.mjpg");
+        }
         return EXIT_SUCCESS;
     }
     catch (std::exception& e)

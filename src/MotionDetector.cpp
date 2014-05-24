@@ -9,9 +9,13 @@ constexpr int MIN_MOTION_PIXELS = 60;
 } // anon namespace
 
 
-MotionDetector::MotionDetector(unsigned int numPreAlarmMotions)
+MotionDetector::
+MotionDetector(unsigned int numPreAlarmMotions,
+               unsigned int numNoMotionToStopAlarm)
     : state_(State::NO_ALARM)
     , numPreAlarmMotions_(numPreAlarmMotions)
+    , numNoMotionToStopAlarm_(numNoMotionToStopAlarm)
+    , consecutiveMotions_(0)
 { }
 
 void MotionDetector::examinePicture(const Picture &p)
@@ -33,6 +37,11 @@ void MotionDetector::examinePicture(const Picture &p)
     }
 }
 
+void MotionDetector::AddObserver(MotionDetector::Observer o)
+{
+    observerList_.push_back(o);
+}
+
 unsigned int MotionDetector::countMotionPixels()
 {
     unsigned int ndiff = 0;
@@ -46,22 +55,43 @@ unsigned int MotionDetector::countMotionPixels()
 
 void MotionDetector::onMotionDetected()
 {
+    State prev = state_;
+    consecutiveNoMotion_ = 0;
+
     switch (state_)
     {
     case State::NO_ALARM:
-        {
-            state_ = State::PRE_ALARM;
-            // notify observers
-        }
+        state_ = State::PRE_ALARM;
+        break;
+    case State::PRE_ALARM:
+        if (++consecutiveMotions_ >= numPreAlarmMotions_)
+            state_ = State::ALARM;
+        break;
+    case State::ALARM:
         break;
     default:
         throw UnexpectedException("unexpected motion detector state");
     }
+
+    if (prev != state_)
+        notifyObservers();
 }
 
 void MotionDetector::onNoMotion()
 {
+    consecutiveMotions_ = 0;
+    if (state_ == State::ALARM
+            && ++consecutiveNoMotion_ >= numNoMotionToStopAlarm_)
+    {
+        state_ = State::NO_ALARM;
+        notifyObservers();
+    }
+}
 
+void MotionDetector::notifyObservers()
+{
+    for (auto& o : observerList_)
+        o(state_);
 }
 
 } // namespace antifurto
