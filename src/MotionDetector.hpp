@@ -49,3 +49,7 @@ private:
 };
 
 } // namespace antifurto
+
+namespace std {
+    ostream& operator <<(ostream& o, antifurto::MotionDetector::State s);
+}

@@ -84,7 +84,7 @@ struct MotionDetectorChecker
 
     void onStateChange(MotionDetector::State s)
     {
-        BOOST_CHECK(s == expected);
+        BOOST_CHECK_EQUAL(s, expected);
         called = true;
     }
 };

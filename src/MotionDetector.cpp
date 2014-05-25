@@ -58,20 +58,7 @@ void MotionDetector::clearObservers()
 
 void MotionDetector::dumpState(std::ostream& out) const
 {
-    switch (state_)
-    {
-    case State::ALARM:
-        out << "Alarm";
-        break;
-    case State::NO_ALARM:
-        out << "No alarm";
-        break;
-    case State::PRE_ALARM:
-        out << "Pre alarm";
-        break;
-    default:
-        throw UnexpectedException("unexpected motion detector state");
-    }
+    out << state_;
 }
 
 
@@ -137,3 +124,30 @@ void MotionDetector::notifyObservers()
 }
 
 } // namespace antifurto
+
+
+namespace std
+{
+
+ostream& operator <<(ostream& o, antifurto::MotionDetector::State s)
+{
+    using State = antifurto::MotionDetector::State;
+
+    switch (s)
+    {
+    case State::ALARM:
+        o << "Alarm";
+        break;
+    case State::NO_ALARM:
+        o << "No alarm";
+        break;
+    case State::PRE_ALARM:
+        o << "Pre alarm";
+        break;
+    default:
+        throw antifurto::UnexpectedException("unexpected motion detector state");
+    }
+    return o;
+}
+
+} // namespace std

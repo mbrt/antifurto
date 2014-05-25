@@ -33,6 +33,7 @@ find_package(OpenCV REQUIRED core highgui imgproc)
 set(ANTIFURTO_CPP
     src/CvCamera.cpp
     src/MotionDetector.cpp
+    src/PictureArchive.cpp
 )
 set(ANTIFURTO_HPP
     src/Camera.hpp
@@ -40,6 +41,7 @@ set(ANTIFURTO_HPP
     src/Picture.hpp
     src/Exception.hpp
     src/MotionDetector.hpp
+    src/PictureArchive.hpp
 )
 
 # main exe and libs
