@@ -1,5 +1,8 @@
 #include "MotionDetector.hpp"
 
+#include <iostream>
+
+
 namespace antifurto {
 namespace { // anon
 
@@ -24,23 +27,53 @@ void MotionDetector::examinePicture(const Picture &p)
     if (static_cast<cv::Mat>(curr_).empty())
         curr_ = p;
     else if (prevDiff_.empty())
+    {
         cv::absdiff(curr_, p, prevDiff_);
+        curr_ = p;
+    }
     else
     {
         // main check loop
-        cv::absdiff(curr_, p, motion_);
-        cv::bitwise_and(prevDiff_, motion_, motion_);
+        cv::absdiff(curr_, p, currDiff_);
+        cv::bitwise_and(prevDiff_, currDiff_, motion_);
         if (countMotionPixels() >= MIN_MOTION_PIXELS)
             onMotionDetected();
         else
             onNoMotion();
+        // save
+        std::swap(prevDiff_, currDiff_);
+        curr_ = p;
     }
 }
 
-void MotionDetector::AddObserver(MotionDetector::Observer o)
+void MotionDetector::addObserver(MotionDetector::Observer o)
 {
     observerList_.push_back(o);
 }
+
+void MotionDetector::clearObservers()
+{
+    observerList_.clear();
+}
+
+void MotionDetector::dumpState(std::ostream& out) const
+{
+    switch (state_)
+    {
+    case State::ALARM:
+        out << "Alarm";
+        break;
+    case State::NO_ALARM:
+        out << "No alarm";
+        break;
+    case State::PRE_ALARM:
+        out << "Pre alarm";
+        break;
+    default:
+        throw UnexpectedException("unexpected motion detector state");
+    }
+}
+
 
 unsigned int MotionDetector::countMotionPixels()
 {
@@ -53,6 +86,7 @@ void MotionDetector::onMotionDetected()
 {
     State prev = state_;
     consecutiveNoMotion_ = 0;
+    ++consecutiveMotions_;
 
     switch (state_)
     {
@@ -60,7 +94,7 @@ void MotionDetector::onMotionDetected()
         state_ = State::PRE_ALARM;
         break;
     case State::PRE_ALARM:
-        if (++consecutiveMotions_ >= numPreAlarmMotions_)
+        if (consecutiveMotions_ >= numPreAlarmMotions_)
             state_ = State::ALARM;
         break;
     case State::ALARM:
@@ -75,13 +109,25 @@ void MotionDetector::onMotionDetected()
 
 void MotionDetector::onNoMotion()
 {
+    State prev = state_;
     consecutiveMotions_ = 0;
-    if (state_ == State::ALARM
-            && ++consecutiveNoMotion_ >= numNoMotionToStopAlarm_)
+    ++consecutiveNoMotion_;
+
+    switch (state_)
     {
+    case State::NO_ALARM:
+        break;
+    case State::PRE_ALARM:
         state_ = State::NO_ALARM;
-        notifyObservers();
+        break;
+    case State::ALARM:
+        if (consecutiveNoMotion_ >= numNoMotionToStopAlarm_)
+            state_ = State::NO_ALARM;
+        break;
     }
+
+    if (prev != state_)
+        notifyObservers();
 }
 
 void MotionDetector::notifyObservers()

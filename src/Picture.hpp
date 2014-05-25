@@ -31,6 +31,22 @@ public:
     Picture& operator =(cv::Mat const& data)
     { data.copyTo(data_); return *this; }
 
+    // accessors
+    using iterator = cv::MatIterator_<uchar>;
+    using const_iterator = cv::MatConstIterator_<uchar>;
+
+    iterator begin()
+    { return data_.begin<uchar>(); }
+
+    iterator end()
+    { return data_.end<uchar>(); }
+
+    const_iterator begin() const
+    { return data_.begin<uchar>(); }
+
+    const_iterator end() const
+    { return data_.end<uchar>(); }
+
     // conversion
     operator cv::Mat&()
     { return data_; }

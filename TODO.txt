@@ -1,0 +1,5 @@
+TODO LIST
+---------
+
+- In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
+  provide conversion operators to InputArray and OutputArray

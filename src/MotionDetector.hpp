@@ -5,6 +5,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <functional>
+#include <iosfwd>
 
 
 namespace antifurto {
@@ -13,7 +14,7 @@ namespace antifurto {
 class MotionDetector
 {
 public:
-    MotionDetector(unsigned int numPreAlarmMotions = 4,
+    MotionDetector(unsigned int numPreAlarmMotions = 3,
                    unsigned int numNoMotionToStopAlarm = 20);
     void examinePicture(Picture const& p);
 
@@ -22,7 +23,10 @@ public:
         NO_ALARM, PRE_ALARM, ALARM
     };
     using Observer = std::function<void(State)>;
-    void AddObserver(Observer o);
+    void addObserver(Observer o);
+    void clearObservers();
+
+    void dumpState(std::ostream& out) const;
 
 private:
     unsigned int countMotionPixels();
@@ -33,6 +37,7 @@ private:
     using ObserverList = std::vector<Observer>;
 
     cv::Mat prevDiff_;
+    cv::Mat currDiff_;
     cv::Mat motion_;
     Picture curr_;
     State state_;
