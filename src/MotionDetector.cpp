@@ -44,13 +44,9 @@ void MotionDetector::AddObserver(MotionDetector::Observer o)
 
 unsigned int MotionDetector::countMotionPixels()
 {
-    unsigned int ndiff = 0;
-    for (int row = 0; row < motion_.rows; ++row)
-    {
-        uchar* p = motion_.ptr(row);
-        ndiff += std::count_if(p, p + motion_.cols, [](uchar a){ return a > MIN_PIXEL_DIFF; });
-    }
-    return ndiff;
+    return std::count_if(
+                motion_.begin<uchar>(), motion_.end<uchar>(),
+                [](uchar a){ return a > MIN_PIXEL_DIFF; });
 }
 
 void MotionDetector::onMotionDetected()

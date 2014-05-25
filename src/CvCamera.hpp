@@ -42,6 +42,7 @@ public:
 
 private:
     CvCaptureRAII capture_;
+    cv::Mat frame_;
 };
 
 struct CameraException : public Exception

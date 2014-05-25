@@ -20,6 +20,41 @@ BOOST_AUTO_TEST_CASE(cameraTakePicture)
     camera.takePicture(p);
 }
 
+BOOST_AUTO_TEST_CASE(pictureRefcount)
+{
+    antifurto::Picture z { cv::Mat(cv::Mat::zeros(10, 10, CV_8U)) };
+    antifurto::Picture o { cv::Mat(cv::Mat::ones(10, 10, CV_8U)) };
+
+    auto checkRefcount = [](cv::Mat const& m) { BOOST_CHECK_EQUAL(*m.refcount, 1); };
+    auto checkEqual = [](cv::Mat const& a, cv::Mat const& b) {
+        BOOST_CHECK(std::equal(a.begin<uchar>(), a.end<uchar>(), b.begin<uchar>()));
+    };
+    auto checkNotEqual = [](cv::Mat const& a, cv::Mat const& b) {
+        BOOST_CHECK(!std::equal(a.begin<uchar>(), a.end<uchar>(), b.begin<uchar>()));
+    };
+
+    // test value semantics
+    antifurto::Picture def;
+    antifurto::Picture r1 = z;
+    antifurto::Picture r2 = z;
+
+    checkRefcount(z);
+    checkRefcount(r1);
+    checkRefcount(r2);
+
+    checkEqual(r1, r2);
+    checkEqual(z, r1);
+
+    checkNotEqual(z, o);
+    checkNotEqual(r1, o);
+
+    r2 = o;
+    checkEqual(r2, o);
+    checkNotEqual(r2, z);
+
+    checkRefcount(o);
+}
+
 void dumpState(antifurto::MotionDetector::State s)
 {
     using State = antifurto::MotionDetector::State;

@@ -1,4 +1,5 @@
 #include "CvCamera.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
 
 
 namespace antifurto {
@@ -12,7 +13,8 @@ CvCamera::CvCamera()
 
 void CvCamera::takePicture(Picture& p)
 {
-    p = ::cvQueryFrame(capture_);
+    frame_ = ::cvQueryFrame(capture_);
+    cv::cvtColor(frame_, p, CV_RGB2GRAY);
 }
 
 } // namespace antifurto
