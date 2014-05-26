@@ -8,7 +8,7 @@ else()
 endif()
 
 # c++11 support
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 if(CROSS_COMPILE)
     # options
