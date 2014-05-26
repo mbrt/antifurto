@@ -8,7 +8,7 @@ else()
 endif()
 
 # c++11 support
-list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 if(CROSS_COMPILE)
     # options
@@ -22,34 +22,60 @@ if(CROSS_COMPILE)
 endif()
 
 # libraries
-if(NOT ${CROSS_COMPILE})
+if(NOT CROSS_COMPILE)
     set(Boost_USE_STATIC_LIBS ON)
     find_package(Boost COMPONENTS unit_test_framework)
+    find_package(OpenCV REQUIRED core highgui imgproc)
+    set(ANTIFURTO_LIBS ${OpenCV_LIBS})
+else()
+    # find_package OpenCV does not work well when cross compiling
+    set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc)
+    set(ANTIFURTO_LIBS ${OpenCV_LIBS})
 endif()
-find_package(OpenCV REQUIRED core highgui imgproc)
 
 
-# main exe
-set(ANTIFURTO_CPP
-    src/CvCamera.cpp
+# common files
+set(ANTIFURTO_COMMON_CPP
     src/MotionDetector.cpp
     src/PictureArchive.cpp
 )
-set(ANTIFURTO_HPP
+set(ANTIFURTO_COMMON_HPP
     src/Camera.hpp
-    src/CvCamera.hpp
     src/Picture.hpp
     src/Exception.hpp
     src/MotionDetector.hpp
     src/PictureArchive.hpp
 )
+# x86
+set(ANTIFURTO_X86_CPP
+    src/CvCamera.cpp
+)
+set(ANTIFURTO_X86_HPP
+    src/CvCamera.hpp
+)
+# raspberry pi
+set(ANTIFURTO_PI_CPP
+)
+set(ANTIFURTO_PI_HPP
+)
+
+if(NOT CROSS_COMPILE)
+    set(ANTIFURTO_CPP ${ANTIFURTO_COMMON_CPP} ${ANTIFURTO_X86_CPP})
+    set(ANTIFURTO_HPP ${ANTIFURTO_COMMON_HPP} ${ANTIFURTO_X86_HPP})
+else()
+    set(ANTIFURTO_CPP ${ANTIFURTO_COMMON_CPP} ${ANTIFURTO_PI_CPP})
+    set(ANTIFURTO_HPP ${ANTIFURTO_COMMON_HPP} ${ANTIFURTO_PI_HPP})
+endif()
+
 
 # main exe and libs
 add_library(antifurto_core STATIC ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})
-target_link_libraries(antifurto_core ${OpenCV_LIBS})
+target_link_libraries(antifurto_core ${ANTIFURTO_LIBS})
 
 add_executable(antifurto src/main.cpp ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})
 target_link_libraries(antifurto antifurto_core)
 
 # tests
-add_subdirectory(test)
+if(NOT CROSS_COMPILE)
+    add_subdirectory(test)
+endif()
