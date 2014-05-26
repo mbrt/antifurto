@@ -1,3 +1,6 @@
 [submodule "lib/raspicam_cv"]
 	path = lib/raspicam_cv
 	url = git@github.com:michele-bertasi/raspicam_cv.git
+[submodule "lib/userland"]
+	path = lib/userland
+	url = git@github.com:michele-bertasi/userland.git
