@@ -33,6 +33,8 @@ else()
     set(ANTIFURTO_LIBS ${OpenCV_LIBS})
 endif()
 
+# third party to build
+add_subdirectory(lib)
 
 # common files
 set(ANTIFURTO_COMMON_CPP
