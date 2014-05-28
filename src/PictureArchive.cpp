@@ -4,6 +4,7 @@
 #include <sstream>
 #include <ctime>
 #include <chrono>
+#include <iomanip>
 
 namespace antifurto {
 
@@ -56,11 +57,13 @@ std::string toStringTimePoint(std::chrono::system_clock::time_point t)
     localtime_r(&time, &time_local);
     std::ostringstream out;
     out << time_local.tm_year + 1900 << '-'
+        << std::setfill('0') << std::setw(2)
         << time_local.tm_mon << '-'
         << time_local.tm_mday << ' '
         << time_local.tm_hour << ':'
         << time_local.tm_min << ':'
-        << time_local.tm_sec << ':'
+        << time_local.tm_sec << '.'
+        << std::setw(4)
         << std::chrono::duration_cast<
                 std::chrono::duration<int, std::milli>>(t - rounded).count();
     return out.str();
@@ -74,7 +77,7 @@ void PictureArchive::save(const Picture& p, Clock t)
     filename
         << folder_ << '/'
         << toStringTimePoint(t) << ".jpg";
-    //cv::imwrite()
+    cv::imwrite(filename.str(), p, { CV_IMWRITE_JPEG_QUALITY, 90 });
 }
 
 } // namespace antifurto

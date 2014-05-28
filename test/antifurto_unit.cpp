@@ -1,9 +1,11 @@
 #include <stdexcept>
 #include <cassert>
 #include <functional>
+#include <thread>
 
 #include "CvCamera.hpp"
 #include "MotionDetector.hpp"
+#include "PictureArchive.hpp"
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
@@ -143,4 +145,21 @@ BOOST_AUTO_TEST_CASE(motionDetection)
     BOOST_CHECK_EQUAL(checker.called, false);
     detector.examinePicture(w);
     BOOST_CHECK_EQUAL(checker.called, true);
+}
+
+BOOST_AUTO_TEST_CASE(pictureArchive)
+{
+    PictureArchive archive("/tmp", 3);
+    CvCamera camera;
+    Picture p;
+    for (int i = 0; i < 5; ++i)
+    {
+        camera.takePicture(p);
+        archive.addPicture(p);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    archive.startSaving();
+    camera.takePicture(p);
+    archive.addPicture(p);
+    archive.stopSaving();
 }
