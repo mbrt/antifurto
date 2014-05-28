@@ -41,19 +41,39 @@ void PictureArchive::enqueue(Picture&& p)
         recordBuffer_.erase(recordBuffer_.begin());
 }
 
+namespace { // anon
+
+// see http://stackoverflow.com/questions/17386790/fully-separated-date-with-milliseconds-from-stdchronosystem-clock
+std::string toStringTimePoint(std::chrono::system_clock::time_point t)
+{
+    std::time_t time = std::chrono::system_clock::to_time_t(t);
+    auto rounded = std::chrono::system_clock::from_time_t(time);
+    if (rounded > t) {
+        --time;
+        rounded -= std::chrono::seconds(1);
+    }
+    std::tm time_local;
+    localtime_r(&time, &time_local);
+    std::ostringstream out;
+    out << time_local.tm_year + 1900 << '-'
+        << time_local.tm_mon << '-'
+        << time_local.tm_mday << ' '
+        << time_local.tm_hour << ':'
+        << time_local.tm_min << ':'
+        << time_local.tm_sec << ':'
+        << std::chrono::duration_cast<
+                std::chrono::duration<int, std::milli>>(t - rounded).count();
+    return out.str();
+}
+
+} // anon namespace
+
 void PictureArchive::save(const Picture& p, Clock t)
 {
-    // see http://stackoverflow.com/questions/15957805/extract-year-month-day-etc-from-stdchronotime-point-in-c/15958113#15958113
-    namespace chr = std::chrono;
-    std::time_t time = chr::system_clock::to_time_t(t);
-    char buffer[26];
-    std::strftime(buffer, 26, "Y-m-d H:M:S", std::localtime(&time));
-
     std::stringstream filename;
     filename
         << folder_ << '/'
-//        << std::put_time(std::localtime(&time), "Y-m-d H:M:S ")
-        << ".jpg";
+        << toStringTimePoint(t) << ".jpg";
     //cv::imwrite()
 }
 
