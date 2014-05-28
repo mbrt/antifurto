@@ -13,7 +13,8 @@ ExternalProject_Add(userland
 ExternalProject_Add(raspicam_cv
     CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../toolchain-pi.cmake -DCMAKE_BUILD_TYPE=Release
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/raspicam_cv
-    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build
+    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/raspicam_cv/build
+    BUILD_COMMAND cmake . && make
     INSTALL_COMMAND ""
 )
 add_dependencies(raspicam_cv userland)
