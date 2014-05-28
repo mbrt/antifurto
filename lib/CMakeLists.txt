@@ -5,7 +5,7 @@ if(CROSS_COMPILE)
 ExternalProject_Add(userland
     CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../toolchain-pi.cmake -DCMAKE_BUILD_TYPE=Release
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/userland
-    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/arm-linux/release
+    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/userland/build/arm-linux/release
     BUILD_COMMAND make mmal_core mmal mmal_util vcos bcm_host
     INSTALL_COMMAND ""
 )

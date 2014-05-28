@@ -12,7 +12,7 @@ PictureArchive::
 PictureArchive(std::string folder, unsigned int recordBuffer)
     : folder_(folder), recordBufferSize_(recordBuffer)
     , recording_(false)
-{  }
+{ }
 
 void PictureArchive::addPicture(Picture p)
 {
@@ -35,7 +35,7 @@ void PictureArchive::stopSaving()
     recording_ = false;
 }
 
-void PictureArchive::enqueue(Picture&& p)
+void PictureArchive::enqueue(Picture p)
 {
     recordBuffer_.emplace_back(std::chrono::system_clock::now(), std::move(p));
     if (recordBuffer_.size() > recordBufferSize_)

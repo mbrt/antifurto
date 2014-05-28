@@ -45,9 +45,4 @@ private:
     cv::Mat frame_;
 };
 
-struct CameraException : public Exception
-{
-    using Exception::Exception;
-};
-
 } // namespace antifurto

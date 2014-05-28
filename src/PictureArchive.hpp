@@ -27,13 +27,13 @@ private:
         Clock time;
         Picture picture;
 
-        RecordItem(Clock t, Picture&& p)
+        RecordItem(Clock t, Picture p)
             : time(t), picture(std::move(p))
         { }
     };
     using RecordBuffer = std::list<RecordItem>;
 
-    void enqueue(Picture&& p);
+    void enqueue(Picture p);
     void save(Picture const& p, Clock t);
 
     std::string folder_;

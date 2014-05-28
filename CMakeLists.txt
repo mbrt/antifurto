@@ -21,6 +21,9 @@ if(CROSS_COMPILE)
     configure_file(scripts/umount-sysroot.sh umount-sysroot.sh)
 endif()
 
+# third party to build
+add_subdirectory(lib)
+
 # libraries
 if(NOT CROSS_COMPILE)
     set(Boost_USE_STATIC_LIBS ON)
@@ -30,11 +33,17 @@ if(NOT CROSS_COMPILE)
 else()
     # find_package OpenCV does not work well when cross compiling
     set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc)
-    set(ANTIFURTO_LIBS ${OpenCV_LIBS})
-endif()
+    set(raspicamcv_LIBS raspicamcv)
+    set(raspicamcv_LIBRARY_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib/raspicam_cv/build
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib/userland/build/lib)
+    set(raspicamcv_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lib/raspicam_cv)
 
-# third party to build
-add_subdirectory(lib)
+    link_directories(${raspicamcv_LIBRARY_DIRS})
+    include_directories(. ${raspicamcv_INCLUDE_DIRS})
+
+    set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS})
+endif()
 
 # common files
 set(ANTIFURTO_COMMON_CPP
@@ -57,8 +66,10 @@ set(ANTIFURTO_X86_HPP
 )
 # raspberry pi
 set(ANTIFURTO_PI_CPP
+    src/PiCamera.cpp
 )
 set(ANTIFURTO_PI_HPP
+    src/PiCamera.hpp
 )
 
 if(NOT CROSS_COMPILE)
