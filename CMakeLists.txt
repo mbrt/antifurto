@@ -7,8 +7,12 @@ else()
     set(CROSS_COMPILE false)
 endif()
 
-# c++11 support
+# compile flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# definitions
+if(CROSS_COMPILE)
+    add_definitions(-DANTIFURTO_RASPBERRY=1)
+endif()
 
 if(CROSS_COMPILE)
     # options
@@ -33,7 +37,10 @@ if(NOT CROSS_COMPILE)
 else()
     # find_package OpenCV does not work well when cross compiling
     set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc)
-    set(raspicamcv_LIBS raspicamcv)
+    set(raspicamcv_LIBS
+        raspicamcv
+        rt pthread
+        mmal_core mmal mmal_util vcos bcm_host)
     set(raspicamcv_LIBRARY_DIRS
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/raspicam_cv/build
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/userland/build/lib)
@@ -89,6 +96,4 @@ add_executable(antifurto src/main.cpp)
 target_link_libraries(antifurto antifurto_core)
 
 # tests
-if(NOT CROSS_COMPILE)
-    add_subdirectory(test)
-endif()
+add_subdirectory(test)

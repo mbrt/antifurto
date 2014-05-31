@@ -1,2 +1,3 @@
 #!/bin/bash
-cp pitest ${DEPLOY_DIR}
+cp antifurto ${DEPLOY_DIR}
+cp test/antifurto_pi_test ${DEPLOY_DIR}

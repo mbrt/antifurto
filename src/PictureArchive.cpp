@@ -59,7 +59,7 @@ std::string toStringTimePoint(std::chrono::system_clock::time_point t)
     out << time_local.tm_year + 1900 << '-'
         << std::setfill('0') << std::setw(2)
         << time_local.tm_mon << '-'
-        << time_local.tm_mday << ' '
+        << time_local.tm_mday << '_'
         << time_local.tm_hour << ':'
         << time_local.tm_min << ':'
         << time_local.tm_sec << '.'
