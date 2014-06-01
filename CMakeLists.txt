@@ -56,7 +56,6 @@ endif()
 set(ANTIFURTO_COMMON_CPP
     src/MotionDetector.cpp
     src/PictureArchive.cpp
-    src/SmsSender.cpp
 )
 set(ANTIFURTO_COMMON_HPP
     src/Camera.hpp
@@ -64,7 +63,6 @@ set(ANTIFURTO_COMMON_HPP
     src/Exception.hpp
     src/MotionDetector.hpp
     src/PictureArchive.hpp
-    src/SmsSender.hpp
 )
 # x86
 set(ANTIFURTO_X86_CPP

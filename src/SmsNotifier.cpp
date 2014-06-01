@@ -1,4 +1,4 @@
-#include "SmsSender.hpp"
+#include "SmsNotifier.hpp"
 
 #include <iomanip>
 
@@ -12,7 +12,7 @@ namespace antifurto {
 ///
 /// send HTTP request using curl:
 /// http://makandracards.com/makandra/1145-how-to-send-http-requests-using-curl
-void SmsSender::send(const std::string &msg, const std::string &dest)
+void SmsNotifier::send(const std::string &msg, const std::string &dest)
 {
 }
 

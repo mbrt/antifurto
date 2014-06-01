@@ -6,7 +6,7 @@
 namespace antifurto {
 
 /// This class sends SMS by using a web service
-class SmsSender
+class SmsNotifier
 {
 public:
     void send(std::string const& msg, std::string const& dest);
