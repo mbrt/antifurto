@@ -46,8 +46,7 @@ int Process::runCommand(const std::string& command)
         stdout_ << &buffer[0];
     }
 
-    ::pclose(proc);
-    return 0;
+    return ::pclose(proc);
 }
 
 } // ipc

@@ -23,5 +23,8 @@ else()
     # main unit test exe
     add_executable(antifurto_unit antifurto_unit.cpp)
     target_link_libraries(antifurto_unit ${Boost_LIBRARIES} antifurto_core)
-
 endif(CROSS_COMPILE)
+
+# cross tests
+add_executable(notification_test notification_test.cpp)
+target_link_libraries(notification_test antifurto_core)
