@@ -1,4 +1,3 @@
-Libreria open per whatsapp: https://github.com/tgalal/yowsup
 Progetto telecamera con Raspberry PI http://www.codeproject.com/Articles/665518/Raspberry-Pi-as-low-cost-HD-surveillance-camera
 Raspberry PI camera: http://thepihut.com/pages/how-to-install-the-raspberry-pi-camera
 Streaming of motion jpeg with nodejs: https://github.com/rodowi/Paparazzo.js
@@ -28,6 +27,10 @@ dns dinamico: http://dyndns.it/solutions/#
 invio sms
     code sample: http://www.codeproject.com/Articles/387567/How-to-send-an-SMS-message-from-an-application
     servizio: http://www.cardboardfish.com/products/personal/index.html
+Libreria open per whatsapp: https://github.com/tgalal/yowsup
+
+Message passing (zeromq): http://zeromq.org/
+serialization (google protocol buffers): https://developers.google.com/protocol-buffers/docs/overview
 
 Sito web:
 Sito statico: http://jekyllrb.com/
