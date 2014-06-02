@@ -7,3 +7,6 @@
 [submodule "lib/yowsup"]
 	path = lib/yowsup
 	url = git@github.com:michele-bertasi/yowsup.git
+[submodule "lib/dropbox_uploader"]
+	path = lib/dropbox_uploader
+	url = git@github.com:michele-bertasi/Dropbox-Uploader.git
