@@ -7,19 +7,19 @@
 namespace antifurto {
 
 /// This class manages notifications using WhatsApp
-class WhatsappNotifier
+class DropboxUploader
 {
 public:
-    WhatsappNotifier(std::string baseDir, std::string configFile);
-    void send(std::string const& dest, std::string const& msg);
+    DropboxUploader(std::string baseDir, std::string configFile);
+    void uploadFile(const std::string& sourceFile, const std::string& destFile);
 
 private:
     std::string baseDir_;
     std::string configFile_;
-    ipc::Process yowsupProcess_;
+    ipc::Process uploaderProcess_;
 };
 
-class WhatsappNotifierException : public Exception
+class DropboxUploaderException : public Exception
 {
     using Exception::Exception;
 };

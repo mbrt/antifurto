@@ -1,4 +1,5 @@
 #include "WhatsappNotifier.hpp"
+#include "meta/ToString.hpp"
 #include <sstream>
 
 
@@ -10,7 +11,7 @@ WhatsappNotifier::WhatsappNotifier(std::string baseDir, std::string configFile)
     , yowsupProcess_("./yowsup-cli")
 { }
 
-bool WhatsappNotifier::send(const std::string& dest, const std::string& msg)
+void WhatsappNotifier::send(const std::string& dest, const std::string& msg)
 {
     std::ostringstream args;
     args << "-c " << configFile_
@@ -25,7 +26,10 @@ bool WhatsappNotifier::send(const std::string& dest, const std::string& msg)
     }
 
     std::string stdout = yowsupProcess_.getStdOut();
-    return stdout.find("Sent message");
+    if (!stdout.find("Sent message"))
+        throw WhatsappNotifierException(
+                meta::toString("Cannot send message\nlog: ",
+                               stdout));
 }
 
 } // namespace antifurto

@@ -18,8 +18,8 @@ int main(int argc, char* argv[])
 
     try {
         WhatsappNotifier notifier(baseDir, configFile);
-        bool sent = notifier.send(number, "Try message");
-        return sent ? 0 : 1;
+        notifier.send(number, "Try message");
+        return 0;
     }
     catch (std::exception& e) {
        std::cerr << "Exception: " << e.what() << std::endl;

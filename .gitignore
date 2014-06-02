@@ -1,3 +1,4 @@
 build/
 *.swp
 CMakeLists.txt.user
+config/private
