@@ -16,6 +16,8 @@ OpenCV per diff
 Componenti:
 Raspberry PI IR camera: http://it.rs-online.com/web/p/modulo-video/7902811/
 Raspberry PI video camera: http://it.rs-online.com/web/p/modulo-video/7757731/
+Moduli radio: http://www.lprs.co.uk/wireless-modules/remote-control-systems.html
+Tutorial con bluetooth per arduino: http://blog.miguelgrinberg.com/post/building-an-arduino-robot-part-vi-remote-control
 
 Software:
 Cross compile Raspberry: http://stackoverflow.com/questions/19162072/installing-raspberry-pi-cross-compiler
