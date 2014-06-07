@@ -9,18 +9,20 @@
 #include <chrono>
 
 namespace antifurto {
+namespace config {
 
-/// Configuration class
-class Config
-{
-public:
 #if defined(ANTIFURTO_RASPBERRY)
     using Camera = antifurto::PiCamera;
 #else
     using Camera = antifurto::CvCamera;
 #endif
-    static constexpr std::chrono::milliseconds monitorCycleDuration { 500 };
-    static constexpr std::chrono::milliseconds monitorCycleDurationOnAlarm { 100 };
-};
 
+using Milliseconds = std::chrono::milliseconds;
+constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
+constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 100 }; }
+
+constexpr const char* configDir() { return "config"; }
+constexpr const char* archiveDir() { return "/tmp"; }
+
+} // namespace config
 } // namespace antifurto

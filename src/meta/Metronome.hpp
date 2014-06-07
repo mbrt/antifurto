@@ -21,7 +21,7 @@ public:
     void checkpoint()
     {
         using namespace std::chrono;
-        TimePoint now = Clock::now();
+        typename Clock::time_point now = Clock::now();
         Resolution elapsed = duration_cast<Resolution>(now - prevCheckpoint_);
         Resolution remaining = duration_cast<Resolution>(cycleTime_ - elapsed);
         if (remaining > Resolution::zero())
@@ -30,9 +30,8 @@ public:
     }
 
 private:
-    using TimePoint = typename Clock::time_point;
     Resolution cycleTime_;
-    TimePoint prevCheckpoint_;
+    typename Clock::time_point prevCheckpoint_;
 };
 
 using DefaultMetronome =

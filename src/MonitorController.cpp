@@ -12,7 +12,7 @@ class MonitorControllerImpl
 {
 public:
     MonitorControllerImpl()
-        : metronome_(Config::monitorCycleDuration)
+        : metronome_(config::monitorCycleDuration())
         , loopThread_([this](){ monitor(); })
     {
         motionDetector_.addObserver([this](MotionDetector::State s) {
@@ -44,10 +44,10 @@ private:
         switch (state)
         {
         case State::NO_ALARM:
-            metronome_ = Metronome(Config::monitorCycleDuration);
+            metronome_ = Metronome(config::monitorCycleDuration());
             break;
         case State::PRE_ALARM:
-            metronome_ = Metronome(Config::monitorCycleDurationOnAlarm);
+            metronome_ = Metronome(config::monitorCycleDurationOnAlarm());
             break;
         default:
             break;
@@ -56,7 +56,7 @@ private:
 
     using Metronome = meta::DefaultMetronome;
 
-    Config::Camera camera_;
+    config::Camera camera_;
     MotionDetector motionDetector_;
     Metronome metronome_;
     bool running_;
