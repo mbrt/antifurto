@@ -27,7 +27,9 @@ Low level: http://elinux.org/RPi_Low-level_peripherals#GPIO_Driving_Example_.28C
 Software:
 Cross compile Raspberry: http://stackoverflow.com/questions/19162072/installing-raspberry-pi-cross-compiler
 Dropbox upload via script: https://github.com/andreafabrizi/Dropbox-Uploader
-Minidump linux: http://stackoverflow.com/questions/7470310/generating-mini-text-dump-linux
+Minidump
+linux: http://stackoverflow.com/questions/7470310/generating-mini-text-dump-linux
+crash report google: https://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad
 
 Connettività:
 dns dinamico: http://dyndns.it/solutions/#

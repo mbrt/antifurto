@@ -35,6 +35,7 @@ private:
         Picture p;
         while (running_) {
             camera_.takePicture(p);
+            recording_.addPicture(p);
             motionDetector_.examinePicture(p);
             metronome_.checkpoint();
         }
