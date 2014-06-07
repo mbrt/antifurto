@@ -1,6 +1,7 @@
 #include "MonitorController.hpp"
 #include "Config.hpp"
 #include "MotionDetector.hpp"
+#include "RecordingController.hpp"
 #include "meta/Metronome.hpp"
 
 #include <thread>
@@ -13,6 +14,7 @@ class MonitorControllerImpl
 public:
     MonitorControllerImpl()
         : metronome_(config::monitorCycleDuration())
+        , recording_(motionDetector_)
         , loopThread_([this](){ monitor(); })
     {
         motionDetector_.addObserver([this](MotionDetector::State s) {
@@ -59,6 +61,7 @@ private:
     config::Camera camera_;
     MotionDetector motionDetector_;
     Metronome metronome_;
+    RecordingController recording_;
     bool running_;
     std::thread loopThread_;
 };

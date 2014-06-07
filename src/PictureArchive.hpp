@@ -3,6 +3,7 @@
 #include <string>
 #include <list>
 #include <chrono>
+#include <functional>
 
 #include "Picture.hpp"
 
@@ -21,6 +22,10 @@ public:
     void startSaving();
     void stopSaving();
 
+    using Observer = std::function<void(const std::string&)>;
+    void addObserver(Observer o);
+    void clearObservers();
+
 private:
     using Clock = std::chrono::system_clock::time_point;
     struct RecordItem {
@@ -32,14 +37,17 @@ private:
         { }
     };
     using RecordBuffer = std::list<RecordItem>;
+    using ObserverList = std::vector<Observer>;
 
     void enqueue(Picture p);
-    void save(Picture const& p, Clock t);
+    void save(const Picture& p, Clock t);
+    void notifyObservers(const std::string& fileName);
 
     std::string folder_;
     unsigned int recordBufferSize_;
     RecordBuffer recordBuffer_;
     bool recording_;
+    ObserverList observers_;
 };
 
 } // namespace antifurto

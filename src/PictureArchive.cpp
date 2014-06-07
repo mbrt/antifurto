@@ -35,6 +35,16 @@ void PictureArchive::stopSaving()
     recording_ = false;
 }
 
+void PictureArchive::addObserver(PictureArchive::Observer o)
+{
+    observers_.emplace_back(std::move(o));
+}
+
+void PictureArchive::clearObservers()
+{
+    observers_.clear();
+}
+
 void PictureArchive::enqueue(Picture p)
 {
     recordBuffer_.emplace_back(std::chrono::system_clock::now(), std::move(p));
@@ -78,6 +88,13 @@ void PictureArchive::save(const Picture& p, Clock t)
         << folder_ << '/'
         << toStringTimePoint(t) << ".jpg";
     cv::imwrite(filename.str(), p, { CV_IMWRITE_JPEG_QUALITY, 90 });
+    notifyObservers(filename.str());
+}
+
+void PictureArchive::notifyObservers(const std::string& fileName)
+{
+    for (auto& obs: observers_)
+        obs(fileName);
 }
 
 } // namespace antifurto

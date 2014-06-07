@@ -31,7 +31,7 @@ add_subdirectory(lib)
 # libraries
 if(NOT CROSS_COMPILE)
     set(Boost_USE_STATIC_LIBS ON)
-    find_package(Boost COMPONENTS unit_test_framework)
+    find_package(Boost COMPONENTS unit_test_framework filesystem)
     find_package(OpenCV REQUIRED core highgui imgproc)
     set(ANTIFURTO_LIBS ${OpenCV_LIBS})
 else()
@@ -59,6 +59,7 @@ set(ANTIFURTO_COMMON_CPP
     src/WhatsappNotifier.cpp
     src/DropboxUploader.cpp
     src/MonitorController.cpp
+    src/RecordingController.cpp
     src/ipc/Process.cpp
 )
 set(ANTIFURTO_COMMON_HPP
@@ -71,6 +72,7 @@ set(ANTIFURTO_COMMON_HPP
     src/DropboxUploader.hpp
     src/MonitorController.hpp
     src/Config.hpp
+    src/RecordingController.hpp
     src/ipc/Process.hpp
     src/ipc/Exception.hpp
     src/meta/TypeTraits.hpp

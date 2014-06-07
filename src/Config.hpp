@@ -23,6 +23,9 @@ constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 100 
 
 constexpr const char* configDir() { return "config"; }
 constexpr const char* archiveDir() { return "/tmp"; }
+constexpr const char* dropboxConfigFile() { return "config/dropbox.cfg"; }
+
+constexpr unsigned int maxArchiveDays() { return 7; }
 
 } // namespace config
 } // namespace antifurto
