@@ -19,6 +19,11 @@ Raspberry PI video camera: http://it.rs-online.com/web/p/modulo-video/7757731/
 Moduli radio: http://www.lprs.co.uk/wireless-modules/remote-control-systems.html
 Tutorial con bluetooth per arduino: http://blog.miguelgrinberg.com/post/building-an-arduino-robot-part-vi-remote-control
 
+GPIO:
+intro: http://www.themagpi.com/issue/issue-2/article/in-control/
+libs in C: http://www.raspberrypi.org/forums/viewtopic.php?f=33&t=9729
+Low level: http://elinux.org/RPi_Low-level_peripherals#GPIO_Driving_Example_.28C.29
+
 Software:
 Cross compile Raspberry: http://stackoverflow.com/questions/19162072/installing-raspberry-pi-cross-compiler
 Dropbox upload via script: https://github.com/andreafabrizi/Dropbox-Uploader

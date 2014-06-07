@@ -18,6 +18,7 @@ public:
     // move
     // not noexcept because of the cv::Mat copy constructor
     // FIXME: this can be fixed if std::vector<uchar> is used instead of cv::Mat
+    // see: http://stackoverflow.com/questions/12139402/initialize-an-opencv-mat-with-an-2d-array
     Picture(Picture&& ) noexcept(false) = default;
     Picture& operator =(Picture&& ) noexcept(false) = default;
 

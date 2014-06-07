@@ -1,4 +1,3 @@
-#include "Camera.hpp"
 
 
 int main(int, char*[])

@@ -58,6 +58,7 @@ set(ANTIFURTO_COMMON_CPP
     src/PictureArchive.cpp
     src/WhatsappNotifier.cpp
     src/DropboxUploader.cpp
+    src/MonitorController.cpp
     src/ipc/Process.cpp
 )
 set(ANTIFURTO_COMMON_HPP
@@ -68,10 +69,14 @@ set(ANTIFURTO_COMMON_HPP
     src/PictureArchive.hpp
     src/WhatsappNotifier.hpp
     src/DropboxUploader.hpp
+    src/MonitorController.hpp
+    src/Config.hpp
     src/ipc/Process.hpp
     src/ipc/Exception.hpp
     src/meta/TypeTraits.hpp
     src/meta/ToString.hpp
+    src/meta/SmartPtr.hpp
+    src/meta/Metronome.hpp
 )
 # x86
 set(ANTIFURTO_X86_CPP
