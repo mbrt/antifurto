@@ -75,8 +75,7 @@ void MotionDetector::onMotionDetected()
     consecutiveNoMotion_ = 0;
     ++consecutiveMotions_;
 
-    switch (state_)
-    {
+    switch (state_) {
     case State::NO_ALARM:
         state_ = State::PRE_ALARM;
         break;
@@ -100,8 +99,7 @@ void MotionDetector::onNoMotion()
     consecutiveMotions_ = 0;
     ++consecutiveNoMotion_;
 
-    switch (state_)
-    {
+    switch (state_) {
     case State::NO_ALARM:
         break;
     case State::PRE_ALARM:
@@ -126,15 +124,13 @@ void MotionDetector::notifyObservers()
 } // namespace antifurto
 
 
-namespace std
-{
+namespace std {
 
 ostream& operator <<(ostream& o, antifurto::MotionDetector::State s)
 {
     using State = antifurto::MotionDetector::State;
 
-    switch (s)
-    {
+    switch (s) {
     case State::ALARM:
         o << "Alarm";
         break;

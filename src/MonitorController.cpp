@@ -31,7 +31,7 @@ private:
     {
         running_ = true;
         Picture p;
-        while(running_) {
+        while (running_) {
             camera_.takePicture(p);
             motionDetector_.examinePicture(p);
             metronome_.checkpoint();
@@ -41,8 +41,8 @@ private:
     void onAlarmStateChanged(MotionDetector::State state)
     {
         using State = MotionDetector::State;
-        switch (state)
-        {
+
+        switch (state) {
         case State::NO_ALARM:
             metronome_ = Metronome(config::monitorCycleDuration());
             break;

@@ -9,7 +9,7 @@ class Camera
 {
 public:
     virtual void takePicture(Picture& p) = 0;
-    virtual ~Camera() {}
+    virtual ~Camera() = default;
 };
 
 struct CameraException : public Exception
