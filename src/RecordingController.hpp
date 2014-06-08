@@ -9,6 +9,7 @@
 #include <string>
 #include <mutex>
 #include <condition_variable>
+#include <memory>
 
 namespace antifurto {
 
@@ -32,7 +33,7 @@ private:
             boost::lockfree::capacity<32768>>;
 
     PictureArchive archive_;
-    DropboxUploader uploader_;
+    std::unique_ptr<DropboxUploader> uploader_;
     std::thread uploaderThread_;
     bool uploadWorking_;
     UploadQueue uploadQueue_;

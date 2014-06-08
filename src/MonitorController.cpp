@@ -15,6 +15,7 @@ public:
     MonitorControllerImpl()
         : metronome_(config::monitorCycleDuration())
         , recording_(motionDetector_)
+        , running_(true)
         , loopThread_([this](){ monitor(); })
     {
         motionDetector_.addObserver([this](MotionDetector::State s) {
@@ -31,7 +32,6 @@ public:
 private:
     void monitor()
     {
-        running_ = true;
         Picture p;
         while (running_) {
             camera_.takePicture(p);

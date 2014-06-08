@@ -1,6 +1,8 @@
 #include "DropboxUploader.hpp"
 #include "meta/ToString.hpp"
+
 #include <sstream>
+#include <fstream>
 
 namespace antifurto {
 
@@ -8,7 +10,11 @@ DropboxUploader::
 DropboxUploader(std::string baseDir, std::string configFile)
     : baseDir_(baseDir), configFile_(configFile)
     , uploaderProcess_("./dropbox_uploader.sh")
-{ }
+{
+    std::ifstream config(configFile.c_str());
+    if (!config.good())
+        throw DropboxUploaderException("Config file not found");
+}
 
 void DropboxUploader::
 uploadFile(const std::string& sourceFile, const std::string& destFile) const

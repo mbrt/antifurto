@@ -5,18 +5,26 @@ namespace antifurto {
 
 RecordingController::RecordingController(MotionDetector& detector)
     : archive_(config::archiveDir())
-    , uploader_("./", config::dropboxConfigFile())
     , uploadWorking_(false)
 {
     detector.addObserver([this](MotionDetector::State s){
         onAlarmStateChanged(s);
     });
-    if (uploader_.good()) {
-        // register the callback to get file that are saved only if upload works
-        archive_.addObserver([this](std::string const& f){
-            onPictureSaved(f);
-        });
-        uploaderThread_ = std::thread([this]{ uploadWorker(); });
+    try {
+        uploader_.reset(new DropboxUploader(
+                        "./", config::dropboxConfigFile()));
+        if (uploader_->good()) {
+            // register the callback to get file that are saved only if
+            // upload works
+            archive_.addObserver([this](std::string const& f){
+                onPictureSaved(f);
+            });
+            uploadWorking_ = true;
+            uploaderThread_ = std::thread([this]{ uploadWorker(); });
+        }
+    }
+    catch (...) {
+        // ignore uploader errors
     }
 }
 
@@ -60,7 +68,6 @@ void RecordingController::onPictureSaved(const std::string& fileName)
 
 void RecordingController::uploadWorker()
 {
-    uploadWorking_ = true;
     auto consumer = [this](std::string const& f) { uploadFile(f); };
     while (uploadWorking_) {
         uploadQueue_.consume_all(consumer);
@@ -75,7 +82,7 @@ void RecordingController::uploadWorker()
 
 void RecordingController::uploadFile(const std::string& fileName)
 {
-    uploader_.uploadFile(fileName, fileName);
+    uploader_->uploadFile(fileName, fileName);
 }
 
 

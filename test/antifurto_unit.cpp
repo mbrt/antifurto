@@ -6,6 +6,7 @@
 #include "CvCamera.hpp"
 #include "MotionDetector.hpp"
 #include "PictureArchive.hpp"
+#include "RecordingController.hpp"
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
@@ -162,4 +163,10 @@ BOOST_AUTO_TEST_CASE(pictureArchive)
     camera.takePicture(p);
     archive.addPicture(p);
     archive.stopSaving();
+}
+
+BOOST_AUTO_TEST_CASE(recordingController)
+{
+    MotionDetector detector;
+    RecordingController controller{ detector };
 }
