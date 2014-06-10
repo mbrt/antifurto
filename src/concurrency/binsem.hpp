@@ -1,8 +1,13 @@
-// see: https://gist.github.com/yohhoy/2156481
+#pragma once
+
 #include <mutex>
 #include <condition_variable>
 
+namespace antifurto {
+namespace concurrency {
+
 // binary semaphore
+// see: https://gist.github.com/yohhoy/2156481
 class binsem {
 public:
     explicit binsem(int init_count = count_max)
@@ -47,3 +52,5 @@ private:
     std::condition_variable cv_;
 };
 
+} // namespace concurrency
+} // namespace antifurto

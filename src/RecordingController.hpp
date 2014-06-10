@@ -3,12 +3,9 @@
 #include "PictureArchive.hpp"
 #include "DropboxUploader.hpp"
 #include "MotionDetector.hpp"
+#include "concurrency/SpScQueue.hpp"
 
-#include <boost/lockfree/spsc_queue.hpp>
-#include <thread>
 #include <string>
-#include <mutex>
-#include <condition_variable>
 #include <memory>
 
 namespace antifurto {
@@ -18,27 +15,20 @@ class RecordingController
 {
 public:
     RecordingController(MotionDetector& detector);
-    ~RecordingController();
     void addPicture(Picture p);
 
 private:
     void onAlarmStateChanged(MotionDetector::State state);
     void onPictureSaved(const std::string& fileName);
-    void uploadWorker();
     void uploadFile(const std::string& fileName);
 
-    using UploadQueue =
-        boost::lockfree::spsc_queue<
-            std::string,
-            boost::lockfree::capacity<32768>>;
+    using UploadWorker =
+        concurrency::SpScQueue<std::string,
+            std::function<void(const std::string&)>>;
 
     PictureArchive archive_;
     std::unique_ptr<DropboxUploader> uploader_;
-    std::thread uploaderThread_;
-    bool uploadWorking_;
-    UploadQueue uploadQueue_;
-    std::mutex conditionMutex_;
-    std::condition_variable uploadNeeded_;
+    UploadWorker uploadWorker_;
 };
 
 } // namespace antifurto

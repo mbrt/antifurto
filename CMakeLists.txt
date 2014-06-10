@@ -51,6 +51,7 @@ else()
 
     set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS})
 endif()
+include_directories(lib/folly/include)
 
 # common files
 set(ANTIFURTO_COMMON_CPP
@@ -79,6 +80,8 @@ set(ANTIFURTO_COMMON_HPP
     src/meta/ToString.hpp
     src/meta/SmartPtr.hpp
     src/meta/Metronome.hpp
+    src/concurrency/SpScQueue.hpp
+    src/concurrency/binsem.hpp
 )
 # x86
 set(ANTIFURTO_X86_CPP

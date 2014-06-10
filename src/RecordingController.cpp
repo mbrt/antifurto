@@ -5,7 +5,7 @@ namespace antifurto {
 
 RecordingController::RecordingController(MotionDetector& detector)
     : archive_(config::archiveDir())
-    , uploadWorking_(false)
+    , uploadWorker_([this](const std::string& f){ uploadFile(f); }, 150)
 {
     detector.addObserver([this](MotionDetector::State s){
         onAlarmStateChanged(s);
@@ -19,24 +19,11 @@ RecordingController::RecordingController(MotionDetector& detector)
             archive_.addObserver([this](std::string const& f){
                 onPictureSaved(f);
             });
-            uploadWorking_ = true;
-            uploaderThread_ = std::thread([this]{ uploadWorker(); });
         }
     }
     catch (...) {
         // ignore uploader errors
     }
-}
-
-RecordingController::~RecordingController()
-{
-    {
-        std::unique_lock<std::mutex>(conditionMutex_);
-        uploadWorking_ = false;
-    }
-    uploadNeeded_.notify_one();
-    if (uploaderThread_.joinable())
-        uploaderThread_.join();
 }
 
 void RecordingController::addPicture(Picture p)
@@ -62,22 +49,7 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
 
 void RecordingController::onPictureSaved(const std::string& fileName)
 {
-    uploadQueue_.push(fileName);
-    uploadNeeded_.notify_one();
-}
-
-void RecordingController::uploadWorker()
-{
-    auto consumer = [this](std::string const& f) { uploadFile(f); };
-    while (uploadWorking_) {
-        uploadQueue_.consume_all(consumer);
-
-        // wait on condition
-        std::unique_lock<std::mutex>(conditionMutex_);
-        uploadNeeded_.wait(conditionMutex_, [this, consumer]() {
-           return !uploadWorking_ || uploadQueue_.consume_one(consumer);
-        });
-    }
+    uploadWorker_.enqueue(fileName);
 }
 
 void RecordingController::uploadFile(const std::string& fileName)
