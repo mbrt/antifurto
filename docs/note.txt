@@ -40,6 +40,9 @@ Libreria open per whatsapp: https://github.com/tgalal/yowsup
 
 Message passing (zeromq): http://zeromq.org/
 serialization (google protocol buffers): https://developers.google.com/protocol-buffers/docs/overview
+folly lockfree: https://github.com/facebook/folly/blob/master/folly/ProducerConsumerQueue.h
+
+Monitor USB mount in Python: http://pyudev.readthedocs.org/en/latest/
 
 Sito web:
 Sito statico: http://jekyllrb.com/
