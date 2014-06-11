@@ -6,6 +6,7 @@ namespace antifurto {
 RecordingController::RecordingController(MotionDetector& detector)
     : archive_(config::archiveDir())
     , uploadWorker_([this](const std::string& f){ uploadFile(f); }, 150)
+    , recordingWorker_([this](Picture& p){ archive_.addPicture(std::move(p)); }, 1024)
 {
     detector.addObserver([this](MotionDetector::State s){
         onAlarmStateChanged(s);
@@ -28,7 +29,8 @@ RecordingController::RecordingController(MotionDetector& detector)
 
 void RecordingController::addPicture(Picture p)
 {
-    archive_.addPicture(std::move(p));
+    if (!recordingWorker_.enqueue(std::move(p)))
+        std::cerr << "Failed to enqueue the picture\n";
 }
 
 void RecordingController::onAlarmStateChanged(MotionDetector::State state)
@@ -54,7 +56,12 @@ void RecordingController::onPictureSaved(const std::string& fileName)
 
 void RecordingController::uploadFile(const std::string& fileName)
 {
-    uploader_->uploadFile(fileName, fileName);
+    try {
+        uploader_->uploadFile(fileName, fileName);
+    }
+    catch (std::exception& e) {
+        std::cerr << "Error uploading file: " << e.what() << std::endl;
+    }
 }
 
 

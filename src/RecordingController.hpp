@@ -25,10 +25,14 @@ private:
     using UploadWorker =
         concurrency::SpScQueue<std::string,
             std::function<void(const std::string&)>>;
+    using RecordingWorker =
+        concurrency::SpScQueue<Picture,
+            std::function<void(Picture&)>>;
 
     PictureArchive archive_;
     std::unique_ptr<DropboxUploader> uploader_;
     UploadWorker uploadWorker_;
+    RecordingWorker recordingWorker_;
 };
 
 } // namespace antifurto
