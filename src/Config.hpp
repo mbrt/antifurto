@@ -19,7 +19,7 @@ namespace config {
 
 using Milliseconds = std::chrono::milliseconds;
 constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
-constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 100 }; }
+constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 }; }
 
 constexpr const char* configDir() { return "config"; }
 constexpr const char* archiveDir() { return "/tmp"; }

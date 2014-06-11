@@ -47,10 +47,10 @@ private:
         while (!done_) {
             semaphore_.wait();
             while (!done_ && queue_.read(value))
-                F(value);
+                workFunc_(value);
             working_.clear();
             while (!done_ && queue_.read(value))
-                F(value);
+                workFunc_(value);
         }
     }
 
