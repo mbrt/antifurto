@@ -6,7 +6,7 @@ namespace antifurto {
 namespace meta {
 namespace detail {
 
-std::string toStringImpl(std::ostringstream& out) {
+inline std::string toStringImpl(std::ostringstream& out) {
     return out.str();
 }
 

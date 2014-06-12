@@ -24,6 +24,7 @@ constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 
 constexpr const char* configDir() { return "config"; }
 constexpr const char* archiveDir() { return "/tmp"; }
 constexpr const char* dropboxConfigFile() { return "config/dropbox.cfg"; }
+constexpr const char* whatsappConfigFile() { return "config/whatsapp.cfg"; }
 
 constexpr unsigned int maxArchiveDays() { return 7; }
 

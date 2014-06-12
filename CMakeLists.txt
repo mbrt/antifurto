@@ -61,6 +61,7 @@ set(ANTIFURTO_COMMON_CPP
     src/DropboxUploader.cpp
     src/MonitorController.cpp
     src/RecordingController.cpp
+    src/NotificationController.cpp
     src/ipc/Process.cpp
 )
 set(ANTIFURTO_COMMON_HPP
@@ -74,6 +75,7 @@ set(ANTIFURTO_COMMON_HPP
     src/MonitorController.hpp
     src/Config.hpp
     src/RecordingController.hpp
+    src/NotificationController.hpp
     src/ipc/Process.hpp
     src/ipc/Exception.hpp
     src/meta/TypeTraits.hpp

@@ -48,3 +48,6 @@ Sito web:
 Sito statico: http://jekyllrb.com/
 Flask, web server python: http://flask.pocoo.org/
 Bootstrap, front-end framework cross device: http://getbootstrap.com/
+Real time video streaming: http://phoboslab.org/log/2013/09/html5-live-video-streaming-via-websockets
+with videojs: http://stackoverflow.com/questions/21849961/videojs-with-live-stream
+HTML5 video player: http://www.videojs.com/
