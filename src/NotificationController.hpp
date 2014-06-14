@@ -18,10 +18,14 @@ public:
 
 private:
     using ContactList = std::vector<std::string>;
+    using Notifications = std::vector<std::future<void>>;
+
     void notifyContacts();
+    void processNotificationResults();
 
     WhatsappNotifier whatsapp_;
     ContactList contacts_;
+    Notifications notifications_;
 };
 
 } // namespace antifurto
