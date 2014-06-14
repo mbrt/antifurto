@@ -31,6 +31,11 @@ std::string Process::getStdOut() const
     return stdout_.str();
 }
 
+void Process::kill() const
+{
+    throw Exception("Kill not implemented");
+}
+
 
 int Process::runCommand(const std::string& command)
 {
@@ -39,7 +44,7 @@ int Process::runCommand(const std::string& command)
         throw Exception("Failed to run process");
 
     stdout_.clear();
-    std::array<char, 64> buffer;
+    std::array<char, 512> buffer;
     std::size_t len;
     while ((len = ::fread(&buffer[0], 1, buffer.size() - 1, proc)) > 0) {
         buffer[len] = '\0';

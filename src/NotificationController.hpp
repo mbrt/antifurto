@@ -2,16 +2,18 @@
 
 #include "WhatsappNotifier.hpp"
 #include "MotionDetector.hpp"
+#include "Config_fwd.hpp"
 
 #include <vector>
 #include <string>
+#include <future>
 
 namespace antifurto {
 
 class NotificationController
 {
 public:
-    NotificationController(MotionDetector& detector);
+    NotificationController(config::Configuration& c, MotionDetector& detector);
     void onAlarmStateChanged(MotionDetector::State state);
 
 private:
@@ -19,7 +21,7 @@ private:
     void notifyContacts();
 
     WhatsappNotifier whatsapp_;
-    ContactList concats_;
+    ContactList contacts_;
 };
 
 } // namespace antifurto

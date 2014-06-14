@@ -1,6 +1,7 @@
 #pragma once
 
 #include "meta/SmartPtr.hpp"
+#include "Config_fwd.hpp"
 
 namespace antifurto {
 
@@ -10,7 +11,7 @@ class MonitorControllerImpl;
 class MonitorController
 {
 public:
-    MonitorController();
+    MonitorController(config::Configuration& c);
 
 private:
     meta::ErasedUniquePtr<MonitorControllerImpl> pimpl_;

@@ -31,9 +31,10 @@ add_subdirectory(lib)
 # libraries
 if(NOT CROSS_COMPILE)
     set(Boost_USE_STATIC_LIBS ON)
-    find_package(Boost COMPONENTS unit_test_framework filesystem)
+    find_package(Boost COMPONENTS
+                 unit_test_framework filesystem program_options)
     find_package(OpenCV REQUIRED core highgui imgproc)
-    set(ANTIFURTO_LIBS ${OpenCV_LIBS})
+    set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
 else()
     # find_package OpenCV does not work well when cross compiling
     set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc)
@@ -55,35 +56,37 @@ include_directories(lib/folly/include)
 
 # common files
 set(ANTIFURTO_COMMON_CPP
-    src/MotionDetector.cpp
-    src/PictureArchive.cpp
-    src/WhatsappNotifier.cpp
+    src/Config.cpp
     src/DropboxUploader.cpp
     src/MonitorController.cpp
-    src/RecordingController.cpp
+    src/MotionDetector.cpp
     src/NotificationController.cpp
+    src/PictureArchive.cpp
+    src/RecordingController.cpp
+    src/WhatsappNotifier.cpp
     src/ipc/Process.cpp
 )
 set(ANTIFURTO_COMMON_HPP
     src/Camera.hpp
-    src/Picture.hpp
-    src/Exception.hpp
-    src/MotionDetector.hpp
-    src/PictureArchive.hpp
-    src/WhatsappNotifier.hpp
-    src/DropboxUploader.hpp
-    src/MonitorController.hpp
     src/Config.hpp
-    src/RecordingController.hpp
+    src/Config_fwd.hpp
+    src/DropboxUploader.hpp
+    src/Exception.hpp
+    src/MonitorController.hpp
+    src/MotionDetector.hpp
     src/NotificationController.hpp
-    src/ipc/Process.hpp
-    src/ipc/Exception.hpp
-    src/meta/TypeTraits.hpp
-    src/meta/ToString.hpp
-    src/meta/SmartPtr.hpp
-    src/meta/Metronome.hpp
+    src/Picture.hpp
+    src/PictureArchive.hpp
+    src/RecordingController.hpp
+    src/WhatsappNotifier.hpp
     src/concurrency/SpScQueue.hpp
     src/concurrency/binsem.hpp
+    src/ipc/Exception.hpp
+    src/ipc/Process.hpp
+    src/meta/Metronome.hpp
+    src/meta/SmartPtr.hpp
+    src/meta/ToString.hpp
+    src/meta/TypeTraits.hpp
 )
 # x86
 set(ANTIFURTO_X86_CPP

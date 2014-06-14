@@ -14,6 +14,7 @@ public:
     int run(const std::string& args, const std::string& workDir);
     int run(const std::string& args);
     std::string getStdOut() const;
+    void kill() const;
 
 private:
     int runCommand(const std::string& command);
