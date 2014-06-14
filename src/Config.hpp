@@ -19,6 +19,8 @@ namespace config {
     using Camera = antifurto::CvCamera;
 #endif
 
+///@{ Static configurations
+///
 using Milliseconds = std::chrono::milliseconds;
 constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
 constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 }; }
@@ -30,7 +32,9 @@ constexpr const char* dropboxConfigFile() { return "config/dropbox.cfg"; }
 constexpr const char* whatsappConfigFile() { return "config/whatsapp.cfg"; }
 
 constexpr unsigned int maxArchiveDays() { return 7; }
+///@}
 
+/// This class represents the configuration of antifurto
 class Configuration
 {
 public:
@@ -42,8 +46,15 @@ public:
         std::string pwd;
         StringList destinations;
     };
+    struct Dropbox {
+        std::string appKey;
+        std::string appSecret;
+        std::string oauthToken;
+        std::string oauthTokenSecret;
+    };
 
     Whatsapp whatsapp;
+    Dropbox dropbox;
 
 private:
     void parseConfigFile(const char* configFile);

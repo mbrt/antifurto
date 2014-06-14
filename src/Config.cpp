@@ -30,18 +30,23 @@ parseConfigFile(const char* configFile)
     // declare a group of options available only on command line
     po::options_description generic("Generic options");
     generic.add_options()
-            ("help,h", "produce help message")
-            ("version,v", "print version string")
-            ;
+       ("help,h", "produce help message")
+       ("version,v", "print version string")
+       ;
     // declare a group of options available both on command line and in
     // config file
     po::options_description config("Configuration");
     config.add_options()
-            ("whatsapp.src", po::value<std::string>(), "whatsapp source number")
-            ("whatsapp.pwd", po::value<std::string>(), "whatsapp password")
-            ("whatsapp.dest", po::value<StringList>()->composing(),
-             "Whatsapp destinations")
-            ;
+        ("whatsapp.src", po::value<std::string>(), "whatsapp source number")
+        ("whatsapp.pwd", po::value<std::string>(), "whatsapp password")
+        ("whatsapp.dest", po::value<StringList>()->composing(),
+         "whatsapp destinations")
+        ("dropbox.appkey", po::value<std::string>(), "dropbox app key")
+        ("dropbox.appsecret", po::value<std::string>(), "dropbox app secret")
+        ("dropbox.oauth-token", po::value<std::string>(), "dropbox oauth token")
+        ("dropbox.oauth-secret", po::value<std::string>(),
+         "dropbox oauth token secret")
+        ;
 
     po::options_description cmdline_opts, config_opts;
     cmdline_opts.add(generic).add(config);
@@ -56,6 +61,10 @@ parseConfigFile(const char* configFile)
     storeOptionOrDefault(vm, "whatsapp.src", whatsapp.src);
     storeOptionOrDefault(vm, "whatsapp.pwd", whatsapp.pwd);
     storeOptionOrDefault(vm, "whatsapp.dest", whatsapp.destinations);
+    storeOptionOrDefault(vm, "dropbox.appkey", dropbox.appKey);
+    storeOptionOrDefault(vm, "dropbox.appsecret", dropbox.appSecret);
+    storeOptionOrDefault(vm, "dropbox.oauth-token", dropbox.oauthToken);
+    storeOptionOrDefault(vm, "dropbox.oauth-secret", dropbox.oauthTokenSecret);
 }
 
 } // namespace config
