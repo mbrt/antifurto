@@ -5,20 +5,8 @@
 namespace po = boost::program_options;
 
 namespace antifurto {
-namespace { // anon
 
-template <typename T>
-bool storeOptionOrDefault(po::variables_map& vm, const char* option, T& out)
-{
-    bool res = vm.count(option);
-    if (res)
-        out = vm[option].as<T>();
-    return res;
-}
-
-} // anon namespace
-
-
+// implementation class for ConfigurationParser
 class ConfigurationParserImpl
 {
 public:
@@ -44,26 +32,35 @@ public:
         Configuration::Whatsapp& whatsapp = config_.whatsapp;
         Configuration::Dropbox& dropbox = config_.dropbox;
 
-        storeOptionOrDefault(vm_, "whatsapp.src", whatsapp.src);
-        storeOptionOrDefault(vm_, "whatsapp.pwd", whatsapp.pwd);
-        storeOptionOrDefault(vm_, "whatsapp.dest", whatsapp.destinations);
-        storeOptionOrDefault(vm_, "dropbox.appkey", dropbox.appKey);
-        storeOptionOrDefault(vm_, "dropbox.appsecret", dropbox.appSecret);
-        storeOptionOrDefault(vm_, "dropbox.oauth-token", dropbox.oauthToken);
-        storeOptionOrDefault(vm_, "dropbox.oauth-secret", dropbox.oauthTokenSecret);
+        storeOptionOrDefault("whatsapp.src", whatsapp.src);
+        storeOptionOrDefault("whatsapp.pwd", whatsapp.pwd);
+        storeOptionOrDefault("whatsapp.dest", whatsapp.destinations);
+        storeOptionOrDefault("dropbox.appkey", dropbox.appKey);
+        storeOptionOrDefault("dropbox.appsecret", dropbox.appSecret);
+        storeOptionOrDefault("dropbox.oauth-token", dropbox.oauthToken);
+        storeOptionOrDefault("dropbox.oauth-secret", dropbox.oauthTokenSecret);
 
         return config_;
     }
 
 private:
+    template <typename T>
+    bool storeOptionOrDefault(const char* option, T& out)
+    {
+        bool res = vm_.count(option);
+        if (res)
+            out = vm_[option].as<T>();
+        return res;
+    }
+
     void initOptions()
     {
         // declare a group of options available only on command line
         po::options_description generic("Generic options");
         generic.add_options()
-           ("help,h", "produce help message")
-           ("version,v", "print version string")
-           ;
+            ("help,h", "produce help message")
+            ("version,v", "print version string")
+            ;
         // declare a group of options available both on command line and in
         // config file
         po::options_description config("Configuration");
@@ -88,6 +85,7 @@ private:
     po::options_description configOpts_;
     po::variables_map vm_;
 };
+
 
 ConfigurationParser::ConfigurationParser()
     : impl_(new ConfigurationParserImpl)

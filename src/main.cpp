@@ -1,5 +1,6 @@
 #include "MonitorController.hpp"
 #include "Config.hpp"
+#include "StaticConfig.hpp"
 
 #include <thread>
 #include <iostream>

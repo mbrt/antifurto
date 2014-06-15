@@ -77,6 +77,7 @@ set(ANTIFURTO_COMMON_HPP
     src/Picture.hpp
     src/PictureArchive.hpp
     src/RecordingController.hpp
+    src/StaticConfig.hpp
     src/WhatsappNotifier.hpp
     src/concurrency/SpScQueue.hpp
     src/concurrency/binsem.hpp

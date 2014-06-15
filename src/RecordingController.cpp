@@ -1,5 +1,6 @@
 #include "RecordingController.hpp"
 #include "Config.hpp"
+#include "StaticConfig.hpp"
 
 namespace antifurto {
 

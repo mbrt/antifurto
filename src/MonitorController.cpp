@@ -1,5 +1,6 @@
 #include "MonitorController.hpp"
 #include "Config.hpp"
+#include "StaticConfig.hpp"
 #include "MotionDetector.hpp"
 #include "RecordingController.hpp"
 #include "NotificationController.hpp"

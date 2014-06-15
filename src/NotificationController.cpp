@@ -1,5 +1,6 @@
 #include "NotificationController.hpp"
 #include "Config.hpp"
+#include "StaticConfig.hpp"
 
 #include <iostream>
 
