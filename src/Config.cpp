@@ -18,52 +18,94 @@ bool storeOptionOrDefault(po::variables_map& vm, const char* option, T& out)
 
 } // anon namespace
 
-Configuration::Configuration(const char* configFile)
+
+class ConfigurationParserImpl
 {
-    parseConfigFile(configFile);
+public:
+    ConfigurationParserImpl()
+    {
+        initOptions();
+    }
+
+    void parseCmdLine(int argc, char* argv[])
+    {
+        po::store(po::parse_command_line(argc, argv, cmdLineOpts_), vm_);
+        po::notify(vm_);
+    }
+
+    void parseConfigFile(const char* configFile)
+    {
+        po::store(po::parse_config_file<char>(configFile, configOpts_), vm_);
+        po::notify(vm_);
+    }
+
+    Configuration getConfiguration()
+    {
+        Configuration::Whatsapp& whatsapp = config_.whatsapp;
+        Configuration::Dropbox& dropbox = config_.dropbox;
+
+        storeOptionOrDefault(vm_, "whatsapp.src", whatsapp.src);
+        storeOptionOrDefault(vm_, "whatsapp.pwd", whatsapp.pwd);
+        storeOptionOrDefault(vm_, "whatsapp.dest", whatsapp.destinations);
+        storeOptionOrDefault(vm_, "dropbox.appkey", dropbox.appKey);
+        storeOptionOrDefault(vm_, "dropbox.appsecret", dropbox.appSecret);
+        storeOptionOrDefault(vm_, "dropbox.oauth-token", dropbox.oauthToken);
+        storeOptionOrDefault(vm_, "dropbox.oauth-secret", dropbox.oauthTokenSecret);
+
+        return config_;
+    }
+
+private:
+    void initOptions()
+    {
+        // declare a group of options available only on command line
+        po::options_description generic("Generic options");
+        generic.add_options()
+           ("help,h", "produce help message")
+           ("version,v", "print version string")
+           ;
+        // declare a group of options available both on command line and in
+        // config file
+        po::options_description config("Configuration");
+        config.add_options()
+            ("whatsapp.src", po::value<std::string>(), "whatsapp source number")
+            ("whatsapp.pwd", po::value<std::string>(), "whatsapp password")
+            ("whatsapp.dest", po::value<Configuration::StringList>()->composing(),
+             "whatsapp destinations")
+            ("dropbox.appkey", po::value<std::string>(), "dropbox app key")
+            ("dropbox.appsecret", po::value<std::string>(), "dropbox app secret")
+            ("dropbox.oauth-token", po::value<std::string>(), "dropbox oauth token")
+            ("dropbox.oauth-secret", po::value<std::string>(),
+             "dropbox oauth token secret")
+            ;
+
+        cmdLineOpts_.add(generic).add(config);
+        configOpts_.add(config);
+    }
+
+    Configuration config_;
+    po::options_description cmdLineOpts_;
+    po::options_description configOpts_;
+    po::variables_map vm_;
+};
+
+ConfigurationParser::ConfigurationParser()
+    : impl_(new ConfigurationParserImpl)
+{ }
+
+void ConfigurationParser::parseCmdLine(int argc, char* argv[])
+{
+    return impl_->parseCmdLine(argc, argv);
 }
 
-void Configuration::
-parseConfigFile(const char* configFile)
+void ConfigurationParser::parseConfigFile(const char* configFile)
 {
-    // declare a group of options available only on command line
-    po::options_description generic("Generic options");
-    generic.add_options()
-       ("help,h", "produce help message")
-       ("version,v", "print version string")
-       ;
-    // declare a group of options available both on command line and in
-    // config file
-    po::options_description config("Configuration");
-    config.add_options()
-        ("whatsapp.src", po::value<std::string>(), "whatsapp source number")
-        ("whatsapp.pwd", po::value<std::string>(), "whatsapp password")
-        ("whatsapp.dest", po::value<StringList>()->composing(),
-         "whatsapp destinations")
-        ("dropbox.appkey", po::value<std::string>(), "dropbox app key")
-        ("dropbox.appsecret", po::value<std::string>(), "dropbox app secret")
-        ("dropbox.oauth-token", po::value<std::string>(), "dropbox oauth token")
-        ("dropbox.oauth-secret", po::value<std::string>(),
-         "dropbox oauth token secret")
-        ;
+    return impl_->parseConfigFile(configFile);
+}
 
-    po::options_description cmdline_opts, config_opts;
-    cmdline_opts.add(generic).add(config);
-    config_opts.add(config);
-
-    // parsing
-    po::variables_map vm;
-    po::store(po::parse_config_file<char>(configFile, config_opts), vm);
-    po::notify(vm);
-
-    // store options
-    storeOptionOrDefault(vm, "whatsapp.src", whatsapp.src);
-    storeOptionOrDefault(vm, "whatsapp.pwd", whatsapp.pwd);
-    storeOptionOrDefault(vm, "whatsapp.dest", whatsapp.destinations);
-    storeOptionOrDefault(vm, "dropbox.appkey", dropbox.appKey);
-    storeOptionOrDefault(vm, "dropbox.appsecret", dropbox.appSecret);
-    storeOptionOrDefault(vm, "dropbox.oauth-token", dropbox.oauthToken);
-    storeOptionOrDefault(vm, "dropbox.oauth-secret", dropbox.oauthTokenSecret);
+Configuration ConfigurationParser::getConfiguration()
+{
+    return impl_->getConfiguration();
 }
 
 } // namespace antifurto

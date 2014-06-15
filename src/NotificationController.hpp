@@ -16,7 +16,7 @@ class Configuration;
 class NotificationController
 {
 public:
-    NotificationController(Configuration& c, MotionDetector& detector);
+    NotificationController(const Configuration& c, MotionDetector& detector);
     ~NotificationController();
 
     void onAlarmStateChanged(MotionDetector::State state);

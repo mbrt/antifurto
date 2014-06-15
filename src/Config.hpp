@@ -6,6 +6,8 @@
 #   include "CvCamera.hpp"
 #endif
 
+#include "meta/SmartPtr.hpp"
+
 #include <chrono>
 #include <string>
 #include <vector>
@@ -41,8 +43,6 @@ constexpr unsigned int maxArchiveDays() { return 7; }
 class Configuration
 {
 public:
-    Configuration(const char* configFile);
-
     using StringList = std::vector<std::string>;
     struct Whatsapp {
         std::string src;
@@ -58,9 +58,6 @@ public:
 
     Whatsapp whatsapp;
     Dropbox dropbox;
-
-private:
-    void parseConfigFile(const char* configFile);
 };
 
 
@@ -74,7 +71,12 @@ class ConfigurationParser
 public:
     ConfigurationParser();
 
+    void parseCmdLine(int argc, char* argv[]);
+    void parseConfigFile(const char* configFile);
+    Configuration getConfiguration();
+
 private:
+    meta::ErasedUniquePtr<ConfigurationParserImpl> impl_;
 };
 
 } // namespace antifurto

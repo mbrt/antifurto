@@ -11,7 +11,7 @@ class Configuration;
 class MonitorController
 {
 public:
-    MonitorController(Configuration& c);
+    MonitorController(const Configuration& c);
 
 private:
     meta::ErasedUniquePtr<MonitorControllerImpl> pimpl_;

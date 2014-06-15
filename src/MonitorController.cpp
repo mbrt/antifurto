@@ -13,7 +13,7 @@ namespace antifurto {
 class MonitorControllerImpl
 {
 public:
-    MonitorControllerImpl(Configuration& c)
+    MonitorControllerImpl(Configuration const& c)
         : metronome_(config::monitorCycleDuration())
         , recording_(motionDetector_)
         , notification_(c, motionDetector_)
@@ -71,7 +71,7 @@ private:
 };
 
 
-MonitorController::MonitorController(Configuration& c)
+MonitorController::MonitorController(const Configuration& c)
     : pimpl_(new MonitorControllerImpl(c))
 { }
 

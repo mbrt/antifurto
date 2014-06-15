@@ -6,7 +6,7 @@
 namespace antifurto {
 
 NotificationController::
-NotificationController(Configuration& c, MotionDetector& detector)
+NotificationController(const Configuration& c, MotionDetector& detector)
     : whatsapp_(".", config::whatsappConfigFile())
     , contacts_(c.whatsapp.destinations.begin(), c.whatsapp.destinations.end())
 {
