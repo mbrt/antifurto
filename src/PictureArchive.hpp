@@ -40,7 +40,7 @@ private:
     using ObserverList = std::vector<Observer>;
 
     void enqueue(Picture p);
-    void save(const Picture& p, Clock t);
+    void save(Picture& p, Clock t);
     void notifyObservers(const std::string& fileName);
 
     std::string folder_;

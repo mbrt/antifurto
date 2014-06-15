@@ -25,7 +25,7 @@ void PictureArchive::addPicture(Picture p)
 void PictureArchive::startSaving()
 {
     recording_ = true;
-    for (auto const& i: recordBuffer_)
+    for (auto& i: recordBuffer_)
         save(i.picture, i.time);
     recordBuffer_.clear();
 }
@@ -79,14 +79,32 @@ std::string toStringTimePoint(std::chrono::system_clock::time_point t)
     return out.str();
 }
 
+std::string toStringShortTimePoint(std::chrono::system_clock::time_point t)
+{
+    std::time_t time = std::chrono::system_clock::to_time_t(t);
+    std::tm time_local;
+    localtime_r(&time, &time_local);
+    std::ostringstream out;
+    out << time_local.tm_year + 1900 << '/'
+        << std::setfill('0') << std::setw(2)
+        << time_local.tm_mon << '/'
+        << time_local.tm_mday << ' '
+        << time_local.tm_hour << ':'
+        << time_local.tm_min << ':'
+        << time_local.tm_sec;
+    return out.str();
+}
+
 } // anon namespace
 
-void PictureArchive::save(const Picture& p, Clock t)
+void PictureArchive::save(Picture& p, Clock t)
 {
     std::stringstream filename;
     filename
         << folder_ << '/'
         << toStringTimePoint(t) << ".jpg";
+    cv::putText(p, toStringShortTimePoint(t), cv::Point(30,30),
+        CV_FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(200,200,250), 1, CV_AA);
     cv::imwrite(filename.str(), p, { CV_IMWRITE_JPEG_QUALITY, 90 });
     notifyObservers(filename.str());
 }
