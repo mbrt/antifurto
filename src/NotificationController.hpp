@@ -5,6 +5,7 @@
 #include "Config_fwd.hpp"
 
 #include <vector>
+#include <deque>
 #include <string>
 #include <future>
 
@@ -18,7 +19,7 @@ public:
 
 private:
     using ContactList = std::vector<std::string>;
-    using Notifications = std::vector<std::future<void>>;
+    using Notifications = std::deque<std::future<void>>;
 
     void notifyContacts();
     void processNotificationResults();
