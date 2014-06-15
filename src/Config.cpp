@@ -5,7 +5,6 @@
 namespace po = boost::program_options;
 
 namespace antifurto {
-namespace config {
 namespace { // anon
 
 template <typename T>
@@ -67,5 +66,4 @@ parseConfigFile(const char* configFile)
     storeOptionOrDefault(vm, "dropbox.oauth-secret", dropbox.oauthTokenSecret);
 }
 
-} // namespace config
 } // namespace antifurto

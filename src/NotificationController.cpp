@@ -6,12 +6,12 @@
 namespace antifurto {
 
 NotificationController::
-NotificationController(config::Configuration& c, MotionDetector& detector)
+NotificationController(Configuration& c, MotionDetector& detector)
     : whatsapp_(".", config::whatsappConfigFile())
     , contacts_(c.whatsapp.destinations.begin(), c.whatsapp.destinations.end())
 {
     if (!contacts_.empty()) {
-        detector.addObserver([this](MotionDetector::State s){
+        detector.addObserver([this](MotionDetector::State s) {
             onAlarmStateChanged(s);
         });
     }

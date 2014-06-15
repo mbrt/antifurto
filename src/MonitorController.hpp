@@ -1,17 +1,17 @@
 #pragma once
 
 #include "meta/SmartPtr.hpp"
-#include "Config_fwd.hpp"
 
 namespace antifurto {
 
 // fwd decl
 class MonitorControllerImpl;
+class Configuration;
 
 class MonitorController
 {
 public:
-    MonitorController(config::Configuration& c);
+    MonitorController(Configuration& c);
 
 private:
     meta::ErasedUniquePtr<MonitorControllerImpl> pimpl_;

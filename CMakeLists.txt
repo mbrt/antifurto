@@ -69,7 +69,6 @@ set(ANTIFURTO_COMMON_CPP
 set(ANTIFURTO_COMMON_HPP
     src/Camera.hpp
     src/Config.hpp
-    src/Config_fwd.hpp
     src/DropboxUploader.hpp
     src/Exception.hpp
     src/MonitorController.hpp

@@ -34,6 +34,9 @@ constexpr const char* whatsappConfigFile() { return "config/whatsapp.cfg"; }
 constexpr unsigned int maxArchiveDays() { return 7; }
 ///@}
 
+} // namespace config
+
+
 /// This class represents the configuration of antifurto
 class Configuration
 {
@@ -60,5 +63,18 @@ private:
     void parseConfigFile(const char* configFile);
 };
 
-} // namespace config
+
+// fwd reference
+class ConfigurationParserImpl;
+
+/// This class fills a Configuration by parsing the command line and a
+/// configuration file
+class ConfigurationParser
+{
+public:
+    ConfigurationParser();
+
+private:
+};
+
 } // namespace antifurto

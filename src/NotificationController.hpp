@@ -2,7 +2,6 @@
 
 #include "WhatsappNotifier.hpp"
 #include "MotionDetector.hpp"
-#include "Config_fwd.hpp"
 
 #include <vector>
 #include <deque>
@@ -11,13 +10,14 @@
 
 namespace antifurto {
 
+// fwd reference
+class Configuration;
+
 class NotificationController
 {
 public:
-    NotificationController(config::Configuration& c, MotionDetector& detector);
+    NotificationController(Configuration& c, MotionDetector& detector);
     ~NotificationController();
-    NotificationController(const NotificationController& ) = delete;
-    NotificationController& operator =(const NotificationController& ) = delete;
 
     void onAlarmStateChanged(MotionDetector::State state);
 

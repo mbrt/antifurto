@@ -4,9 +4,9 @@ TODO LIST
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
 - Refactor of config
-  - move Configuration class out of config namespace
   - move parsing facilities to a ConfigParser class
   - add parsing of command line
+  - split config in multiple files (static config and options)
 - Add templating mechanism to support config file generation for yowsup and
   dropbox uploader
 - Kill subprocess

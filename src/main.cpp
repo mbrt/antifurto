@@ -9,7 +9,7 @@ using namespace antifurto;
 int main(int, char*[])
 {
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    config::Configuration cfg(config::configFile());
+    Configuration cfg(config::configFile());
     MonitorController controller(cfg);
     //std::this_thread::sleep_for(std::chrono::seconds(1000));
     std::cout << "Monitoring started.\n"
