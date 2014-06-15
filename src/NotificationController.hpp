@@ -15,6 +15,10 @@ class NotificationController
 {
 public:
     NotificationController(config::Configuration& c, MotionDetector& detector);
+    ~NotificationController();
+    NotificationController(const NotificationController& ) = delete;
+    NotificationController& operator =(const NotificationController& ) = delete;
+
     void onAlarmStateChanged(MotionDetector::State state);
 
 private:

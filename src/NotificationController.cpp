@@ -17,6 +17,18 @@ NotificationController(config::Configuration& c, MotionDetector& detector)
     }
 }
 
+NotificationController::~NotificationController()
+{
+    // FIXME: It is better to kill the notifications here
+    for (auto& f : notifications_)
+    {
+        try {
+            f.get();
+        }
+        catch (...) { }
+    }
+}
+
 void NotificationController::onAlarmStateChanged(MotionDetector::State state)
 {
     switch (state) {
