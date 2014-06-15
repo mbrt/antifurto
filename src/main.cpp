@@ -9,10 +9,13 @@ using namespace antifurto;
 
 int main(int argc, char* argv[])
 {
-    std::this_thread::sleep_for(std::chrono::seconds(5));
     ConfigurationParser parser;
     parser.parseCmdLine(argc, argv);
     parser.parseConfigFile(config::configFile());
+    if (!parser.canContinue())
+        return 1;
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     MonitorController controller(parser.getConfiguration());
     //std::this_thread::sleep_for(std::chrono::seconds(1000));
     std::cout << "Monitoring started.\n"

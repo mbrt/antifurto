@@ -7,12 +7,18 @@ else()
     set(CROSS_COMPILE false)
 endif()
 
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
+set(VERSION_BUILD 0)
+set(VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD}")
+
 # compile flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # definitions
 if(CROSS_COMPILE)
     add_definitions(-DANTIFURTO_RASPBERRY=1)
 endif()
+add_definitions(-DANTIFURTO_VERSION_STRING="${VERSION_STRING}")
 
 if(CROSS_COMPILE)
     # options

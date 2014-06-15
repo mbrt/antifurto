@@ -19,6 +19,14 @@ public:
     {
         po::store(po::parse_command_line(argc, argv, cmdLineOpts_), vm_);
         po::notify(vm_);
+        if (vm_.count("help")) {
+            std::cout << cmdLineOpts_ << std::endl;
+            canContinue_ = false;
+        }
+        else if (vm_.count("version")) {
+            std::cout << ANTIFURTO_VERSION_STRING << std::endl;
+            canContinue_ = false;
+        }
     }
 
     void parseConfigFile(const char* configFile)
@@ -42,6 +50,9 @@ public:
 
         return config_;
     }
+
+    bool canContinue() const
+    { return canContinue_; }
 
 private:
     template <typename T>
@@ -84,6 +95,7 @@ private:
     po::options_description cmdLineOpts_;
     po::options_description configOpts_;
     po::variables_map vm_;
+    bool canContinue_ = true;
 };
 
 
@@ -104,6 +116,11 @@ void ConfigurationParser::parseConfigFile(const char* configFile)
 Configuration ConfigurationParser::getConfiguration()
 {
     return impl_->getConfiguration();
+}
+
+bool ConfigurationParser::canContinue() const
+{
+    return impl_->canContinue();
 }
 
 } // namespace antifurto

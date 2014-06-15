@@ -45,6 +45,7 @@ public:
     void parseCmdLine(int argc, char* argv[]);
     void parseConfigFile(const char* configFile);
     Configuration getConfiguration();
+    bool canContinue() const;
 
 private:
     meta::ErasedUniquePtr<ConfigurationParserImpl> impl_;
