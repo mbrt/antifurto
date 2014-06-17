@@ -11,11 +11,11 @@ SET(TOOLCHAIN ${TOOLCHAIN_PATH}/${TOOLCHAIN_PREFIX})
 
 # specify the cross compiler
 SET(CMAKE_C_COMPILER ${TOOLCHAIN}gcc)
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --sysroot ${DEVICE_ROOT_FS}")
-SET(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} --sysroot ${DEVICE_ROOT_FS}")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --sysroot ${DEVICE_ROOT_FS} -march=armv6 -mfloat-abi=hard -mfpu=vfp")
+SET(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} --sysroot ${DEVICE_ROOT_FS} -march=armv6 -mfloat-abi=hard -mfpu=vfp")
 SET(CMAKE_CXX_COMPILER ${TOOLCHAIN}g++)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --sysroot ${DEVICE_ROOT_FS}")
-SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} --sysroot ${DEVICE_ROOT_FS}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --sysroot ${DEVICE_ROOT_FS} -march=armv6 -mfloat-abi=hard -mfpu=vfp")
+SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} --sysroot ${DEVICE_ROOT_FS} -march=armv6 -mfloat-abi=hard -mfpu=vfp")
 
 # where is the target environment 
 SET(CMAKE_FIND_ROOT_PATH ${DEVICE_ROOT_FS})
