@@ -1,4 +1,5 @@
 #include "Config.hpp"
+#include "StaticConfig.hpp"
 
 #include <boost/program_options.hpp>
 
@@ -12,6 +13,7 @@ class ConfigurationParserImpl
 public:
     ConfigurationParserImpl()
     {
+        setDefaults();
         initOptions();
     }
 
@@ -62,6 +64,12 @@ private:
         if (res)
             out = vm_[option].as<T>();
         return res;
+    }
+
+    void setDefaults()
+    {
+        config_.log.level = Configuration::Log::Level::INFO;
+        config_.log.dir = config::logDir();
     }
 
     void initOptions()

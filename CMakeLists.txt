@@ -38,7 +38,8 @@ add_subdirectory(lib)
 if(NOT CROSS_COMPILE)
     set(Boost_USE_STATIC_LIBS ON)
     find_package(Boost COMPONENTS
-                 unit_test_framework filesystem system program_options)
+                 unit_test_framework filesystem system program_options
+                 log log_setup date_time thread)
     find_package(OpenCV REQUIRED core highgui imgproc)
     set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
 else()
@@ -64,6 +65,7 @@ include_directories(lib/folly/include)
 set(ANTIFURTO_COMMON_CPP
     src/Config.cpp
     src/DropboxUploader.cpp
+    src/Log.cpp
     src/MonitorController.cpp
     src/MotionDetector.cpp
     src/NotificationController.cpp
@@ -78,6 +80,7 @@ set(ANTIFURTO_COMMON_HPP
     src/Config.hpp
     src/DropboxUploader.hpp
     src/Exception.hpp
+    src/Log.hpp
     src/MonitorController.hpp
     src/MotionDetector.hpp
     src/NotificationController.hpp

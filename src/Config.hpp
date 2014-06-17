@@ -23,9 +23,17 @@ public:
         std::string oauthToken;
         std::string oauthTokenSecret;
     };
+    struct Log {
+        enum class Level {
+            DEBUG, INFO
+        };
+        std::string dir;
+        Level level;
+    };
 
     Whatsapp whatsapp;
     Dropbox dropbox;
+    Log log;
 };
 
 

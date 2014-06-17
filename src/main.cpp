@@ -1,6 +1,7 @@
 #include "MonitorController.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
+#include "Log.hpp"
 
 #include <thread>
 #include <iostream>
@@ -15,6 +16,8 @@ int main(int argc, char* argv[])
     if (!parser.canContinue())
         return 1;
 
+    initLogger(parser.getConfiguration());
+    LOG_INFO << "Init of antifurto";
     std::this_thread::sleep_for(std::chrono::seconds(5));
     MonitorController controller(parser.getConfiguration());
     //std::this_thread::sleep_for(std::chrono::seconds(1000));
