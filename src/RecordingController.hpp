@@ -20,7 +20,7 @@ public:
 private:
     void onAlarmStateChanged(MotionDetector::State state);
     void onPictureSaved(const std::string& fileName);
-    void uploadFile(const std::string& fileName);
+    void uploadFile(const std::string& sourceFile);
 
     using UploadWorker =
         concurrency::SpScQueue<std::string,

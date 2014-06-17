@@ -22,7 +22,7 @@ constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
 constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 }; }
 
 constexpr const char* configDir() { return "config"; }
-constexpr const char* archiveDir() { return "/tmp"; }
+constexpr const char* archiveDir() { return "/tmp/antifurto"; }
 constexpr const char* configFile() { return "config/antifurto.cfg"; }
 constexpr const char* dropboxConfigFile() { return "config/dropbox.cfg"; }
 constexpr const char* whatsappConfigFile() { return "config/whatsapp.cfg"; }

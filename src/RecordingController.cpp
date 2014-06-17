@@ -55,10 +55,13 @@ void RecordingController::onPictureSaved(const std::string& fileName)
     uploadWorker_.enqueue(fileName);
 }
 
-void RecordingController::uploadFile(const std::string& fileName)
+void RecordingController::uploadFile(const std::string& sourceFile)
 {
     try {
-        uploader_->uploadFile(fileName, fileName);
+        std::size_t archiveDirSize = strlen(config::archiveDir());
+        assert(sourceFile.size() > archiveDirSize);
+        std::string dest{sourceFile.substr(archiveDirSize + 1)};
+        uploader_->uploadFile(sourceFile, dest);
     }
     catch (std::exception& e) {
         std::cerr << "Error uploading file: " << e.what() << std::endl;

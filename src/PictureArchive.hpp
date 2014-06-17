@@ -42,8 +42,10 @@ private:
     void enqueue(Picture p);
     void save(Picture& p, Clock t);
     void notifyObservers(const std::string& fileName);
+    void prepareCurrentFolder();
 
-    std::string folder_;
+    std::string baseFolder_;
+    std::string currentFolder_;
     unsigned int recordBufferSize_;
     RecordBuffer recordBuffer_;
     bool recording_;

@@ -1,16 +1,21 @@
 #include "PictureArchive.hpp"
+#include "meta/ToString.hpp"
 
-#include <opencv2/highgui/highgui.hpp>
 #include <sstream>
 #include <ctime>
 #include <chrono>
 #include <iomanip>
 
+#include <opencv2/highgui/highgui.hpp>
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
 namespace antifurto {
 
 PictureArchive::
 PictureArchive(std::string folder, unsigned int recordBuffer)
-    : folder_(folder), recordBufferSize_(recordBuffer)
+    : baseFolder_(folder), recordBufferSize_(recordBuffer)
     , recording_(false)
 { }
 
@@ -25,6 +30,7 @@ void PictureArchive::addPicture(Picture p)
 void PictureArchive::startSaving()
 {
     recording_ = true;
+    prepareCurrentFolder();
     for (auto& i: recordBuffer_)
         save(i.picture, i.time);
     recordBuffer_.clear();
@@ -52,67 +58,31 @@ void PictureArchive::enqueue(Picture p)
         recordBuffer_.erase(recordBuffer_.begin());
 }
 
-namespace { // anon
-
-// see http://stackoverflow.com/questions/17386790/fully-separated-date-with-milliseconds-from-stdchronosystem-clock
-std::string toStringTimePoint(std::chrono::system_clock::time_point t)
-{
-    std::time_t time = std::chrono::system_clock::to_time_t(t);
-    auto rounded = std::chrono::system_clock::from_time_t(time);
-    if (rounded > t) {
-        --time;
-        rounded -= std::chrono::seconds(1);
-    }
-    std::tm time_local;
-    localtime_r(&time, &time_local);
-    std::ostringstream out;
-    out << time_local.tm_year + 1900 << '-'
-        << std::setfill('0') << std::setw(2)
-        << time_local.tm_mon << '-'
-        << time_local.tm_mday << '_'
-        << time_local.tm_hour << ':'
-        << time_local.tm_min << ':'
-        << time_local.tm_sec << '.'
-        << std::setw(4)
-        << std::chrono::duration_cast<
-                std::chrono::duration<int, std::milli>>(t - rounded).count();
-    return out.str();
-}
-
-std::string toStringShortTimePoint(std::chrono::system_clock::time_point t)
-{
-    std::time_t time = std::chrono::system_clock::to_time_t(t);
-    std::tm time_local;
-    localtime_r(&time, &time_local);
-    std::ostringstream out;
-    out << time_local.tm_year + 1900 << '/'
-        << std::setfill('0') << std::setw(2)
-        << time_local.tm_mon << '/'
-        << time_local.tm_mday << ' '
-        << time_local.tm_hour << ':'
-        << time_local.tm_min << ':'
-        << time_local.tm_sec;
-    return out.str();
-}
-
-} // anon namespace
-
 void PictureArchive::save(Picture& p, Clock t)
 {
-    std::stringstream filename;
-    filename
-        << folder_ << '/'
-        << toStringTimePoint(t) << ".jpg";
-    cv::putText(p, toStringShortTimePoint(t), cv::Point(30,30),
-        CV_FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(200,200,250), 1, CV_AA);
-    cv::imwrite(filename.str(), p, { CV_IMWRITE_JPEG_QUALITY, 90 });
-    notifyObservers(filename.str());
+    fs::path filename{currentFolder_};
+    filename /= meta::toString(t, meta::ToStringFormat::FULL, '-', '_') + ".jpg";
+    cv::putText(p, meta::toString(t, meta::ToStringFormat::SHORT, '/', ' '),
+                cv::Point(30,30), CV_FONT_HERSHEY_COMPLEX_SMALL, 0.8,
+                cv::Scalar(200,200,250), 1, CV_AA);
+    cv::imwrite(filename.string(), p, { CV_IMWRITE_JPEG_QUALITY, 90 });
+    notifyObservers(filename.string());
 }
 
 void PictureArchive::notifyObservers(const std::string& fileName)
 {
     for (auto& obs: observers_)
         obs(fileName);
+}
+
+void PictureArchive::prepareCurrentFolder()
+{
+    fs::path current{baseFolder_};
+    current /=  meta::toString(std::chrono::system_clock::now(),
+                             meta::ToStringFormat::DATE_ONLY, '-');
+    if (!fs::exists(current))
+        fs::create_directories(current);
+    currentFolder_ = current.string();
 }
 
 } // namespace antifurto
