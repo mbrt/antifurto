@@ -38,8 +38,7 @@ add_subdirectory(lib)
 if(NOT CROSS_COMPILE)
     set(Boost_USE_STATIC_LIBS ON)
     find_package(Boost COMPONENTS
-                 unit_test_framework filesystem system program_options
-                 log log_setup date_time thread)
+                 unit_test_framework filesystem system program_options)
     find_package(OpenCV REQUIRED core highgui imgproc)
     set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
 else()

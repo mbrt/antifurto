@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Config.hpp"
+#include <iostream>
 
-#define BOOST_LOG_USE_COMPILER_TLS 0
-#include <boost/log/trivial.hpp>
-
-#define LOG_ERROR BOOST_LOG_TRIVIAL(error)
-#define LOG_INFO BOOST_LOG_TRIVIAL(info)
-#define LOG_DEBUG BOOST_LOG_TRIVIAL(debug)
+#define LOG_ERROR std::cerr
+#define LOG_INFO std::cerr
+#define LOG_DEBUG std::cerr
 
 namespace antifurto {
+
+// fwd reference
+class Configuration;
 
 void initLogger(const Configuration& config);
 
