@@ -6,6 +6,11 @@ namespace fs = boost::filesystem;
 
 namespace antifurto {
 
+void failureWriter(const char* data, int size)
+{
+    LOG_ERROR << std::string(data, data + size);
+}
+
 void initLogger(const Configuration& config)
 {
     FLAGS_stderrthreshold = 0;
@@ -19,6 +24,8 @@ void initLogger(const Configuration& config)
     if (!fs::exists(config.log.dir))
         fs::create_directories(config.log.dir);
     google::InitGoogleLogging("antifurto");
+    google::InstallFailureSignalHandler();
+    google::InstallFailureWriter(&failureWriter);
 }
 
 } // namespace antifurto
