@@ -11,6 +11,8 @@ namespace antifurto {
 class Configuration
 {
 public:
+    Configuration();
+
     using StringList = std::vector<std::string>;
     struct Whatsapp {
         std::string src;
@@ -30,10 +32,15 @@ public:
         std::string dir;
         Level level;
     };
+    struct Recording {
+        unsigned int maxDays;
+        std::string archiveDir;
+    };
 
     Whatsapp whatsapp;
     Dropbox dropbox;
     Log log;
+    Recording recording;
 };
 
 

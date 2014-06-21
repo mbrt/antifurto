@@ -7,13 +7,22 @@ namespace po = boost::program_options;
 
 namespace antifurto {
 
+// default configuration
+Configuration::Configuration()
+{
+    log.level = Log::Level::INFO;
+    log.dir = config::logDir();
+    recording.maxDays = config::maxArchiveDays();
+    recording.archiveDir = config::archiveDir();
+}
+
+
 // implementation class for ConfigurationParser
 class ConfigurationParserImpl
 {
 public:
     ConfigurationParserImpl()
     {
-        setDefaults();
         initOptions();
     }
 
@@ -39,10 +48,13 @@ public:
 
     Configuration getConfiguration()
     {
+        Configuration::Recording& rec  =config_.recording;
         Configuration::Log& log = config_.log;
         Configuration::Whatsapp& whatsapp = config_.whatsapp;
         Configuration::Dropbox& dropbox = config_.dropbox;
 
+        storeOptionOrDefault("recording.archive-dir", rec.archiveDir);
+        storeOptionOrDefault("recording.max-days", rec.maxDays);
         storeOptionOrDefault("log.level", log.level);
         storeOptionOrDefault("log.dir", log.dir);
         storeOptionOrDefault("whatsapp.src", whatsapp.src);
@@ -80,12 +92,6 @@ private:
         return true;
     }
 
-    void setDefaults()
-    {
-        config_.log.level = Configuration::Log::Level::INFO;
-        config_.log.dir = config::logDir();
-    }
-
     void initOptions()
     {
         // declare a group of options available only on command line
@@ -98,6 +104,10 @@ private:
         // config file
         po::options_description config("Configuration");
         config.add_options()
+            ("recording.arhive-dir", po::value<std::string>(),
+             "picture archive directory")
+            ("recording.max-days", po::value<unsigned int>(),
+             "max number of recording days to maintain")
             ("log.level", po::value<std::string>(), "log level (debug, info)")
             ("log.dir", po::value<std::string>(), "log directory")
             ("whatsapp.src", po::value<std::string>(), "whatsapp source number")
