@@ -61,6 +61,11 @@ else()
     set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS} ${Boost_LIBRARIES})
 endif()
 include_directories(lib/folly/include)
+# glog
+set(GLOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glog)
+include_directories(${GLOG_DIR}/src)
+link_directories(${GLOG_DIR}/build/${CMAKE_HOST_SYSTEM_PROCESSOR})
+set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog)
 
 # common files
 set(ANTIFURTO_COMMON_CPP

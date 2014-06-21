@@ -1,4 +1,5 @@
 #include "DropboxUploader.hpp"
+#include "Log.hpp"
 #include "meta/ToString.hpp"
 
 #include <sstream>
@@ -53,7 +54,7 @@ void DropboxUploader::runUploaderProcess(const std::string& args) const
     if (retval != 0) {
         std::ostringstream err;
         err << "Cannot run drobpox uploader process; return code: " << retval;
-        std::cerr << "Error uploading file. Log:\n"
+        LOG_ERROR << "Error uploading file. Log:\n"
                   << uploaderProcess_.getStdOut() << std::endl;
         throw DropboxUploaderException(err.str());
     }

@@ -1,6 +1,7 @@
 #include "RecordingController.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
+#include "Log.hpp"
 
 namespace antifurto {
 
@@ -31,7 +32,7 @@ RecordingController::RecordingController(MotionDetector& detector)
 void RecordingController::addPicture(Picture p)
 {
     if (!recordingWorker_.enqueue(std::move(p)))
-        std::cerr << "Failed to enqueue the picture\n";
+        LOG_ERROR << "Failed to enqueue the picture\n";
 }
 
 void RecordingController::onAlarmStateChanged(MotionDetector::State state)
@@ -64,7 +65,7 @@ void RecordingController::uploadFile(const std::string& sourceFile)
         uploader_->uploadFile(sourceFile, dest);
     }
     catch (std::exception& e) {
-        std::cerr << "Error uploading file: " << e.what() << std::endl;
+        LOG_ERROR << "Error uploading file: " << e.what() << std::endl;
     }
 }
 

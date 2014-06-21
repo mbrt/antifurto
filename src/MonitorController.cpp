@@ -4,6 +4,7 @@
 #include "MotionDetector.hpp"
 #include "RecordingController.hpp"
 #include "NotificationController.hpp"
+#include "Log.hpp"
 #include "meta/Metronome.hpp"
 
 #include <thread>
@@ -58,6 +59,7 @@ private:
         default:
             break;
         }
+        LOG_INFO << "Alarm state: " << state;
     }
 
     using Metronome = meta::DefaultMetronome;

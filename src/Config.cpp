@@ -39,9 +39,12 @@ public:
 
     Configuration getConfiguration()
     {
+        Configuration::Log& log = config_.log;
         Configuration::Whatsapp& whatsapp = config_.whatsapp;
         Configuration::Dropbox& dropbox = config_.dropbox;
 
+        storeOptionOrDefault("log.level", log.level);
+        storeOptionOrDefault("log.dir", log.dir);
         storeOptionOrDefault("whatsapp.src", whatsapp.src);
         storeOptionOrDefault("whatsapp.pwd", whatsapp.pwd);
         storeOptionOrDefault("whatsapp.dest", whatsapp.destinations);
@@ -66,6 +69,17 @@ private:
         return res;
     }
 
+    bool storeOptionOrDefault(const char* option, Configuration::Log::Level& out)
+    {
+        std::string value;
+        if (!storeOptionOrDefault(option, value))
+            return false;
+        out = (value == "debug")
+                ? Configuration::Log::Level::DEBUG
+                : Configuration::Log::Level::INFO;
+        return true;
+    }
+
     void setDefaults()
     {
         config_.log.level = Configuration::Log::Level::INFO;
@@ -84,6 +98,8 @@ private:
         // config file
         po::options_description config("Configuration");
         config.add_options()
+            ("log.level", po::value<std::string>(), "log level (debug, info)")
+            ("log.dir", po::value<std::string>(), "log directory")
             ("whatsapp.src", po::value<std::string>(), "whatsapp source number")
             ("whatsapp.pwd", po::value<std::string>(), "whatsapp password")
             ("whatsapp.dest", po::value<Configuration::StringList>()->composing(),
