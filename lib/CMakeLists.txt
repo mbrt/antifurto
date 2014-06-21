@@ -19,13 +19,13 @@ ExternalProject_Add(raspicam_cv
 )
 add_dependencies(raspicam_cv userland)
 
-#ExternalProject_Add(glog
-#    CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../toolchain-pi.cmake -DCMAKE_BUILD_TYPE=Release
-#    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog
-#    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog/build/pi
-#    BUILD_COMMAND cmake . && make
-#    INSTALL_COMMAND ""
-#)
+ExternalProject_Add(glog
+    CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../toolchain-pi.cmake -DCMAKE_BUILD_TYPE=Release -DLOG_FILE_LINE=OFF
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog
+    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog/build/pi
+    BUILD_COMMAND cmake . && make
+    INSTALL_COMMAND ""
+)
 
 else(CROSS_COMPILE)
 

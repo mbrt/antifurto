@@ -10,8 +10,9 @@ TODO LIST
 - Log system
   - log rotate
   - write to single file
-- Archve refactor
+- Archive refactor
   - Pack old directories in videos
 - Web server
 - Service registration with start and stop
 - Radio controller
+- Event queue that allows to schedule events
