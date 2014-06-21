@@ -30,7 +30,7 @@ add_dependencies(raspicam_cv userland)
 else(CROSS_COMPILE)
 
 ExternalProject_Add(glog
-    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DLOG_FILE_LINE=OFF
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog
     BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glog/build/${CMAKE_HOST_SYSTEM_PROCESSOR}
     BUILD_COMMAND cmake . && make

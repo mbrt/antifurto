@@ -10,3 +10,4 @@ TODO LIST
 - Log system
 - Archve refactor
   - Pack old directories in videos
+- Minimum delay to send notifications in alarms
