@@ -17,7 +17,7 @@ class MonitorControllerImpl
 public:
     MonitorControllerImpl(Configuration const& c)
         : metronome_(config::monitorCycleDuration())
-        , recording_(motionDetector_)
+        , recording_(c, motionDetector_)
         , notification_(c, motionDetector_)
         , running_(true)
         , loopThread_([this](){ monitor(); })

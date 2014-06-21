@@ -3,6 +3,7 @@
 #include "PictureArchive.hpp"
 #include "DropboxUploader.hpp"
 #include "MotionDetector.hpp"
+#include "Config.hpp"
 #include "concurrency/SpScQueue.hpp"
 
 #include <string>
@@ -14,8 +15,10 @@ namespace antifurto {
 class RecordingController
 {
 public:
-    RecordingController(MotionDetector& detector);
+    RecordingController(const Configuration& cfg, MotionDetector& detector);
     void addPicture(Picture p);
+    void performMaintenance();
+    void deleteOlderPictures();
 
 private:
     void onAlarmStateChanged(MotionDetector::State state);
@@ -29,6 +32,7 @@ private:
         concurrency::SpScQueue<Picture,
             std::function<void(Picture&)>>;
 
+    Configuration::Recording config_;
     PictureArchive archive_;
     std::unique_ptr<DropboxUploader> uploader_;
     UploadWorker uploadWorker_;

@@ -101,6 +101,7 @@ set(ANTIFURTO_COMMON_HPP
     src/concurrency/binsem.hpp
     src/ipc/Exception.hpp
     src/ipc/Process.hpp
+    src/meta/Iterator.hpp
     src/meta/Metronome.hpp
     src/meta/SmartPtr.hpp
     src/meta/ToString.hpp

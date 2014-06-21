@@ -7,6 +7,7 @@
 #include "MotionDetector.hpp"
 #include "PictureArchive.hpp"
 #include "RecordingController.hpp"
+#include "Config.hpp"
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
@@ -168,5 +169,6 @@ BOOST_AUTO_TEST_CASE(pictureArchive)
 BOOST_AUTO_TEST_CASE(recordingController)
 {
     MotionDetector detector;
-    RecordingController controller{ detector };
+    Configuration cfg;
+    RecordingController controller{ cfg, detector };
 }

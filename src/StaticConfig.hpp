@@ -24,7 +24,7 @@ constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 
 constexpr Seconds minNotificationDelay() { return Seconds{ 15 }; }
 
 constexpr const char* configDir() { return "config"; }
-constexpr const char* archiveDir() { return "/tmp/antifurto"; }
+constexpr const char* archiveDir() { return "/tmp/antifurto/archive"; }
 constexpr const char* logDir() { return "/tmp/antifurto/log"; }
 constexpr const char* configFile() { return "config/antifurto.cfg"; }
 constexpr const char* dropboxConfigFile() { return "config/dropbox.cfg"; }
