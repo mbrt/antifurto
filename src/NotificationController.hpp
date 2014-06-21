@@ -7,6 +7,7 @@
 #include <deque>
 #include <string>
 #include <future>
+#include <chrono>
 
 namespace antifurto {
 
@@ -31,6 +32,7 @@ private:
     WhatsappNotifier whatsapp_;
     ContactList contacts_;
     Notifications notifications_;
+    std::chrono::system_clock::time_point lastNotificationTime_;
 };
 
 } // namespace antifurto

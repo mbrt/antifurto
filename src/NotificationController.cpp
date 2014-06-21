@@ -11,6 +11,7 @@ NotificationController::
 NotificationController(const Configuration& c, MotionDetector& detector)
     : whatsapp_(".", config::whatsappConfigFile())
     , contacts_(c.whatsapp.destinations.begin(), c.whatsapp.destinations.end())
+    , lastNotificationTime_(std::chrono::system_clock::now() - config::minNotificationDelay())
 {
     if (!contacts_.empty()) {
         detector.addObserver([this](MotionDetector::State s) {
@@ -47,12 +48,19 @@ void NotificationController::onAlarmStateChanged(MotionDetector::State state)
 
 void NotificationController::notifyContacts()
 {
+    // do not notify if already notified
+    if (std::chrono::system_clock::now() - lastNotificationTime_
+            < config::minNotificationDelay())
+        return;
+
     for (const auto& contact : contacts_)
         notifications_.emplace_back(
             std::async(std::launch::async, [=] {
                 // copy also whatsapp notifier, to avoid race conditions
                 whatsapp_.send(contact, "Intrusion alarm!");
             }));
+
+    lastNotificationTime_ = std::chrono::system_clock::now();
 }
 
 void NotificationController::processNotificationResults()
