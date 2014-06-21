@@ -46,6 +46,7 @@ void RecordingController::addPicture(Picture p)
 void RecordingController::performMaintenance()
 {
     if (!fs::exists(config_.archiveDir)) return;
+    LOG_INFO << "Performing archive maintenance";
     deleteOlderPictures();
 }
 

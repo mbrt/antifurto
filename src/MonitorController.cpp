@@ -20,7 +20,6 @@ public:
         , recording_(c, motionDetector_)
         , notification_(c, motionDetector_)
         , running_(true)
-        , loopThread_([this](){ monitor(); })
     {
         motionDetector_.addObserver([this](MotionDetector::State s) {
             onAlarmStateChanged(s);
@@ -31,6 +30,16 @@ public:
     {
         running_ = false;
         loopThread_.join();
+    }
+
+    void performMaintenance()
+    {
+        recording_.performMaintenance();
+    }
+
+    void startMonitor()
+    {
+        loopThread_ = std::thread([this]{ monitor(); });
     }
 
 private:
@@ -77,5 +86,15 @@ private:
 MonitorController::MonitorController(const Configuration& c)
     : pimpl_(new MonitorControllerImpl(c))
 { }
+
+void MonitorController::performMaintenance()
+{
+    pimpl_->performMaintenance();
+}
+
+void MonitorController::startMonitor()
+{
+    pimpl_->startMonitor();
+}
 
 } // namespace antifurto

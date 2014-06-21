@@ -13,6 +13,9 @@ class MonitorController
 public:
     MonitorController(const Configuration& c);
 
+    void performMaintenance();
+    void startMonitor();
+
 private:
     meta::ErasedUniquePtr<MonitorControllerImpl> pimpl_;
 };
