@@ -8,6 +8,8 @@ TODO LIST
 - Kill subprocess
 - Packaging system
 - Log system
+  - log rotate
+  - write to single file
 - Archve refactor
   - Pack old directories in videos
 - Minimum delay to send notifications in alarms
