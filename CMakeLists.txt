@@ -52,13 +52,22 @@ else()
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/raspicam_cv/build
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/userland/build/lib)
     set(raspicamcv_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lib/raspicam_cv)
+    find_package(Boost COMPONENTS
+                 filesystem system program_options)
 
     link_directories(${raspicamcv_LIBRARY_DIRS})
     include_directories(. ${raspicamcv_INCLUDE_DIRS})
 
-    set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS})
+    set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS} ${Boost_LIBRARIES})
+    set(ANTIFURTO_DEPENDENCIES raspicam_cv)
 endif()
 include_directories(lib/folly/include)
+# glog
+set(GLOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glog)
+include_directories(${GLOG_DIR}/src)
+link_directories(${GLOG_DIR}/build/${CMAKE_HOST_SYSTEM_PROCESSOR})
+set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog)
+set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
 
 # common files
 set(ANTIFURTO_COMMON_CPP
@@ -124,6 +133,7 @@ endif()
 # main exe and libs
 add_library(antifurto_core STATIC ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})
 target_link_libraries(antifurto_core ${ANTIFURTO_LIBS})
+add_dependencies(antifurto_core ${ANTIFURTO_DEPENDENCIES})
 
 add_executable(antifurto src/main.cpp)
 target_link_libraries(antifurto antifurto_core)

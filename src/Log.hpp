@@ -1,10 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <glog/logging.h>
 
-#define LOG_ERROR std::cerr
-#define LOG_INFO std::cerr
-#define LOG_DEBUG std::cerr
+#define LOG_ERROR LOG(ERROR)
+#define LOG_INFO LOG(INFO)
+#define LOG_DEBUG VLOG(1)
 
 namespace antifurto {
 

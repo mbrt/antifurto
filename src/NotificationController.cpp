@@ -1,6 +1,7 @@
 #include "NotificationController.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
+#include "Log.hpp"
 
 #include <iostream>
 
@@ -66,11 +67,11 @@ void NotificationController::processNotificationResults()
             notifications_.pop_front();
         }
         catch (std::exception& e) {
-            std::cerr << "Notification failed " << e.what() << std::endl;
+            LOG_ERROR << "Notification failed " << e.what() << std::endl;
         }
     }
     if (!notifications_.empty())
-        std::cerr << "Notifications not completed\n";
+        LOG_ERROR << "Notifications not completed\n";
 }
 
 } // namespace antifurto
