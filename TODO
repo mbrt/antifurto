@@ -10,6 +10,7 @@ TODO LIST
 - Log system
   - log rotate
   - write to single file
+  - wrap glog macros into functions like log::debug(), etc.
 - Archive refactor
   - Pack old directories in videos
   - Sync dropbox with archive directories
