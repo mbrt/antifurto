@@ -2,7 +2,6 @@
 
 #include "Exception.hpp"
 #include <string>
-#include <sstream>
 
 namespace antifurto {
 namespace ipc {
@@ -10,6 +9,7 @@ namespace ipc {
 class Process
 {
 public:
+    Process() {}
     Process(std::string exePath);
     int run(const std::string& args, const std::string& workDir);
     int run(const std::string& args);
@@ -20,7 +20,7 @@ private:
     int runCommand(const std::string& command);
 
     std::string exePath_;
-    std::ostringstream stdout_;
+    std::string stdout_;
 };
 
 } // namespace ipc

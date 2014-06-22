@@ -28,7 +28,7 @@ int Process::run(const std::string& args)
 
 std::string Process::getStdOut() const
 {
-    return stdout_.str();
+    return stdout_;
 }
 
 void Process::kill() const
@@ -43,13 +43,14 @@ int Process::runCommand(const std::string& command)
     if (!proc)
         throw Exception("Failed to run process");
 
-    stdout_.clear();
+    std::stringstream outStream;
     std::array<char, 512> buffer;
     std::size_t len;
     while ((len = ::fread(&buffer[0], 1, buffer.size() - 1, proc)) > 0) {
         buffer[len] = '\0';
-        stdout_ << &buffer[0];
+        outStream << &buffer[0];
     }
+    stdout_ = outStream.str();
 
     return ::pclose(proc);
 }
