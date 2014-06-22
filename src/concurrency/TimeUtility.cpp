@@ -5,8 +5,8 @@ namespace antifurto {
 namespace concurrency {
 
 std::chrono::system_clock::time_point
-makeTimePoint (int year, int mon, int day,
-               int hour, int min, int sec)
+makeTimePoint(int year, int mon, int day,
+              int hour, int min, int sec)
 {
     struct std::tm t;
     t.tm_sec = sec;        // second of minute (0 .. 59 and 60 for leap seconds)
@@ -29,8 +29,8 @@ std::chrono::system_clock::time_point tomorrow()
     auto now = system_clock::to_time_t(system_clock::now());
     std::tm now_local;
     localtime_r(&now, &now_local);
-    return makeTimePoint(now_local.tm_year, now_local.tm_mon, now_local.tm_mday,
-                         0, 0, 0);
+    return makeTimePoint(now_local.tm_year + 1900, now_local.tm_mon,
+                         now_local.tm_mday + 1, 0, 0, 0);
 }
 
 

@@ -12,6 +12,7 @@ TaskScheduler::TaskScheduler()
 TaskScheduler::~TaskScheduler()
 {
     done_.store(true, std::memory_order_release);
+    semaphore_.signal();
     thread_.join();
 }
 

@@ -9,6 +9,8 @@
 #include "RecordingController.hpp"
 #include "Config.hpp"
 #include "concurrency/TaskScheduler.hpp"
+#include "concurrency/TimeUtility.hpp"
+#include "text/ToString.hpp"
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
@@ -197,4 +199,11 @@ BOOST_AUTO_TEST_CASE(taskScheduler)
         std::this_thread::sleep_for(seconds(3) + milliseconds(10));
     }
     BOOST_CHECK_EQUAL(counter, 2);
+}
+
+BOOST_AUTO_TEST_CASE(timeOps)
+{
+    std::cout << "Now: " << text::toString(std::chrono::system_clock::now())
+              << "\nTomorrow: " << text::toString(concurrency::tomorrow())
+              << std::endl;
 }
