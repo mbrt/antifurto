@@ -66,7 +66,7 @@ include_directories(lib/folly/include)
 set(GLOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glog)
 include_directories(${GLOG_DIR}/src)
 link_directories(${GLOG_DIR}/build/${CMAKE_HOST_SYSTEM_PROCESSOR})
-set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog)
+set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog pthread)
 set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
 
 # common files
@@ -80,6 +80,7 @@ set(ANTIFURTO_COMMON_CPP
     src/PictureArchive.cpp
     src/RecordingController.cpp
     src/WhatsappNotifier.cpp
+    src/concurrency/TaskScheduler.cpp
     src/ipc/Process.cpp
     src/meta/ToString.cpp
 )
@@ -99,6 +100,7 @@ set(ANTIFURTO_COMMON_HPP
     src/WhatsappNotifier.hpp
     src/concurrency/SpScQueue.hpp
     src/concurrency/binsem.hpp
+    src/concurrency/TaskScheduler.hpp
     src/ipc/Exception.hpp
     src/ipc/Process.hpp
     src/meta/Iterator.hpp

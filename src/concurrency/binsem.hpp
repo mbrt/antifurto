@@ -30,6 +30,16 @@ public:
             return false;
         }
     }
+    template <typename Clock, typename Duration>
+    bool wait_until(std::chrono::time_point<Clock, Duration> timeout)
+    {
+        std::unique_lock<std::mutex> lk(m_);
+        auto status = cv_.wait_until(lk, timeout, [=]{ return 0 < count_; });
+        if (status)
+            --count_;
+        return status;
+    }
+
     // V-operation / release
     void signal()
     {

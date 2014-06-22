@@ -8,6 +8,7 @@
 #include "PictureArchive.hpp"
 #include "RecordingController.hpp"
 #include "Config.hpp"
+#include "concurrency/TaskScheduler.hpp"
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
@@ -171,4 +172,28 @@ BOOST_AUTO_TEST_CASE(recordingController)
     MotionDetector detector;
     Configuration cfg;
     RecordingController controller{ cfg, detector };
+}
+
+BOOST_AUTO_TEST_CASE(taskScheduler)
+{
+    using namespace std::chrono;
+
+    int counter = 0;
+    {
+        concurrency::TaskScheduler sched;
+        sched.scheduleEvery(seconds(1), [&]{ std::cout << "tick\n"; ++counter; });
+        std::this_thread::sleep_for(seconds(5) + milliseconds(10));
+    }
+    BOOST_CHECK_EQUAL(counter, 5);
+
+    counter = 0;
+    {
+        concurrency::TaskScheduler sched;
+        sched.scheduleEvery(seconds(1), [&]{
+            std::this_thread::sleep_for(seconds(1) + milliseconds(500));
+            std::cout << "tick\n";
+            ++counter; });
+        std::this_thread::sleep_for(seconds(3) + milliseconds(10));
+    }
+    BOOST_CHECK_EQUAL(counter, 2);
 }
