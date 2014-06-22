@@ -83,7 +83,8 @@ set(ANTIFURTO_COMMON_CPP
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
     src/ipc/Process.cpp
-    src/meta/ToString.cpp
+    src/text/ToString.cpp
+    src/text/TextReplace.hpp
 )
 set(ANTIFURTO_COMMON_HPP
     src/Camera.hpp
@@ -109,8 +110,9 @@ set(ANTIFURTO_COMMON_HPP
     src/meta/Iterator.hpp
     src/meta/Metronome.hpp
     src/meta/SmartPtr.hpp
-    src/meta/ToString.hpp
     src/meta/TypeTraits.hpp
+    src/text/ToString.hpp
+    src/text/TextReplace.hpp
 )
 # x86
 set(ANTIFURTO_X86_CPP

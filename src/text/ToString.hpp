@@ -4,7 +4,7 @@
 #include <chrono>
 
 namespace antifurto {
-namespace meta {
+namespace text {
 namespace detail {
 
 inline std::string toStringImpl(std::ostringstream& out) {
@@ -38,5 +38,5 @@ std::string toString(std::chrono::system_clock::time_point t,
                      char dateSep = '/',
                      char dateTimeSep = ' ');
 
-} // namespace meta
+} // namespace text
 } // namespace antifurto

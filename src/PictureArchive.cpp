@@ -1,5 +1,5 @@
 #include "PictureArchive.hpp"
-#include "meta/ToString.hpp"
+#include "text/ToString.hpp"
 
 #include <sstream>
 #include <ctime>
@@ -61,8 +61,8 @@ void PictureArchive::enqueue(Picture p)
 void PictureArchive::save(Picture& p, Clock t)
 {
     fs::path filename{ currentFolder_ };
-    filename /= meta::toString(t, meta::ToStringFormat::FULL, '-', '_') + ".jpg";
-    cv::putText(p, meta::toString(t, meta::ToStringFormat::SHORT, '/', ' '),
+    filename /= text::toString(t, text::ToStringFormat::FULL, '-', '_') + ".jpg";
+    cv::putText(p, text::toString(t, text::ToStringFormat::SHORT, '/', ' '),
                 cv::Point(30,30), CV_FONT_HERSHEY_COMPLEX_SMALL, 0.8,
                 cv::Scalar(200,200,250), 1, CV_AA);
     cv::imwrite(filename.string(), p, { CV_IMWRITE_JPEG_QUALITY, 90 });
@@ -78,8 +78,8 @@ void PictureArchive::notifyObservers(const std::string& fileName)
 void PictureArchive::prepareCurrentFolder()
 {
     fs::path current{ baseFolder_ };
-    current /=  meta::toString(std::chrono::system_clock::now(),
-                               meta::ToStringFormat::DATE_ONLY, '-');
+    current /=  text::toString(std::chrono::system_clock::now(),
+                               text::ToStringFormat::DATE_ONLY, '-');
     if (!fs::exists(current))
         fs::create_directories(current);
     currentFolder_ = current.string();

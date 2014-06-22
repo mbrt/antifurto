@@ -1,6 +1,6 @@
 #include "DropboxUploader.hpp"
 #include "Log.hpp"
-#include "meta/ToString.hpp"
+#include "text/ToString.hpp"
 
 #include <sstream>
 #include <fstream>
@@ -30,7 +30,7 @@ uploadFile(const std::string& sourceFile, const std::string& destFile) const
 
     std::string stdout = uploaderProcess_.getStdOut();
     if (!stdout.find("DONE"))
-        throw DropboxUploaderException(meta::toString(
+        throw DropboxUploaderException(text::toString(
                 "Cannot upload file ", sourceFile,
                                            "\nlog: ", stdout));
 }

@@ -3,7 +3,7 @@
 #include <iomanip>
 
 namespace antifurto {
-namespace meta {
+namespace text {
 
 // see http://stackoverflow.com/questions/17386790/fully-separated-date-with-milliseconds-from-stdchronosystem-clock
 std::string toString(std::chrono::system_clock::time_point t,
@@ -36,5 +36,5 @@ std::string toString(std::chrono::system_clock::time_point t,
 }
 
 
-} // namespace meta
+} // namespace text
 } // namespace antifurto

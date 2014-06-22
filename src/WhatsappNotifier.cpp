@@ -1,5 +1,5 @@
 #include "WhatsappNotifier.hpp"
-#include "meta/ToString.hpp"
+#include "text/ToString.hpp"
 #include <sstream>
 
 
@@ -28,7 +28,7 @@ void WhatsappNotifier::send(const std::string& dest, const std::string& msg)
     std::string stdout = yowsupProcess_.getStdOut();
     if (!stdout.find("Sent message"))
         throw WhatsappNotifierException(
-                meta::toString("Cannot send message\nlog: ",
+                text::toString("Cannot send message\nlog: ",
                                stdout));
 }
 
