@@ -1,10 +1,15 @@
 #include "DropboxUploader.hpp"
 #include "Log.hpp"
+#include "Config.hpp"
+#include "StaticConfig.hpp"
 #include "text/ToString.hpp"
+#include "text/TextReplace.hpp"
 
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
 
 namespace antifurto {
 
@@ -58,6 +63,29 @@ void DropboxUploader::runUploaderProcess(const std::string& args) const
                   << uploaderProcess_.getStdOut() << std::endl;
         throw DropboxUploaderException(err.str());
     }
+}
+
+
+DropboxUploader configureDropboxUploader(const Configuration& c,
+                                         const std::string& baseDir)
+{
+    fs::path cfgTemplate{baseDir};
+    cfgTemplate /= "dropbox.cfg.in";
+    fs::path cfg{config::tmpDir()};
+    cfg /= "dropbox.cfg";
+
+    std::ifstream in{cfgTemplate.string()};
+    std::ofstream out{cfg.string()};
+    if (!in || !out)
+        throw DropboxUploaderException("Error opening files");
+
+    text::TextReplace replace;
+    replace.addVariable("APP_KEY", c.dropbox.appKey);
+    replace.addVariable("APP_SECRET", c.dropbox.appSecret);
+    replace.addVariable("OAUTH_TOKEN", c.dropbox.oauthToken);
+    replace.addVariable("OAUTH_TOKEN_SECRET", c.dropbox.oauthTokenSecret);
+    replace.replaceVariables(in, out);
+    return DropboxUploader(baseDir, cfg.string());
 }
 
 

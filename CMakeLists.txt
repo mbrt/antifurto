@@ -84,7 +84,7 @@ set(ANTIFURTO_COMMON_CPP
     src/concurrency/TimeUtility.cpp
     src/ipc/Process.cpp
     src/text/ToString.cpp
-    src/text/TextReplace.hpp
+    src/text/TextReplace.cpp
 )
 set(ANTIFURTO_COMMON_HPP
     src/Camera.hpp
