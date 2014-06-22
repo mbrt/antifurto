@@ -171,7 +171,8 @@ BOOST_AUTO_TEST_CASE(recordingController)
 {
     MotionDetector detector;
     Configuration cfg;
-    RecordingController controller{ cfg, detector };
+    concurrency::TaskScheduler scheduler;
+    RecordingController controller{ cfg, detector, scheduler };
 }
 
 BOOST_AUTO_TEST_CASE(taskScheduler)

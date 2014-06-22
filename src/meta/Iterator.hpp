@@ -16,7 +16,7 @@ private:
 };
 
 template <typename Iterator>
-IteratorPair<Iterator> make_iterator_pair(Iterator begin, Iterator end)
+IteratorPair<Iterator> makeIteratorPair(Iterator begin, Iterator end)
 {
     return { begin, end };
 }

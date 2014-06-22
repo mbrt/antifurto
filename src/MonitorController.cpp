@@ -5,6 +5,7 @@
 #include "RecordingController.hpp"
 #include "NotificationController.hpp"
 #include "Log.hpp"
+#include "concurrency/TaskScheduler.hpp"
 #include "meta/Metronome.hpp"
 
 #include <thread>
@@ -17,7 +18,7 @@ class MonitorControllerImpl
 public:
     MonitorControllerImpl(Configuration const& c)
         : metronome_(config::monitorCycleDuration())
-        , recording_(c, motionDetector_)
+        , recording_(c, motionDetector_, scheduler_)
         , notification_(c, motionDetector_)
         , running_(true)
     {
@@ -74,6 +75,7 @@ private:
     using Metronome = meta::DefaultMetronome;
 
     config::Camera camera_;
+    concurrency::TaskScheduler scheduler_;
     MotionDetector motionDetector_;
     Metronome metronome_;
     RecordingController recording_;

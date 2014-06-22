@@ -81,6 +81,7 @@ set(ANTIFURTO_COMMON_CPP
     src/RecordingController.cpp
     src/WhatsappNotifier.cpp
     src/concurrency/TaskScheduler.cpp
+    src/concurrency/TimeUtility.cpp
     src/ipc/Process.cpp
     src/meta/ToString.cpp
 )
@@ -99,8 +100,10 @@ set(ANTIFURTO_COMMON_HPP
     src/StaticConfig.hpp
     src/WhatsappNotifier.hpp
     src/concurrency/SpScQueue.hpp
-    src/concurrency/binsem.hpp
     src/concurrency/TaskScheduler.hpp
+    src/concurrency/TimeUtility.hpp
+    src/concurrency/binsem.hpp
+    src/concurrency/fwd.hpp
     src/ipc/Exception.hpp
     src/ipc/Process.hpp
     src/meta/Iterator.hpp

@@ -2,6 +2,8 @@
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 #include "Log.hpp"
+#include "concurrency/TaskScheduler.hpp"
+#include "concurrency/TimeUtility.hpp"
 #include "meta/Iterator.hpp"
 
 #include <utility>
@@ -12,8 +14,10 @@ namespace fs = boost::filesystem;
 namespace antifurto {
 
 RecordingController::
-RecordingController(const Configuration& cfg, MotionDetector& detector)
+RecordingController(const Configuration& cfg, MotionDetector& detector,
+                    concurrency::TaskScheduler& scheduler)
     : config_(cfg.recording)
+    , scheduler_(scheduler)
     , archive_(cfg.recording.archiveDir)
     , uploadWorker_([this](const std::string& f){ uploadFile(f); }, 150)
     , recordingWorker_([this](Picture& p){ archive_.addPicture(std::move(p)); }, 1024)
@@ -21,20 +25,15 @@ RecordingController(const Configuration& cfg, MotionDetector& detector)
     detector.addObserver([this](MotionDetector::State s){
         onAlarmStateChanged(s);
     });
-    try {
-        uploader_.reset(new DropboxUploader(
-                        "./", config::dropboxConfigFile()));
-        if (uploader_->good()) {
-            // register the callback to get file that are saved only if
-            // upload works
-            archive_.addObserver([this](std::string const& f){
-                onPictureSaved(f);
-            });
-        }
-    }
-    catch (...) {
-        // ignore uploader errors
-    }
+    initUploader();
+
+    // schedule maintenance at every midnight
+    using namespace std::chrono;
+    auto maintenanceWork = [this] { performMaintenance(); };
+    scheduler_.scheduleAt(concurrency::tomorrow() + minutes(1), [=] {
+        performMaintenance();
+        scheduler_.scheduleEvery(hours(24), maintenanceWork);
+    });
 }
 
 void RecordingController::addPicture(Picture p)
@@ -50,21 +49,26 @@ void RecordingController::performMaintenance()
     deleteOlderPictures();
 }
 
-void RecordingController::deleteOlderPictures()
+void RecordingController::initUploader()
 {
-    unsigned int
-            ndirs = std::distance(fs::directory_iterator(config_.archiveDir),
-                                  fs::directory_iterator());
-    int toDelete = ndirs - config_.maxDays;
-    if (toDelete <= 0) return;
-
-    LOG_INFO << "Deleting " << toDelete << " archive days";
-    std::vector<fs::path> dirs;
-    std::copy(fs::directory_iterator(config_.archiveDir),
-              fs::directory_iterator(), std::back_inserter(dirs));
-    std::sort(dirs.begin(), dirs.end());
-    std::for_each(std::begin(dirs), std::begin(dirs) + toDelete,
-                  [](fs::path const& p) { fs::remove_all(p); });
+    try {
+        uploader_.reset(new DropboxUploader(
+                        "./", config::dropboxConfigFile()));
+        if (uploader_->good()) {
+            // register the callback to get file that are saved only if
+            // upload works
+            archive_.addObserver([this](std::string const& f){
+                onPictureSaved(f);
+            });
+        }
+        else
+            uploader_.reset();
+    }
+    catch (...) {
+        // ignore uploader errors
+    }
+    if (!uploader_)
+        LOG_INFO << "Failed initialization of Dropbox uploader";
 }
 
 
@@ -102,5 +106,21 @@ void RecordingController::uploadFile(const std::string& sourceFile)
     }
 }
 
+void RecordingController::deleteOlderPictures()
+{
+    unsigned int
+            ndirs = std::distance(fs::directory_iterator(config_.archiveDir),
+                                  fs::directory_iterator());
+    int toDelete = ndirs - config_.maxDays;
+    if (toDelete <= 0) return;
+
+    LOG_INFO << "Deleting " << toDelete << " archive days";
+    std::vector<fs::path> dirs;
+    std::copy(fs::directory_iterator(config_.archiveDir),
+              fs::directory_iterator(), std::back_inserter(dirs));
+    std::sort(dirs.begin(), dirs.end());
+    std::for_each(std::begin(dirs), std::begin(dirs) + toDelete,
+                  [](fs::path const& p) { fs::remove_all(p); });
+}
 
 } // namespace antifurto

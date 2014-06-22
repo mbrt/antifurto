@@ -31,11 +31,10 @@ void TaskScheduler::scheduleAfter(Clock::duration d, Task w)
 
 void TaskScheduler::scheduleEvery(Clock::duration d, Task w)
 {
-    auto repTask = [=] {
+    scheduleAfter(std::move(d), [=] {
         scheduleEvery(d, w);
         w();
-    };
-    scheduleAfter(std::move(d), std::move(repTask));
+    });
 }
 
 
