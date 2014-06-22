@@ -25,7 +25,7 @@ RecordingController(const Configuration& cfg, MotionDetector& detector,
     detector.addObserver([this](MotionDetector::State s){
         onAlarmStateChanged(s);
     });
-    initUploader();
+    initUploader(cfg);
 
     // schedule maintenance at every midnight
     using namespace std::chrono;
@@ -49,12 +49,11 @@ void RecordingController::performMaintenance()
     deleteOlderPictures();
 }
 
-void RecordingController::initUploader()
+void RecordingController::initUploader(const Configuration& cfg)
 {
     try {
-        uploader_.reset(new DropboxUploader(
-                        "./", config::dropboxConfigFile()));
-        if (uploader_->good()) {
+        uploader_ = configureDropboxUploader(cfg, "./");
+        if (uploader_.good()) {
             // register the callback to get file that are saved only if
             // upload works
             archive_.addObserver([this](std::string const& f){
@@ -62,13 +61,12 @@ void RecordingController::initUploader()
             });
         }
         else
-            uploader_.reset();
+            LOG_INFO << "Failed initialization of Dropbox uploader";
     }
     catch (...) {
         // ignore uploader errors
-    }
-    if (!uploader_)
         LOG_INFO << "Failed initialization of Dropbox uploader";
+    }
 }
 
 
@@ -99,7 +97,7 @@ void RecordingController::uploadFile(const std::string& sourceFile)
         std::size_t archiveDirSize = strlen(config::archiveDir());
         assert(sourceFile.size() > archiveDirSize);
         std::string dest{sourceFile.substr(archiveDirSize + 1)};
-        uploader_->uploadFile(sourceFile, dest);
+        uploader_.uploadFile(sourceFile, dest);
     }
     catch (std::exception& e) {
         LOG_ERROR << "Error uploading file: " << e.what() << std::endl;

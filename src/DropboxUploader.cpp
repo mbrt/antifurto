@@ -15,7 +15,8 @@ namespace antifurto {
 
 DropboxUploader::
 DropboxUploader(std::string baseDir, std::string configFile)
-    : baseDir_(baseDir), configFile_(configFile)
+    : state_(State::UNKNOWN)
+    , baseDir_(baseDir), configFile_(configFile)
     , uploaderProcess_("./dropbox_uploader.sh")
 {
     std::ifstream config(configFile.c_str());
@@ -40,15 +41,20 @@ uploadFile(const std::string& sourceFile, const std::string& destFile) const
                                            "\nlog: ", stdout));
 }
 
-bool DropboxUploader::good() const
+bool DropboxUploader::good()
 {
+    if (state_ != State::UNKNOWN)
+        return state_ == State::GOOD;
+
     try {
         std::ostringstream args;
         args << "-f " << configFile_ << " info";
         runUploaderProcess(args.str());
+        state_ = State::GOOD;
         return true;
     }
     catch (...) {
+        state_ = State::BAD;
         return false;
     }
 }
@@ -70,21 +76,23 @@ DropboxUploader configureDropboxUploader(const Configuration& c,
                                          const std::string& baseDir)
 {
     fs::path cfgTemplate{baseDir};
-    cfgTemplate /= "dropbox.cfg.in";
+    cfgTemplate /= "config/dropbox.cfg.in";
     fs::path cfg{config::tmpDir()};
     cfg /= "dropbox.cfg";
 
-    std::ifstream in{cfgTemplate.string()};
-    std::ofstream out{cfg.string()};
-    if (!in || !out)
-        throw DropboxUploaderException("Error opening files");
+    {
+        std::ifstream in{cfgTemplate.string()};
+        std::ofstream out{cfg.string()};
+        if (!in || !out)
+            throw DropboxUploaderException("Error opening files");
 
-    text::TextReplace replace;
-    replace.addVariable("APP_KEY", c.dropbox.appKey);
-    replace.addVariable("APP_SECRET", c.dropbox.appSecret);
-    replace.addVariable("OAUTH_TOKEN", c.dropbox.oauthToken);
-    replace.addVariable("OAUTH_TOKEN_SECRET", c.dropbox.oauthTokenSecret);
-    replace.replaceVariables(in, out);
+        text::TextReplace replace;
+        replace.addVariable("APP_KEY", c.dropbox.appKey);
+        replace.addVariable("APP_SECRET", c.dropbox.appSecret);
+        replace.addVariable("OAUTH_TOKEN", c.dropbox.oauthToken);
+        replace.addVariable("OAUTH_TOKEN_SECRET", c.dropbox.oauthTokenSecret);
+        replace.replaceVariables(in, out);
+    } // close files here
     return DropboxUploader(baseDir, cfg.string());
 }
 

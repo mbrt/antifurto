@@ -12,15 +12,20 @@ class Configuration;
 class DropboxUploader
 {
 public:
-    DropboxUploader() {}
+    DropboxUploader() : state_(State::BAD) {}
     DropboxUploader(std::string baseDir, std::string configFile);
     void uploadFile(const std::string& sourceFile,
                     const std::string& destFile) const;
-    bool good() const;
+    bool good();
 
 private:
     void runUploaderProcess(const std::string& args) const;
 
+    enum class State {
+        UNKNOWN, GOOD, BAD
+    };
+
+    State state_;
     std::string baseDir_;
     std::string configFile_;
     mutable ipc::Process uploaderProcess_;

@@ -23,7 +23,7 @@ public:
     void performMaintenance();
 
 private:
-    void initUploader();
+    void initUploader(const Configuration& cfg);
     void onAlarmStateChanged(MotionDetector::State state);
     void onPictureSaved(const std::string& fileName);
     void uploadFile(const std::string& sourceFile);
@@ -39,7 +39,7 @@ private:
     Configuration::Recording config_;
     concurrency::TaskScheduler& scheduler_;
     PictureArchive archive_;
-    std::unique_ptr<DropboxUploader> uploader_;
+    DropboxUploader uploader_;
     UploadWorker uploadWorker_;
     RecordingWorker recordingWorker_;
 };
