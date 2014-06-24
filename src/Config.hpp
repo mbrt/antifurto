@@ -15,6 +15,7 @@ public:
 
     using StringList = std::vector<std::string>;
     struct Whatsapp {
+        std::string cc;
         std::string src;
         std::string pwd;
         StringList destinations;

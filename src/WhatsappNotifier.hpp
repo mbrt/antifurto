@@ -6,6 +6,8 @@
 
 namespace antifurto {
 
+class Configuration;
+
 /// This class manages notifications using WhatsApp
 class WhatsappNotifier
 {
@@ -18,6 +20,11 @@ private:
     std::string configFile_;
     ipc::Process yowsupProcess_;
 };
+
+/// This function configures a WhatsappNotifier using a template file and
+/// variables stored in the given configuration
+WhatsappNotifier configureWhatsappNotifier(const Configuration& c,
+                                           const std::string& baseDir);
 
 class WhatsappNotifierException : public Exception
 {

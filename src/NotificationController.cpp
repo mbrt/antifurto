@@ -9,7 +9,7 @@ namespace antifurto {
 
 NotificationController::
 NotificationController(const Configuration& c, MotionDetector& detector)
-    : whatsapp_(".", config::whatsappConfigFile())
+    : whatsapp_(configureWhatsappNotifier(c, "./"))
     , contacts_(c.whatsapp.destinations.begin(), c.whatsapp.destinations.end())
     , lastNotificationTime_(std::chrono::system_clock::now() - config::minNotificationDelay())
 {

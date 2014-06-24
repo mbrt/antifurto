@@ -57,6 +57,7 @@ public:
         storeOptionOrDefault("recording.max-days", rec.maxDays);
         storeOptionOrDefault("log.level", log.level);
         storeOptionOrDefault("log.dir", log.dir);
+        storeOptionOrDefault("whatsapp.cc", whatsapp.cc);
         storeOptionOrDefault("whatsapp.src", whatsapp.src);
         storeOptionOrDefault("whatsapp.pwd", whatsapp.pwd);
         storeOptionOrDefault("whatsapp.dest", whatsapp.destinations);
@@ -110,6 +111,8 @@ private:
              "max number of recording days to maintain")
             ("log.level", po::value<std::string>(), "log level (debug, info)")
             ("log.dir", po::value<std::string>(), "log directory")
+            ("whatsapp.cc", po::value<std::string>(),
+             "whatsapp source number country code")
             ("whatsapp.src", po::value<std::string>(), "whatsapp source number")
             ("whatsapp.pwd", po::value<std::string>(), "whatsapp password")
             ("whatsapp.dest", po::value<Configuration::StringList>()->composing(),
