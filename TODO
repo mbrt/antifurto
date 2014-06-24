@@ -3,8 +3,6 @@ TODO LIST
 
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
-- Add templating mechanism to support config file generation for yowsup and
-  dropbox uploader
 - Kill subprocess
 - Packaging system
 - Log system
@@ -18,3 +16,4 @@ TODO LIST
 - Service registration with start and stop
 - Radio controller
 - Use exe directory instead of current directory
+- Bootstrap script for cross compile
