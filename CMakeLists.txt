@@ -3,8 +3,10 @@ PROJECT("Antifurto" CXX)
 
 if(DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CROSS_COMPILE true)
+    set(ARCHITECTURE pi)
 else()
     set(CROSS_COMPILE false)
+    set(ARCHITECTURE ${CMAKE_HOST_SYSTEM_PROCESSOR})
 endif()
 
 set(VERSION_MAJOR 0)
@@ -65,7 +67,7 @@ include_directories(lib/folly/include)
 # glog
 set(GLOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glog)
 include_directories(${GLOG_DIR}/src)
-link_directories(${GLOG_DIR}/build/${CMAKE_HOST_SYSTEM_PROCESSOR})
+link_directories(${GLOG_DIR}/build/${ARCHITECTURE})
 set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog pthread)
 set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
 
