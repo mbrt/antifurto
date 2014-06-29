@@ -8,7 +8,7 @@ namespace antifurto {
 namespace ipc {
 
 Process::Process(std::string command)
-    : exePath_(command)
+    : exePath_(std::move(command))
 { }
 
 int Process::run(const std::string& args, const std::string& workDir)

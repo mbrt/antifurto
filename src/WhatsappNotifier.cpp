@@ -11,9 +11,9 @@
 namespace antifurto {
 
 WhatsappNotifier::WhatsappNotifier(std::string baseDir, std::string configFile)
-    : baseDir_(baseDir)
-    , configFile_(configFile)
-    , yowsupProcess_(fs::concatPaths(baseDir, "yowsup-cli"))
+    : baseDir_(std::move(baseDir))
+    , configFile_(std::move(configFile))
+    , yowsupProcess_(fs::concatPaths(baseDir_, "yowsup-cli"))
 { }
 
 void WhatsappNotifier::send(const std::string& dest, const std::string& msg)
@@ -40,9 +40,9 @@ void WhatsappNotifier::send(const std::string& dest, const std::string& msg)
 WhatsappNotifier
 configureWhatsappNotifier(const Configuration& c, const std::string& baseDir)
 {
-    std::string cfg{fs::concatPaths(baseDir, "config", "whatsapp.cfg.in")};
-    std::ifstream in{cfg};
-    std::ofstream out{fs::concatPaths(config::tmpDir(), "whatsapp.cfg")};
+    std::string cfg{fs::concatPaths(config::tmpDir(), "whatsapp.cfg")};
+    std::ifstream in{fs::concatPaths(baseDir, "config", "whatsapp.cfg.in")};
+    std::ofstream out{cfg};
     if (!in || !out)
         throw WhatsappNotifierException("Error opening files");
 

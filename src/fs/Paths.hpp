@@ -8,8 +8,7 @@ namespace antifurto {
 namespace fs {
 namespace detail {
 
-template <typename... Args>
-std::string concatPathsImpl(boost::filesystem::path& p)
+inline std::string concatPathsImpl(boost::filesystem::path& p)
 {
     return p.string();
 }
@@ -23,10 +22,10 @@ std::string concatPathsImpl(boost::filesystem::path& p, T&& t, Args&&... args)
 
 } // namespace detail
 
-template <typename... Args>
-std::string concatPaths(Args&&... args)
+template <typename T, typename... Args>
+std::string concatPaths(T&& t, Args&&... args)
 {
-    boost::filesystem::path p;
+    boost::filesystem::path p{std::forward<T>(t)};
     return detail::concatPathsImpl(p, std::forward<Args>(args)...);
 }
 

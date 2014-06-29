@@ -63,9 +63,10 @@ void RecordingController::initUploader(const Configuration& cfg)
         else
             LOG_INFO << "Failed initialization of Dropbox uploader";
     }
-    catch (...) {
+    catch (std::exception& e) {
         // ignore uploader errors
-        LOG_INFO << "Failed initialization of Dropbox uploader";
+        LOG_INFO << "Failed initialization of Dropbox uploader. "
+                 << "Exception: " << e.what();
     }
 }
 

@@ -14,10 +14,10 @@ namespace antifurto {
 DropboxUploader::
 DropboxUploader(std::string baseDir, std::string configFile)
     : state_(State::UNKNOWN)
-    , baseDir_(baseDir), configFile_(configFile)
-    , uploaderProcess_(fs::concatPaths(baseDir, "dropbox_uploader.sh"))
+    , baseDir_(std::move(baseDir)), configFile_(std::move(configFile))
+    , uploaderProcess_(fs::concatPaths(baseDir_, "dropbox_uploader.sh"))
 {
-    std::ifstream config(configFile.c_str());
+    std::ifstream config(configFile_.c_str());
     if (!config.good())
         throw DropboxUploaderException("Config file not found");
 }
@@ -73,9 +73,9 @@ void DropboxUploader::runUploaderProcess(const std::string& args) const
 DropboxUploader configureDropboxUploader(const Configuration& c,
                                          const std::string& baseDir)
 {
-    std::string cfg{fs::concatPaths(baseDir, "config", "dropbox.cfg.in")};
-    std::ifstream in{cfg};
-    std::ofstream out{fs::concatPaths(config::tmpDir(), "dropbox.cfg")};
+    std::string cfg{fs::concatPaths(config::tmpDir(), "dropbox.cfg")};
+    std::ifstream in{fs::concatPaths(baseDir, "config", "dropbox.cfg.in")};
+    std::ofstream out{cfg};
     if (!in || !out)
         throw DropboxUploaderException("Error opening files");
 
