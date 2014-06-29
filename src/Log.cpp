@@ -2,7 +2,7 @@
 #include "Config.hpp"
 
 #include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace antifurto {
 
@@ -21,8 +21,8 @@ void initLogger(const Configuration& config)
     FLAGS_max_log_size = 2; // 2MB
     FLAGS_stop_logging_if_full_disk = true;
     FLAGS_log_dir = config.log.dir;
-    if (!fs::exists(config.log.dir))
-        fs::create_directories(config.log.dir);
+    if (!bfs::exists(config.log.dir))
+        bfs::create_directories(config.log.dir);
     google::InitGoogleLogging("antifurto");
     google::InstallFailureSignalHandler();
     google::InstallFailureWriter(&failureWriter);

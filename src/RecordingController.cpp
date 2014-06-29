@@ -9,7 +9,7 @@
 #include <utility>
 #include <algorithm>
 #include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace antifurto {
 
@@ -44,7 +44,7 @@ void RecordingController::addPicture(Picture p)
 
 void RecordingController::performMaintenance()
 {
-    if (!fs::exists(config_.archiveDir)) return;
+    if (!bfs::exists(config_.archiveDir)) return;
     LOG_INFO << "Performing archive maintenance";
     deleteOlderPictures();
 }
@@ -107,18 +107,18 @@ void RecordingController::uploadFile(const std::string& sourceFile)
 void RecordingController::deleteOlderPictures()
 {
     unsigned int
-            ndirs = std::distance(fs::directory_iterator(config_.archiveDir),
-                                  fs::directory_iterator());
+            ndirs = std::distance(bfs::directory_iterator(config_.archiveDir),
+                                  bfs::directory_iterator());
     int toDelete = ndirs - config_.maxDays;
     if (toDelete <= 0) return;
 
     LOG_INFO << "Deleting " << toDelete << " archive days";
-    std::vector<fs::path> dirs;
-    std::copy(fs::directory_iterator(config_.archiveDir),
-              fs::directory_iterator(), std::back_inserter(dirs));
+    std::vector<bfs::path> dirs;
+    std::copy(bfs::directory_iterator(config_.archiveDir),
+              bfs::directory_iterator(), std::back_inserter(dirs));
     std::sort(dirs.begin(), dirs.end());
     std::for_each(std::begin(dirs), std::begin(dirs) + toDelete,
-                  [](fs::path const& p) { fs::remove_all(p); });
+                  [](bfs::path const& p) { bfs::remove_all(p); });
 }
 
 } // namespace antifurto

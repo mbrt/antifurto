@@ -29,6 +29,7 @@ std::string TextReplace::replaceVariables(const std::string& input) const
 void TextReplace::replaceVariables(std::istream& in, std::ostream& out) const
 {
     out << replaceVariables(readContents(in));
+    out.flush();
 }
 
 std::string readContents(std::istream& in)

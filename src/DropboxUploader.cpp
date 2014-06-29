@@ -2,14 +2,12 @@
 #include "Log.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
+#include "fs/Paths.hpp"
 #include "text/ToString.hpp"
 #include "text/TextReplace.hpp"
 
 #include <sstream>
 #include <fstream>
-#include <iostream>
-#include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
 
 namespace antifurto {
 
@@ -17,7 +15,7 @@ DropboxUploader::
 DropboxUploader(std::string baseDir, std::string configFile)
     : state_(State::UNKNOWN)
     , baseDir_(baseDir), configFile_(configFile)
-    , uploaderProcess_("./dropbox_uploader.sh")
+    , uploaderProcess_(fs::concatPaths(baseDir, "dropbox_uploader.sh"))
 {
     std::ifstream config(configFile.c_str());
     if (!config.good())
@@ -75,25 +73,20 @@ void DropboxUploader::runUploaderProcess(const std::string& args) const
 DropboxUploader configureDropboxUploader(const Configuration& c,
                                          const std::string& baseDir)
 {
-    fs::path cfgTemplate{baseDir};
-    cfgTemplate /= "config/dropbox.cfg.in";
-    fs::path cfg{config::tmpDir()};
-    cfg /= "dropbox.cfg";
+    std::string cfg{fs::concatPaths(baseDir, "config", "dropbox.cfg.in")};
+    std::ifstream in{cfg};
+    std::ofstream out{fs::concatPaths(config::tmpDir(), "dropbox.cfg")};
+    if (!in || !out)
+        throw DropboxUploaderException("Error opening files");
 
-    {
-        std::ifstream in{cfgTemplate.string()};
-        std::ofstream out{cfg.string()};
-        if (!in || !out)
-            throw DropboxUploaderException("Error opening files");
-
-        text::TextReplace replace;
-        replace.addVariable("APP_KEY", c.dropbox.appKey);
-        replace.addVariable("APP_SECRET", c.dropbox.appSecret);
-        replace.addVariable("OAUTH_TOKEN", c.dropbox.oauthToken);
-        replace.addVariable("OAUTH_TOKEN_SECRET", c.dropbox.oauthTokenSecret);
-        replace.replaceVariables(in, out);
-    } // close files here
-    return DropboxUploader(baseDir, cfg.string());
+    text::TextReplace replace;
+    replace.addVariable("APP_KEY", c.dropbox.appKey);
+    replace.addVariable("APP_SECRET", c.dropbox.appSecret);
+    replace.addVariable("OAUTH_TOKEN", c.dropbox.oauthToken);
+    replace.addVariable("OAUTH_TOKEN_SECRET", c.dropbox.oauthTokenSecret);
+    replace.replaceVariables(in, out);
+    out.close(); // explicitly close out file to catch errors
+    return DropboxUploader(baseDir, cfg);
 }
 
 

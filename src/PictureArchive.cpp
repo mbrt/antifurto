@@ -1,4 +1,5 @@
 #include "PictureArchive.hpp"
+#include "fs/Paths.hpp"
 #include "text/ToString.hpp"
 
 #include <sstream>
@@ -8,8 +9,7 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <boost/filesystem.hpp>
-
-namespace fs = boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace antifurto {
 
@@ -60,13 +60,15 @@ void PictureArchive::enqueue(Picture p)
 
 void PictureArchive::save(Picture& p, Clock t)
 {
-    fs::path filename{ currentFolder_ };
-    filename /= text::toString(t, text::ToStringFormat::FULL, '-', '_') + ".jpg";
+    std::string filename{ fs::concatPaths(
+        currentFolder_,
+        text::toString(t, text::ToStringFormat::FULL, '-', '_') + ".jpg")};
+
     cv::putText(p, text::toString(t, text::ToStringFormat::SHORT, '/', ' '),
                 cv::Point(30,30), CV_FONT_HERSHEY_COMPLEX_SMALL, 0.8,
                 cv::Scalar(200,200,250), 1, CV_AA);
-    cv::imwrite(filename.string(), p, { CV_IMWRITE_JPEG_QUALITY, 90 });
-    notifyObservers(filename.string());
+    cv::imwrite(filename, p, {CV_IMWRITE_JPEG_QUALITY, 90});
+    notifyObservers(filename);
 }
 
 void PictureArchive::notifyObservers(const std::string& fileName)
@@ -77,12 +79,12 @@ void PictureArchive::notifyObservers(const std::string& fileName)
 
 void PictureArchive::prepareCurrentFolder()
 {
-    fs::path current{ baseFolder_ };
-    current /=  text::toString(std::chrono::system_clock::now(),
-                               text::ToStringFormat::DATE_ONLY, '-');
-    if (!fs::exists(current))
-        fs::create_directories(current);
-    currentFolder_ = current.string();
+    currentFolder_ = fs::concatPaths(
+        baseFolder_,
+        text::toString(std::chrono::system_clock::now(),
+                       text::ToStringFormat::DATE_ONLY, '-'));
+    if (!bfs::exists(currentFolder_))
+        bfs::create_directories(currentFolder_);
 }
 
 } // namespace antifurto

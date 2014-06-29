@@ -85,6 +85,7 @@ set(ANTIFURTO_COMMON_CPP
     src/WhatsappNotifier.cpp
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
+    src/fs/Paths.cpp
     src/ipc/Process.cpp
     src/text/ToString.cpp
     src/text/TextReplace.cpp
@@ -109,6 +110,7 @@ set(ANTIFURTO_COMMON_HPP
     src/concurrency/TimeUtility.hpp
     src/concurrency/binsem.hpp
     src/concurrency/fwd.hpp
+    src/fs/Paths.hpp
     src/ipc/Exception.hpp
     src/ipc/Process.hpp
     src/meta/Iterator.hpp
