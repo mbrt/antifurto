@@ -75,6 +75,7 @@ set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
 set(ANTIFURTO_COMMON_CPP
     src/Config.cpp
     src/DropboxUploader.cpp
+    src/Environment.cpp
     src/Log.cpp
     src/MonitorController.cpp
     src/MotionDetector.cpp
@@ -92,6 +93,7 @@ set(ANTIFURTO_COMMON_HPP
     src/Camera.hpp
     src/Config.hpp
     src/DropboxUploader.hpp
+    src/Environment.hpp
     src/Exception.hpp
     src/Log.hpp
     src/MonitorController.hpp

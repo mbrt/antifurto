@@ -5,7 +5,7 @@ namespace antifurto {
 PiCamera::PiCamera()
     : capture_(::raspiCamCvCreateCameraCapture(0))
 {
-    ::raspiCamCvSetCapturePropertyHeight(capture_, 640);
+    ::raspiCamCvSetCapturePropertyWidth(capture_, 640);
     if (!capture_)
         throw CameraException("Cannot initialize camera");
 }
