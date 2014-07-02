@@ -1,6 +1,8 @@
 #pragma once
 
-#include <iostream>
+#ifdef NDEBUG
+#   define GOOGLE_STRIP_FILE_LINE
+#endif
 #include <glog/logging.h>
 
 #define LOG_ERROR LOG(ERROR)

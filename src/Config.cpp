@@ -1,6 +1,7 @@
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 
+#include <iostream>
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
