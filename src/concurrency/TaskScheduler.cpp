@@ -41,7 +41,7 @@ void TaskScheduler::scheduleEvery(Clock::duration d, Task w)
 
 void TaskScheduler::schedulerLoop()
 {
-    while (!done_.load(std::memory_order_release)) {
+    while (!done_.load(std::memory_order_acquire)) {
         workIfTaskReady();
         waitForNextTask();
     }
