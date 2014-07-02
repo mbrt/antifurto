@@ -10,6 +10,7 @@ namespace fs = boost::filesystem;
 #elif defined(__linux__)
 #   include <unistd.h>
 #   include <sys/stat.h>
+#   include <linux/limits.h>
 #else
 #   error "Unsupported platform"
 #endif
@@ -25,18 +26,14 @@ std::string getExecutableRuntimePath()
     return szFileName;
 #elif defined(__linux__)
     static const char* selfLink = "/proc/self/exe";
-    struct stat sb;
-    if (lstat(selfLink, &sb) == -1)
-        throw Exception("Cannot stat self process");
-
-    std::unique_ptr<char[]> linkName{new char[sb.st_size + 1]};
-    ssize_t sz = readlink(selfLink, linkName.get(), sb.st_size + 1);
+    std::array<char, PATH_MAX> linkName;
+    ssize_t sz = readlink(selfLink, &linkName[0], PATH_MAX);
     if (sz < 0)
         throw Exception("Readlink on self failure");
-    else if (sz > sb.st_size)
-        throw Exception("Unexpected increase of self exe link size");
+    else if (sz > PATH_MAX)
+        throw Exception("Path too long for process");
     linkName[sz] = '\0';
-    return std::string{linkName.get()};
+    return std::string{&linkName[0]};
 #endif
 }
 

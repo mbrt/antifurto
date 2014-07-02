@@ -52,7 +52,7 @@ void RecordingController::performMaintenance()
 void RecordingController::initUploader(const Configuration& cfg)
 {
     try {
-        uploader_ = configureDropboxUploader(cfg, "./");
+        uploader_ = configureDropboxUploader(cfg, config::exeDir());
         if (uploader_.good()) {
             // register the callback to get file that are saved only if
             // upload works

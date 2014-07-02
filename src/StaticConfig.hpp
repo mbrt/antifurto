@@ -23,13 +23,13 @@ constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
 constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 }; }
 constexpr Seconds minNotificationDelay() { return Seconds{ 15 }; }
 
-constexpr const char* configDir() { return "config"; }
+std::string exeDir();
+std::string configDir();
+std::string configFile();
+
 constexpr const char* archiveDir() { return "/tmp/antifurto/archive"; }
 constexpr const char* logDir() { return "/tmp/antifurto/log"; }
 constexpr const char* tmpDir() { return "/tmp"; }
-constexpr const char* configFile() { return "config/antifurto.cfg"; }
-constexpr const char* dropboxConfigFile() { return "config/dropbox.cfg"; }
-constexpr const char* whatsappConfigFile() { return "config/whatsapp.cfg"; }
 
 constexpr unsigned int maxArchiveDays() { return 7; }
 

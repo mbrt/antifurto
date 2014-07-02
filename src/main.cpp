@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 {
     ConfigurationParser parser;
     parser.parseCmdLine(argc, argv);
-    parser.parseConfigFile(config::configFile());
+    parser.parseConfigFile(config::configFile().c_str());
     if (!parser.canContinue())
         return 1;
 

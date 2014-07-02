@@ -82,6 +82,7 @@ set(ANTIFURTO_COMMON_CPP
     src/NotificationController.cpp
     src/PictureArchive.cpp
     src/RecordingController.cpp
+    src/StaticConfig.cpp
     src/WhatsappNotifier.cpp
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
