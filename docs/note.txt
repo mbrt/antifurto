@@ -51,3 +51,5 @@ Bootstrap, front-end framework cross device: http://getbootstrap.com/
 Real time video streaming: http://phoboslab.org/log/2013/09/html5-live-video-streaming-via-websockets
 with videojs: http://stackoverflow.com/questions/21849961/videojs-with-live-stream
 HTML5 video player: http://www.videojs.com/
+picture gallery: http://blog.cedric.ws/raspberry-pi-opencv-create-a-security-system-web-interface
+    installare apache + php: http://www.instructables.com/id/Raspberry-Pi-Web-Server/step7/Install-Apache-with-PHP/
