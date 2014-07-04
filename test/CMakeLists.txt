@@ -23,6 +23,9 @@ else()
     # main unit test exe
     add_executable(antifurto_unit antifurto_unit.cpp)
     target_link_libraries(antifurto_unit ${Boost_LIBRARIES} antifurto_core)
+
+    # concurrency test
+    add_executable(concurrency_test concurrency_test.cpp)
 endif(CROSS_COMPILE)
 
 # cross tests
