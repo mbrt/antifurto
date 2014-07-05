@@ -15,9 +15,15 @@
 namespace antifurto {
 namespace concurrency {
 
+constexpr int defaultCapacity() { return 1024; }
 
+/// Lockfree single producer single consumer queue.
+///
+/// This queue is different from the standard implementation, because it
+/// does not use busy wait. When the queue is empty, the worker thread stops
+/// in a semaphore.
 #if defined(USE_BOOST_LOCKFREE)
-template <typename T, typename F, int Capacity = 1024>
+template <typename T, typename F, int Capacity = defaultCapacity()>
 #else
 template <typename T, typename F>
 #endif
@@ -30,7 +36,7 @@ public:
         , workFunc_(std::move(workFunction))
         , worker_([this]{ work(); })
 #else
-    SpScQueue(F workFunction = F(), std::size_t queueSize = 1024)
+    SpScQueue(F workFunction = F(), std::size_t queueSize = defaultCapacity())
         : working_(ATOMIC_FLAG_INIT), done_(false), semaphore_(0)
         , queue_(queueSize)
         , workFunc_(std::move(workFunction))
@@ -66,30 +72,33 @@ private:
         }
     }
 
+#if defined(USE_BOOST_LOCKFREE)
     inline bool queueRead(T& value)
     {
-#if defined(USE_BOOST_LOCKFREE)
         return queue_.pop(value);
-#else
-        return queue_.read(value);
-#endif
     }
 
     template <typename U>
     inline bool queueWrite(U&& value)
     {
-#if defined(USE_BOOST_LOCKFREE)
         return queue_.push(std::forward<U>(value));
-#else
-        return queue_.write(std::forward<U>(value));
-#endif
     }
 
-#if defined(USE_BOOST_LOCKFREE)
     using Queue = boost::lockfree::spsc_queue<
                     T,
                     boost::lockfree::capacity<Capacity>>;
 #else
+    inline bool queueRead(T& value)
+    {
+        return queue_.read(value);
+    }
+
+    template <typename U>
+    inline bool queueWrite(U&& value)
+    {
+        return queue_.write(std::forward<U>(value));
+    }
+
     using Queue = folly::ProducerConsumerQueue<T>;
 #endif
 
