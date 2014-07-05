@@ -18,10 +18,10 @@ namespace config {
 #endif
 
 using Milliseconds = std::chrono::milliseconds;
-using Seconds = std::chrono::seconds;
+using Minutes = std::chrono::minutes;
 constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
 constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 }; }
-constexpr Seconds minNotificationDelay() { return Seconds{ 15 }; }
+constexpr Minutes minNotificationDelay() { return Minutes{ 10 }; }
 
 std::string exeDir();
 std::string configDir();
