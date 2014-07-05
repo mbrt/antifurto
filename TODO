@@ -12,6 +12,13 @@ TODO LIST
   - Pack old directories in videos
   - Sync dropbox with archive directories
 - Web server
+  - fix picture names
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile
+- Add cmake configurations for profile and distribution
+  see: CMAKE_CONFIGURATION_TYPES in
+  http://www.cmake.org/Wiki/CMake_Useful_Variables
+- Bug fix
+  - do not send too much notifications
+  - picture names misses some 0s
