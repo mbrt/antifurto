@@ -20,4 +20,3 @@ TODO LIST
 - Add cmake configurations for profile and distribution
   see: CMAKE_CONFIGURATION_TYPES in
   http://www.cmake.org/Wiki/CMake_Useful_Variables
-- Current date returns month - 1?

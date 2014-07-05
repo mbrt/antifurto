@@ -20,7 +20,7 @@ std::string toString(std::chrono::system_clock::time_point t,
     std::ostringstream out;
     out << time_local.tm_year + 1900 << dateSep
         << std::setfill('0')
-        << std::setw(2) << time_local.tm_mon << dateSep
+        << std::setw(2) << time_local.tm_mon + 1 << dateSep
         << std::setw(2) << time_local.tm_mday;
     if (format <= ToStringFormat::SHORT)
         out << dateTimeSep << std::setfill('0')
