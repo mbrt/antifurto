@@ -12,8 +12,7 @@ TODO LIST
   - Pack old directories in videos
   - Sync dropbox with archive directories
 - Web server
-  - fix picture names
-  - fix folder navigation (names truncated)
+  - add live view
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile
