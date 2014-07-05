@@ -1,0 +1,25 @@
+Webserver install
+----------------------------------------------------------------
+See https://wiki.ubuntu.com/Lighttpd+PHP
+
+> sudo apt-get install lighttpd php5-cgi
+> sudo lighty-enable-mod fastcgi 
+> sudo lighty-enable-mod fastcgi-php
+> sudo service lighttpd force-reload
+
+copy the web interface in /var/www
+> cp -r lib/pics_web_interface/webinterface/* /var/www/
+
+link the archive dir
+> ln -s /path/to/archive /var/www/pics
+
+add authentication
+> cd /etc/lighttpd/
+> sudo cp lighttpd.conf lighttpd.conf.bak
+> sudo patch lighttpd < /path/to/project/config/lighttpd.conf.patch
+> sudo service lighttpd restart
+
+the password is stored in a file in /path/to/project/config/.lighttpdpassword
+and have the following contents:
+admin:write-your-password-here
+

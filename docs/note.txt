@@ -53,3 +53,4 @@ with videojs: http://stackoverflow.com/questions/21849961/videojs-with-live-stre
 HTML5 video player: http://www.videojs.com/
 picture gallery: http://blog.cedric.ws/raspberry-pi-opencv-create-a-security-system-web-interface
     installare apache + php: http://www.instructables.com/id/Raspberry-Pi-Web-Server/step7/Install-Apache-with-PHP/
+    installare lighttpd + php: https://wiki.ubuntu.com/Lighttpd+PHP
