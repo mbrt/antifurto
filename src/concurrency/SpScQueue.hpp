@@ -4,10 +4,20 @@
 #include <thread>
 #include <iostream>
 
-#if defined(USE_BOOST_LOCKFREE)
+#if defined(SPSCQ_USE_BOOST_LOCKFREE)
 #   include <boost/lockfree/spsc_queue.hpp>
 #else
 #   include <folly/ProducerConsumerQueue.hpp>
+#endif
+
+// #define SPSCQ_NO_BRANCH_OPT
+
+#if defined(__GNUC__) && !defined(SPSCQ_NO_BRANCH_OPT)
+#define SPSCQ_LIKELY(x)   __builtin_expect((x),1)
+#define SPSCQ_UNLIKELY(x) __builtin_expect((x),0)
+#else
+#define SPSCQ_LIKELY(x)   x
+#define SPSCQ_UNLIKELY(x) x
 #endif
 
 #include "binsem.hpp"
@@ -22,7 +32,8 @@ constexpr int defaultCapacity() { return 1024; }
 /// This queue is different from the standard implementation, because it
 /// does not use busy wait. When the queue is empty, the worker thread stops
 /// in a semaphore.
-#if defined(USE_BOOST_LOCKFREE)
+/// Purpose of this queue is to make enqueue extremely fast
+#if defined(SPSCQ_USE_BOOST_LOCKFREE)
 template <typename T, typename F, int Capacity = defaultCapacity()>
 #else
 template <typename T, typename F>
@@ -30,7 +41,7 @@ template <typename T, typename F>
 class SpScQueue
 {
 public:
-#if defined(USE_BOOST_LOCKFREE)
+#if defined(SPSCQ_USE_BOOST_LOCKFREE)
     SpScQueue(F workFunction = F())
         : working_(ATOMIC_FLAG_INIT), done_(false), semaphore_(0)
         , workFunc_(std::move(workFunction))
@@ -54,7 +65,7 @@ public:
     template <typename U>
     bool enqueue(U&& value) {
         bool enqueued = queueWrite(std::forward<U>(value));
-        if (!working_.test_and_set())
+        if (SPSCQ_UNLIKELY(!working_.test_and_set()))
             semaphore_.signal();
         return enqueued;
     }
@@ -62,17 +73,17 @@ public:
 private:
     void work() {
         T value;
-        while (!done_) {
+        while (SPSCQ_LIKELY(!done_)) {
             semaphore_.wait();
-            while (!done_ && queueRead(value))
+            while (SPSCQ_LIKELY(!done_ && queueRead(value)))
                 workFunc_(value);
             working_.clear();
-            while (!done_ && queueRead(value))
+            while (SPSCQ_UNLIKELY(!done_ && queueRead(value)))
                 workFunc_(value);
         }
     }
 
-#if defined(USE_BOOST_LOCKFREE)
+#if defined(SPSCQ_USE_BOOST_LOCKFREE)
     inline bool queueRead(T& value)
     {
         return queue_.pop(value);
