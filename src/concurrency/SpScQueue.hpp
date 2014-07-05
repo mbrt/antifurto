@@ -10,8 +10,7 @@
 #   include <folly/ProducerConsumerQueue.hpp>
 #endif
 
-#include <mutex>
-#include <condition_variable>
+#include "binsem.hpp"
 
 namespace antifurto {
 namespace concurrency {
@@ -22,15 +21,16 @@ class SpScQueue
 {
 public:
     SpScQueue(F workFunction = F(), std::size_t queueSize = 1024)
-        : working_(ATOMIC_FLAG_INIT), done_(false)
-        , queue_(queueSize), workFunc_(workFunction)
+        : working_(ATOMIC_FLAG_INIT), done_(false), semaphore_(0)
+        , queue_(queueSize)
+        , workFunc_(std::move(workFunction))
         , worker_([this]{ work(); })
     { }
 
     ~SpScQueue() {
         // exit even if the work has not been completed
         done_ = true;
-        sem_.notify_one();
+        semaphore_.signal();
         worker_.join();
     }
 
@@ -38,7 +38,7 @@ public:
     bool enqueue(U&& value) {
         bool enqueued = queue_.write(std::forward<U>(value));
         if (!working_.test_and_set())
-            sem_.notify_one();
+            semaphore_.signal();
         return enqueued;
     }
 
@@ -46,7 +46,7 @@ private:
     void work() {
         T value;
         while (!done_) {
-            waitNotify();
+            semaphore_.wait();
             while (!done_ && queue_.read(value))
                 workFunc_(value);
             working_.clear();
@@ -55,21 +55,13 @@ private:
         }
     }
 
-    inline void waitNotify()
-    {
-        std::unique_lock<std::mutex> lock(m_);
-        sem_.wait(lock);
-        // spurious wake-ups are not problematic
-    }
-
     using Queue = folly::ProducerConsumerQueue<T>;
 
     std::atomic_flag working_;
     std::atomic<bool> done_;
+    binsem semaphore_;
     Queue queue_;
     F workFunc_;
-    std::mutex m_;
-    std::condition_variable sem_;
     std::thread worker_;
 };
 

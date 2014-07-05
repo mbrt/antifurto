@@ -26,6 +26,7 @@ else()
 
     # concurrency test
     add_executable(concurrency_test concurrency_test.cpp)
+    target_link_libraries(concurrency_test pthread)
 endif(CROSS_COMPILE)
 
 # cross tests
