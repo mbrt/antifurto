@@ -21,4 +21,3 @@ TODO LIST
   http://www.cmake.org/Wiki/CMake_Useful_Variables
 - Bug fix
   - do not send too much notifications
-  - picture names misses some 0s

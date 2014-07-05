@@ -19,14 +19,14 @@ std::string toString(std::chrono::system_clock::time_point t,
     localtime_r(&time, &time_local);
     std::ostringstream out;
     out << time_local.tm_year + 1900 << dateSep
-        << std::setfill('0') << std::setw(2)
-        << time_local.tm_mon << dateSep
-        << time_local.tm_mday;
+        << std::setfill('0')
+        << std::setw(2) << time_local.tm_mon << dateSep
+        << std::setw(2) << time_local.tm_mday;
     if (format <= ToStringFormat::SHORT)
-        out << dateTimeSep << std::setfill('0') << std::setw(2)
-            << time_local.tm_hour << ':'
-            << time_local.tm_min << ':'
-            << time_local.tm_sec;
+        out << dateTimeSep << std::setfill('0')
+            << std::setw(2) << time_local.tm_hour << ':'
+            << std::setw(2) << time_local.tm_min << ':'
+            << std::setw(2) << time_local.tm_sec;
     if (format == ToStringFormat::FULL)
         out << '.'
             << std::setfill('0') << std::setw(4)
