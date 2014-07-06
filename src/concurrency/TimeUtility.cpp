@@ -29,7 +29,7 @@ std::chrono::system_clock::time_point tomorrow()
     auto now = system_clock::to_time_t(system_clock::now());
     std::tm now_local;
     localtime_r(&now, &now_local);
-    return makeTimePoint(now_local.tm_year + 1900, now_local.tm_mon,
+    return makeTimePoint(now_local.tm_year + 1900, now_local.tm_mon + 1,
                          now_local.tm_mday + 1, 0, 0, 0);
 }
 
