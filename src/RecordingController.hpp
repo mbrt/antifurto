@@ -9,6 +9,7 @@
 
 #include <string>
 #include <memory>
+#include <queue>
 
 namespace antifurto {
 
@@ -28,6 +29,7 @@ private:
     void onPictureSaved(const std::string& fileName);
     void uploadFile(const std::string& sourceFile);
     void deleteOlderPictures();
+    void enqueueOlderPictures();
 
     using UploadWorker =
         concurrency::SpScQueue<std::string,
@@ -35,6 +37,7 @@ private:
     using RecordingWorker =
         concurrency::SpScQueue<Picture,
             std::function<void(Picture&)>>;
+    using UploadQueue = std::queue<std::string>;
 
     Configuration::Recording config_;
     concurrency::TaskScheduler& scheduler_;
@@ -42,6 +45,7 @@ private:
     DropboxUploader uploader_;
     UploadWorker uploadWorker_;
     RecordingWorker recordingWorker_;
+    UploadQueue toUploadAfterQueue_;
 };
 
 } // namespace antifurto

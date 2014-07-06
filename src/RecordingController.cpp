@@ -39,7 +39,7 @@ RecordingController(const Configuration& cfg, MotionDetector& detector,
 void RecordingController::addPicture(Picture p)
 {
     if (!recordingWorker_.enqueue(std::move(p)))
-        LOG_ERROR << "Failed to enqueue the picture\n";
+        LOG_ERROR << "Failed to save the picture, queue is full";
 }
 
 void RecordingController::performMaintenance()
@@ -76,8 +76,11 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
     using State = MotionDetector::State;
     switch (state) {
     case State::NO_ALARM:
-        archive_.stopSaving();
-        break;
+        {
+            archive_.stopSaving();
+            enqueueOlderPictures();
+            break;
+        }
     case State::ALARM:
         archive_.startSaving();
         break;
@@ -89,7 +92,10 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
 
 void RecordingController::onPictureSaved(const std::string& fileName)
 {
-    uploadWorker_.enqueue(fileName);
+    if (!uploadWorker_.enqueue(fileName)) {
+        LOG_INFO << "Failed to upload picture to Dropbox: queue is full";
+        toUploadAfterQueue_.emplace(fileName);
+    }
 }
 
 void RecordingController::uploadFile(const std::string& sourceFile)
@@ -120,6 +126,29 @@ void RecordingController::deleteOlderPictures()
     std::sort(dirs.begin(), dirs.end());
     std::for_each(std::begin(dirs), std::begin(dirs) + toDelete,
                   [](bfs::path const& p) { bfs::remove_all(p); });
+}
+
+void RecordingController::enqueueOlderPictures()
+{
+    if (toUploadAfterQueue_.empty())
+        return;
+    LOG_INFO << "Start uploading older pictures";
+
+    while (!toUploadAfterQueue_.empty()) {
+        if (uploadWorker_.enqueue(toUploadAfterQueue_.front()))
+            toUploadAfterQueue_.pop();
+        else
+            break;
+    }
+    // if the queue is not empty, we need to schedule an upload after
+    if (!toUploadAfterQueue_.empty()) {
+        LOG_INFO << "Cannot empty the upload queue. Schedule a new upload";
+        scheduler_.scheduleAfter(std::chrono::minutes(10), [=] {
+            enqueueOlderPictures();
+        });
+    }
+    else
+        LOG_INFO << "Upload of older pictures completed";
 }
 
 } // namespace antifurto

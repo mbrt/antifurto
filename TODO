@@ -11,6 +11,7 @@ TODO LIST
 - Archive refactor
   - Pack old directories in videos
   - Sync dropbox with archive directories
+  - Put not uploaded images in a list and serve it when alarm is off
 - Web server
   - add live view
 - Service registration with start and stop
@@ -19,3 +20,4 @@ TODO LIST
 - Add cmake configurations for profile and distribution
   see: CMAKE_CONFIGURATION_TYPES in
   http://www.cmake.org/Wiki/CMake_Useful_Variables
+- Rewrite TaskScheduler to use condition variable and not semaphore
