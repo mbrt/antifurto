@@ -5,14 +5,16 @@ namespace concurrency {
 
 TaskScheduler::TaskScheduler()
     : done_(false)
-    , semaphore_(0)
     , thread_([this]{ schedulerLoop(); })
 { }
 
 TaskScheduler::~TaskScheduler()
 {
-    done_.store(true, std::memory_order_release);
-    semaphore_.signal();
+    {
+        std::unique_lock<std::mutex> lock(queueMutex_);
+        done_ = true;
+    }
+    cv_.notify_one();
     thread_.join();
 }
 
@@ -22,7 +24,7 @@ void TaskScheduler::scheduleAt(Clock::time_point t, Task w)
         std::unique_lock<std::mutex> lock(queueMutex_);
         queue_.emplace(std::move(w), std::move(t));
     }
-    semaphore_.signal();
+    cv_.notify_one();
 }
 
 void TaskScheduler::scheduleAfter(Clock::duration d, Task w)
@@ -31,12 +33,12 @@ void TaskScheduler::scheduleAfter(Clock::duration d, Task w)
         std::unique_lock<std::mutex> lock(queueMutex_);
         queue_.emplace(std::move(w), Clock::now() + d);
     }
-    semaphore_.signal();
+    cv_.notify_one();
 }
 
 void TaskScheduler::scheduleEvery(Clock::duration d, Task w)
 {
-    scheduleAfter(std::move(d), [=] {
+    scheduleAfter(d, [=] {
         scheduleEvery(d, w);
         w();
     });
@@ -45,35 +47,25 @@ void TaskScheduler::scheduleEvery(Clock::duration d, Task w)
 
 void TaskScheduler::schedulerLoop()
 {
-    while (!done_.load(std::memory_order_acquire)) {
-        workIfTaskReady();
-        waitForNextTask();
-    }
-}
+    Task task;
+    while (true) {
+        {
+            std::unique_lock<std::mutex> lock(queueMutex_);
+            // wait until an element is present
+            while (!done_ && queue_.empty())
+                cv_.wait(lock);
+            if (done_) return;
 
-bool TaskScheduler::workIfTaskReady()
-{
-    std::unique_lock<std::mutex> lock(queueMutex_);
-    if (!queue_.empty() && queue_.top().timePoint <= Clock::now()) {
-        auto item = queue_.top(); queue_.pop();
-        lock.unlock();  // work unlocked
-        item.task();
-        return true;
-    }
-    return false;
-}
+            // wait until the top element time point is arrived
+            auto next = queue_.top().timePoint;
+            while (!done_ && Clock::now() < next)
+                cv_.wait_until(lock, next);
+            if (done_) return;
 
-void TaskScheduler::waitForNextTask()
-{
-    std::unique_lock<std::mutex> lock(queueMutex_);
-    if (queue_.empty()) {
-        lock.unlock();
-        semaphore_.wait();
-    }
-    else {
-        auto next = queue_.top().timePoint;
-        lock.unlock();
-        semaphore_.wait_until(next);
+            task = queue_.top().task;
+            queue_.pop();
+        }
+        task();
     }
 }
 

@@ -3,11 +3,10 @@
 #include <chrono>
 #include <functional>
 #include <queue>
-#include <atomic>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 
-#include "binsem.hpp"
 
 namespace antifurto {
 namespace concurrency {
@@ -34,8 +33,6 @@ public:
 
 private:
     void schedulerLoop();
-    bool workIfTaskReady();
-    void waitForNextTask();
 
     struct TaskItem {
         Task task;
@@ -47,7 +44,7 @@ private:
     };
     struct TaskComparator {
         bool operator()(const TaskItem& a, const TaskItem& b) const {
-            return a.timePoint < b.timePoint;
+            return a.timePoint > b.timePoint;
         }
     };
 
@@ -57,8 +54,8 @@ private:
 
     Queue queue_;
     std::mutex queueMutex_;
-    std::atomic<bool> done_;
-    binsem semaphore_;
+    std::condition_variable cv_;
+    bool done_;
     std::thread thread_;
 };
 
