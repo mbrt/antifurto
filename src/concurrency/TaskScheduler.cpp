@@ -18,15 +18,19 @@ TaskScheduler::~TaskScheduler()
 
 void TaskScheduler::scheduleAt(Clock::time_point t, Task w)
 {
-    std::unique_lock<std::mutex> lock(queueMutex_);
-    queue_.push(TaskItem{ std::move(w), std::move(t) });
+    {
+        std::unique_lock<std::mutex> lock(queueMutex_);
+        queue_.emplace(std::move(w), std::move(t));
+    }
     semaphore_.signal();
 }
 
 void TaskScheduler::scheduleAfter(Clock::duration d, Task w)
 {
-    std::unique_lock<std::mutex> lock(queueMutex_);
-    queue_.push(TaskItem{ std::move(w), Clock::now() + d });
+    {
+        std::unique_lock<std::mutex> lock(queueMutex_);
+        queue_.emplace(std::move(w), Clock::now() + d);
+    }
     semaphore_.signal();
 }
 

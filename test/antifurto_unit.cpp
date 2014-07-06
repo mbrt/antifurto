@@ -211,6 +211,22 @@ BOOST_AUTO_TEST_CASE(taskScheduler)
         std::this_thread::sleep_for(milliseconds(35));
         BOOST_CHECK_EQUAL(counter, 1);
     }
+
+    counter = 0;
+    {
+        concurrency::TaskScheduler sched;
+        sched.scheduleAfter(seconds(2), [&]{
+            counter = 2;
+        });
+        sched.scheduleAfter(seconds(1), [&]{
+            counter = 1;
+        });
+        BOOST_CHECK_EQUAL(counter, 0);
+        std::this_thread::sleep_for(seconds(1) + milliseconds(50));
+        BOOST_CHECK_EQUAL(counter, 1);
+        std::this_thread::sleep_for(seconds(1) + milliseconds(50));
+        BOOST_CHECK_EQUAL(counter, 2);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(timeOps)

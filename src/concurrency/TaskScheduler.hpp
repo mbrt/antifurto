@@ -40,6 +40,10 @@ private:
     struct TaskItem {
         Task task;
         Clock::time_point timePoint;
+
+        TaskItem() {}
+        TaskItem(Task ts, Clock::time_point tp)
+            : task(std::move(ts)), timePoint(std::move(tp)) {}
     };
     struct TaskComparator {
         bool operator()(const TaskItem& a, const TaskItem& b) const {
