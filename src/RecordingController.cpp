@@ -94,6 +94,7 @@ void RecordingController::onPictureSaved(const std::string& fileName)
 {
     if (!uploadWorker_.enqueue(fileName)) {
         LOG_INFO << "Failed to upload picture to Dropbox: queue is full";
+        std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
         toUploadAfterQueue_.emplace(fileName);
     }
 }
@@ -130,6 +131,7 @@ void RecordingController::deleteOlderPictures()
 
 void RecordingController::enqueueOlderPictures()
 {
+    std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
     if (toUploadAfterQueue_.empty())
         return;
     LOG_INFO << "Start uploading older pictures";
@@ -143,7 +145,7 @@ void RecordingController::enqueueOlderPictures()
     // if the queue is not empty, we need to schedule an upload after
     if (!toUploadAfterQueue_.empty()) {
         LOG_INFO << "Cannot empty the upload queue. Schedule a new upload";
-        scheduler_.scheduleAfter(std::chrono::minutes(10), [=] {
+        scheduler_.scheduleAfter(std::chrono::minutes(10), [this] {
             enqueueOlderPictures();
         });
     }

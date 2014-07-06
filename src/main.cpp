@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     MonitorController controller(parser.getConfiguration());
     controller.performMaintenance();
     controller.startMonitor();
-    //std::this_thread::sleep_for(std::chrono::seconds(1000));
+    //std::this_thread::sleep_for(std::chrono::hours(1));
     std::cout << "Monitoring started.\n"
                  "Press any key to stop...";
     std::cin.ignore();

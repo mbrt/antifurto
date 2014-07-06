@@ -10,6 +10,7 @@
 #include <string>
 #include <memory>
 #include <queue>
+#include <mutex>
 
 namespace antifurto {
 
@@ -46,6 +47,7 @@ private:
     UploadWorker uploadWorker_;
     RecordingWorker recordingWorker_;
     UploadQueue toUploadAfterQueue_;
+    std::mutex toUploadAfterQueueMutex_;
 };
 
 } // namespace antifurto

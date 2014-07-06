@@ -57,9 +57,8 @@ void TaskScheduler::schedulerLoop()
             if (done_) return;
 
             // wait until the top element time point is arrived
-            auto next = queue_.top().timePoint;
-            while (!done_ && Clock::now() < next)
-                cv_.wait_until(lock, next);
+            while (!done_ && Clock::now() < queue_.top().timePoint)
+                cv_.wait_until(lock, queue_.top().timePoint);
             if (done_) return;
 
             task = queue_.top().task;

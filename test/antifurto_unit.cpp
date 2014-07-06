@@ -216,9 +216,11 @@ BOOST_AUTO_TEST_CASE(taskScheduler)
     {
         concurrency::TaskScheduler sched;
         sched.scheduleAfter(seconds(2), [&]{
+            std::cout << 2 << std::endl;
             counter = 2;
         });
         sched.scheduleAfter(seconds(1), [&]{
+            std::cout << 1 << std::endl;
             counter = 1;
         });
         BOOST_CHECK_EQUAL(counter, 0);
