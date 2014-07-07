@@ -3,12 +3,12 @@
 #include "../Exception.hpp"
 
 namespace antifurto {
-namespace ipc {
+namespace concurrency {
 
 class Exception : public ::antifurto::Exception
 {
     using ::antifurto::Exception::Exception;
 };
 
-} // namespace ipc
+} // namespace concurrency
 } // namespace antifurto

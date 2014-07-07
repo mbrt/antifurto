@@ -84,6 +84,7 @@ set(ANTIFURTO_COMMON_CPP
     src/RecordingController.cpp
     src/StaticConfig.cpp
     src/WhatsappNotifier.cpp
+    src/concurrency/PosixSignalHandler.cpp
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
     src/fs/Paths.cpp
@@ -106,6 +107,8 @@ set(ANTIFURTO_COMMON_HPP
     src/RecordingController.hpp
     src/StaticConfig.hpp
     src/WhatsappNotifier.hpp
+    src/concurrency/Exception.hpp
+    src/concurrency/PosixSignalHandler.cpp
     src/concurrency/SpScQueue.hpp
     src/concurrency/TaskScheduler.hpp
     src/concurrency/TimeUtility.hpp
