@@ -11,7 +11,7 @@ TaskScheduler::TaskScheduler()
 TaskScheduler::~TaskScheduler()
 {
     {
-        std::unique_lock<std::mutex> lock(queueMutex_);
+        std::lock_guard<std::mutex> lock(queueMutex_);
         done_ = true;
     }
     cv_.notify_one();
@@ -21,7 +21,7 @@ TaskScheduler::~TaskScheduler()
 void TaskScheduler::scheduleAt(Clock::time_point t, Task w)
 {
     {
-        std::unique_lock<std::mutex> lock(queueMutex_);
+        std::lock_guard<std::mutex> lock(queueMutex_);
         queue_.emplace(std::move(w), std::move(t));
     }
     cv_.notify_one();
@@ -30,7 +30,7 @@ void TaskScheduler::scheduleAt(Clock::time_point t, Task w)
 void TaskScheduler::scheduleAfter(Clock::duration d, Task w)
 {
     {
-        std::unique_lock<std::mutex> lock(queueMutex_);
+        std::lock_guard<std::mutex> lock(queueMutex_);
         queue_.emplace(std::move(w), Clock::now() + d);
     }
     cv_.notify_one();
