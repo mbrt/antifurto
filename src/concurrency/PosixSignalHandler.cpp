@@ -75,7 +75,7 @@ PosixSignalHandler::~PosixSignalHandler()
 void PosixSignalHandler::clearSignalMask()
 {
     sigset_t signalMask;
-    ::sigemptyset(&signalMask);
+    ::sigfillset(&signalMask);
     if (::pthread_sigmask(SIG_BLOCK, &signalMask, NULL) != 0)
         throw Exception("Cannot block signals");
 }
