@@ -4,6 +4,7 @@
 
 #include <functional>
 #include <vector>
+#include <mutex>
 
 namespace antifurto {
 namespace concurrency {
@@ -28,7 +29,9 @@ public:
 private:
     void clearSignalMask();
 
+    std::mutex handlerListM_;
     std::vector<Handler> handlerList_;
+    bool loopRunning_;
 };
 
 } // namespace concurrency
