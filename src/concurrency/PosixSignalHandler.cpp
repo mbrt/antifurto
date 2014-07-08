@@ -61,7 +61,7 @@ void PosixSignalHandler::enterSignalHandlingLoop()
         if (!h)
             throw Exception(text::toString("Unexpected signal ", signum));
         h(signum);
-        if (signum == SIGTERM)
+        if (signum == SIGTERM || signum == SIGINT)
             return;
     }
 }

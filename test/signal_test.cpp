@@ -17,6 +17,7 @@ int main()
     PosixSignalHandler handler;
     handler.setSignalHandler(SIGUSR1, &handleSignal);
     handler.setSignalHandler(SIGTERM, &handleSignal);
+    handler.setSignalHandler(SIGINT, &handleSignal);
     handler.enterSignalHandlingLoop();
     return 0;
 }
