@@ -27,6 +27,10 @@ else()
     # concurrency test
     add_executable(concurrency_test concurrency_test.cpp)
     target_link_libraries(concurrency_test pthread)
+
+    # signal test
+    add_executable(signal_test signal_test.cpp)
+    target_link_libraries(signal_test antifurto_core)
 endif(CROSS_COMPILE)
 
 # cross tests

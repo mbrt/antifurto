@@ -18,6 +18,7 @@ PosixSignalHandler* instance = nullptr;
 
 PosixSignalHandler::PosixSignalHandler()
     : handlerList_(SIGRTMAX)
+    , loopRunning_(false)
 {
     if (instance)
         throw Exception("Cannot initialize signal handler multiple times");
@@ -74,7 +75,7 @@ PosixSignalHandler::~PosixSignalHandler()
 void PosixSignalHandler::clearSignalMask()
 {
     sigset_t signalMask;
-    ::sigfillset(&signalMask);
+    ::sigemptyset(&signalMask);
     if (::pthread_sigmask(SIG_BLOCK, &signalMask, NULL) != 0)
         throw Exception("Cannot block signals");
 }
