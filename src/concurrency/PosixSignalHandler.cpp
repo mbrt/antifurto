@@ -16,6 +16,7 @@ template <typename Container>
 sigset_t addToSigset(Container signs)
 {
     sigset_t result;
+    ::sigemptyset(&result);
     for (auto s : signs)
         ::sigaddset(&result, s);
     return result;
