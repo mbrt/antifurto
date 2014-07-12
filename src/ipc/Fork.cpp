@@ -1,13 +1,17 @@
 #include "Fork.hpp"
 #include "Exception.hpp"
 
+#include <cstring>
 #include <unistd.h>
+#include <signal.h>
 #include <sys/wait.h>
+
+#define USE_WAITID
 
 namespace antifurto {
 namespace ipc {
 
-int forkAndCall(std::function<int()> f)
+ChildProcess forkAndCall(std::function<int()> f)
 {
     pid_t pid = ::fork();
     if (pid == 0) {
@@ -17,13 +21,55 @@ int forkAndCall(std::function<int()> f)
     }
     else if (pid > 0) {
         // parent
-        int status;
-        ::waitpid(pid, &status, 0);
-        return WEXITSTATUS(status);
+        return ChildProcess{pid};
     }
     else
         // failure
         throw Exception("Fork failed");
+}
+
+ChildProcess::ChildProcess(pid_t pid)
+    : pid_(pid)
+{ }
+
+ChildProcess::ChildProcess(ChildProcess&& other)
+{
+    std::swap(pid_, other.pid_);
+}
+
+ChildProcess& ChildProcess::operator =(ChildProcess&& other)
+{
+    std::swap(pid_, other.pid_);
+    return *this;
+}
+
+ChildProcess::~ChildProcess()
+{
+    if (pid_ > 0)
+        wait();
+}
+
+void ChildProcess::kill(int signal)
+{
+    ::kill(pid_, signal);
+}
+
+int ChildProcess::wait()
+{
+#if defined(USE_WAITID)
+    ::siginfo_t info;
+    std::memset(&info, 0, sizeof(::siginfo_t));
+    if (::waitid(P_PID, pid_, &info, WEXITED) == -1) {
+        perror("waitid");
+        throw Exception("wait failed");
+    }
+    pid_ = 0;
+    return info.si_status;
+#else
+    int status;
+    ::waitpid(pid_, &status, 0);
+    return WEXITSTATUS(status);
+#endif
 }
 
 } // namespace ipc
