@@ -88,6 +88,7 @@ set(ANTIFURTO_COMMON_CPP
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
     src/fs/Paths.cpp
+    src/ipc/Fork.cpp
     src/ipc/Process.cpp
     src/text/ToString.cpp
     src/text/TextReplace.cpp
@@ -116,6 +117,7 @@ set(ANTIFURTO_COMMON_HPP
     src/concurrency/fwd.hpp
     src/fs/Paths.hpp
     src/ipc/Exception.hpp
+    src/ipc/Fork.hpp
     src/ipc/Process.hpp
     src/meta/Iterator.hpp
     src/meta/Metronome.hpp
