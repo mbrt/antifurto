@@ -16,7 +16,7 @@ namespace concurrency {
 class PosixSignalHandler
 {
 public:
-    PosixSignalHandler(std::initializer_list<int> signals_);
+    PosixSignalHandler(std::initializer_list<int> signs);
     PosixSignalHandler(const PosixSignalHandler& ) = delete;
     PosixSignalHandler& operator =(const PosixSignalHandler& ) = delete;
 

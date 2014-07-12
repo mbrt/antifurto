@@ -12,26 +12,24 @@ namespace antifurto {
 namespace concurrency {
 namespace { // anon
 
-// TODO: Change to typename Container and use for range
-template <typename Iterator>
-sigset_t addToSigset(Iterator it, Iterator end)
+template <typename Container>
+sigset_t addToSigset(Container signs)
 {
     sigset_t result;
-    for (; it != end; ++it)
-        ::sigaddset(&result, *it);
+    for (auto s : signs)
+        ::sigaddset(&result, s);
     return result;
 }
 
 } // anon namespace
 
-PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signals_)
+PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
     : handlerList_(SIGRTMAX)
-    , signalsToBeHandled_(signals_)
+    , signalsToBeHandled_(signs)
     , run_(false)
 {
     std::sort(std::begin(signalsToBeHandled_), std::end(signalsToBeHandled_));
-    sigset_t signalMask = addToSigset(std::begin(signalsToBeHandled_),
-                                      std::end(signalsToBeHandled_));
+    sigset_t signalMask = addToSigset(signalsToBeHandled_);
     if (::pthread_sigmask(SIG_BLOCK, &signalMask, NULL) != 0)
         throw Exception("Cannot block signals");
 }
@@ -49,9 +47,7 @@ void PosixSignalHandler::enterSignalHandlingLoop()
 {
     run_.store(true, std::memory_order_acquire);
 
-    sigset_t signalMask
-        = addToSigset(std::begin(signalsToBeHandled_),
-                      std::end(signalsToBeHandled_));
+    sigset_t signalMask = addToSigset(signalsToBeHandled_);
     signalsToBeHandled_.clear(); // signals handled not needed anymore
 
     while (run_.load(std::memory_order_release)) {
