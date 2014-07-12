@@ -1,6 +1,8 @@
 #include "PosixSignalHandler.hpp"
 
 #include <csignal>
+#include <algorithm>
+
 #include "../text/ToString.hpp"
 
 // see http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_sigmask.html
@@ -10,49 +12,49 @@ namespace antifurto {
 namespace concurrency {
 namespace { // anon
 
-PosixSignalHandler* instance = nullptr;
-
+// TODO: Change to typename Container and use for range
+template <typename Iterator>
+sigset_t addToSigset(Iterator it, Iterator end)
+{
+    sigset_t result;
+    for (; it != end; ++it)
+        ::sigaddset(&result, *it);
+    return result;
 }
 
-// anon namespace
+} // anon namespace
 
-PosixSignalHandler::PosixSignalHandler()
+PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signals_)
     : handlerList_(SIGRTMAX)
-    , loopRunning_(false)
+    , signalsToBeHandled_(signals_)
+    , run_(false)
 {
-    if (instance)
-        throw Exception("Cannot initialize signal handler multiple times");
-    instance = this;
-    clearSignalMask();
+    std::sort(std::begin(signalsToBeHandled_), std::end(signalsToBeHandled_));
+    sigset_t signalMask = addToSigset(std::begin(signalsToBeHandled_),
+                                      std::end(signalsToBeHandled_));
+    if (::pthread_sigmask(SIG_BLOCK, &signalMask, NULL) != 0)
+        throw Exception("Cannot block signals");
 }
 
 void PosixSignalHandler::setSignalHandler(int signal, Handler h)
 {
-    std::lock_guard<std::mutex> lock(handlerListM_);
-    if (loopRunning_)
-        throw Exception("Cannot set signal handler after handling started");
+    if (!std::binary_search(std::begin(signalsToBeHandled_), std::end(signalsToBeHandled_), signal))
+        throw Exception(text::toString(
+                "Cannot add signal ", signal,
+                ", as it was not specified in construction"));
     handlerList_[signal] = std::move(h);
 }
 
 void PosixSignalHandler::enterSignalHandlingLoop()
 {
-    {
-        std::lock_guard<std::mutex> lock(handlerListM_);
-        loopRunning_ = true;
-    }
+    run_.store(true, std::memory_order_acquire);
 
-    int signum = 0;
-    sigset_t signalMask;
-    ::sigemptyset(&signalMask);
-    for (auto& handler : handlerList_) {
-        if (handler)
-            ::sigaddset(&signalMask, signum);
-        ++signum;
-    }
-    if (::pthread_sigmask(SIG_SETMASK, &signalMask, NULL) != 0)
-        throw Exception("Cannot set signal mask");
+    sigset_t signalMask
+        = addToSigset(std::begin(signalsToBeHandled_),
+                      std::end(signalsToBeHandled_));
+    signalsToBeHandled_.clear(); // signals handled not needed anymore
 
-    while (true) {
+    while (run_.load(std::memory_order_release)) {
         siginfo_t info;
         if (::sigwaitinfo(&signalMask, &info) == -1)
             throw Exception("Error waiting for signal");
@@ -61,23 +63,12 @@ void PosixSignalHandler::enterSignalHandlingLoop()
         if (!h)
             throw Exception(text::toString("Unexpected signal ", signum));
         h(signum);
-        if (signum == SIGTERM || signum == SIGINT)
-            return;
     }
 }
 
-PosixSignalHandler::~PosixSignalHandler()
+void PosixSignalHandler::leaveSignalHandlingLoop()
 {
-    instance = nullptr;
-}
-
-
-void PosixSignalHandler::clearSignalMask()
-{
-    sigset_t signalMask;
-    ::sigfillset(&signalMask);
-    if (::pthread_sigmask(SIG_BLOCK, &signalMask, NULL) != 0)
-        throw Exception("Cannot block signals");
+    run_.store(false, std::memory_order_acquire);
 }
 
 } // namespace concurrency

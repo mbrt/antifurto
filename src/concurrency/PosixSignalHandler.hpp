@@ -4,20 +4,19 @@
 
 #include <functional>
 #include <vector>
-#include <mutex>
+#include <atomic>
 
 namespace antifurto {
 namespace concurrency {
 
 /// This class handles Linux signals
 ///
-/// Note that the class must be initialized as first instruction of the main
-/// and the enterSignalHandlingLoop function must be called at last.
+/// Note that the class must be initialized before any thread creation.
+/// Before the call to enterSignalHandlingLoop, no signals are handled.
 class PosixSignalHandler
 {
 public:
-    PosixSignalHandler();
-    ~PosixSignalHandler();
+    PosixSignalHandler(std::initializer_list<int> signals_);
     PosixSignalHandler(const PosixSignalHandler& ) = delete;
     PosixSignalHandler& operator =(const PosixSignalHandler& ) = delete;
 
@@ -25,13 +24,12 @@ public:
 
     void setSignalHandler(int signal, Handler h);
     void enterSignalHandlingLoop();
+    void leaveSignalHandlingLoop();
 
 private:
-    void clearSignalMask();
-
-    std::mutex handlerListM_;
     std::vector<Handler> handlerList_;
-    bool loopRunning_;
+    std::vector<int> signalsToBeHandled_;
+    std::atomic<bool> run_;
 };
 
 } // namespace concurrency

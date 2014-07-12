@@ -14,10 +14,16 @@ void handleSignal(int sig)
 
 int main()
 {
-    PosixSignalHandler handler;
+    PosixSignalHandler handler{SIGUSR1, SIGTERM, SIGINT};
     handler.setSignalHandler(SIGUSR1, &handleSignal);
-    handler.setSignalHandler(SIGTERM, &handleSignal);
-    handler.setSignalHandler(SIGINT, &handleSignal);
+    handler.setSignalHandler(SIGTERM, [&](int signal){
+        handleSignal(signal);
+        handler.leaveSignalHandlingLoop();
+    });
+    handler.setSignalHandler(SIGINT, [&](int signal){
+        handleSignal(signal);
+        handler.leaveSignalHandlingLoop();
+    });
     handler.enterSignalHandlingLoop();
     return 0;
 }
