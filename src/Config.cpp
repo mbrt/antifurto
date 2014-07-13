@@ -108,7 +108,8 @@ private:
         // config file
         po::options_description config("Configuration");
         config.add_options()
-            ("startup-timeout", po::value<unsigned int>())
+            ("startup-timeout", po::value<unsigned int>(),
+             "seconds before start monitoring")
             ("recording.arhive-dir", po::value<std::string>(),
              "picture archive directory")
             ("recording.max-days", po::value<unsigned int>(),
