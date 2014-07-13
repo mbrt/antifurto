@@ -59,6 +59,7 @@ void forkTest()
 void termTest()
 {
     ipc::ChildProcess c = ipc::forkAndCall(termChild);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     c.kill(SIGUSR1);
     c.kill(SIGTERM);
     int res = c.wait();
@@ -91,10 +92,10 @@ void threadsTest()
 void signalHandledTest()
 {
     ipc::ChildProcess c = ipc::forkAndCall(termChild);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     c.kill(SIGUSR2);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     c.kill(SIGTERM);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     int result = c.wait();
     CHECK(result != 0);
 }
