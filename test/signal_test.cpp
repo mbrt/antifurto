@@ -100,6 +100,48 @@ void signalHandledTest()
     CHECK(result != 0);
 }
 
+struct Handler
+{
+    Handler(int signal)
+        : signal(signal), received(-1)
+    { }
+
+    void operator()()
+    {
+        PosixSignalHandler handler{signal};
+        handler.setSignalHandler(signal, [&](int sig){
+            received = sig;
+            handler.leaveSignalHandlingLoop();
+        });
+        handler.enterSignalHandlingLoop();
+    }
+
+    int signal;
+    int received;
+};
+
+int multiHandlerProc()
+{
+    Handler h1{SIGUSR1};
+    std::thread t{[&]{
+        h1();
+    }};
+    Handler h2{SIGUSR2};
+    h2();
+    t.join();
+    return h1.received == SIGUSR1 && h2.received == SIGUSR2;
+}
+
+void multiHandlerTest()
+{
+    ipc::ChildProcess p = ipc::forkAndCall(multiHandlerProc);
+    std::this_thread::sleep_for(std::chrono::milliseconds(60));
+    p.kill(SIGUSR1);
+    p.kill(SIGUSR2);
+    int result = p.wait();
+    CHECK(result != 0);
+}
+
 int main(int argc, char**)
 {
     if (argc > 1) {
@@ -109,5 +151,6 @@ int main(int argc, char**)
     termTest();
     threadsTest();
     signalHandledTest();
+    multiHandlerTest();
     return 0;
 }
