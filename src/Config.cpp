@@ -15,6 +15,7 @@ Configuration::Configuration()
     log.dir = config::logDir();
     recording.maxDays = config::maxArchiveDays();
     recording.archiveDir = config::archiveDir();
+    startupTimeout = std::chrono::seconds(5);
 }
 
 
@@ -54,6 +55,7 @@ public:
         Configuration::Whatsapp& whatsapp = config_.whatsapp;
         Configuration::Dropbox& dropbox = config_.dropbox;
 
+        storeOptionOrDefault("startupTimeout", config_.startupTimeout);
         storeOptionOrDefault("recording.archive-dir", rec.archiveDir);
         storeOptionOrDefault("recording.max-days", rec.maxDays);
         storeOptionOrDefault("log.level", log.level);
@@ -106,6 +108,7 @@ private:
         // config file
         po::options_description config("Configuration");
         config.add_options()
+            ("startup-timeout", po::value<unsigned int>())
             ("recording.arhive-dir", po::value<std::string>(),
              "picture archive directory")
             ("recording.max-days", po::value<unsigned int>(),

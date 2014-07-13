@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 namespace antifurto {
 
@@ -38,6 +39,7 @@ public:
         std::string archiveDir;
     };
 
+    std::chrono::seconds startupTimeout;
     Whatsapp whatsapp;
     Dropbox dropbox;
     Log log;

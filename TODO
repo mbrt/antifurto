@@ -22,4 +22,3 @@ TODO LIST
   http://www.cmake.org/Wiki/CMake_Useful_Variables
 - Optimizations
   - current bottlenek is cv::MatConstIterator::operator++()
-- Initial timeout before start monitoring configurable

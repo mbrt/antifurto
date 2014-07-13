@@ -29,7 +29,6 @@ int main(int argc, char* argv[])
 
         initLogger(parser.getConfiguration());
         LOG_INFO << "Init of antifurto";
-        std::this_thread::sleep_for(std::chrono::seconds(5));
         MonitorController controller(parser.getConfiguration());
         controller.performMaintenance();
         controller.startMonitor();

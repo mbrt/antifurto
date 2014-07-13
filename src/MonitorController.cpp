@@ -20,6 +20,7 @@ public:
         : metronome_(config::monitorCycleDuration())
         , recording_(c, motionDetector_, scheduler_)
         , notification_(c, motionDetector_)
+        , startupTimeout_(c.startupTimeout)
         , running_(true)
     {
         motionDetector_.addObserver([this](MotionDetector::State s) {
@@ -40,8 +41,11 @@ public:
 
     void startMonitor()
     {
-        LOG_INFO << "Monitoring started";
-        loopThread_ = std::thread([this]{ monitor(); });
+        loopThread_ = std::thread([this]{
+            std::this_thread::sleep_for(startupTimeout_);
+            LOG_INFO << "Monitoring started";
+            monitor();
+        });
     }
 
 private:
@@ -81,6 +85,7 @@ private:
     Metronome metronome_;
     RecordingController recording_;
     NotificationController notification_;
+    std::chrono::seconds startupTimeout_;
     bool running_;
     std::thread loopThread_;
 };
