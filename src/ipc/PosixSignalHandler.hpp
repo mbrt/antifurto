@@ -7,7 +7,7 @@
 #include <atomic>
 
 namespace antifurto {
-namespace concurrency {
+namespace ipc {
 
 /// This class handles Linux signals
 ///
@@ -32,5 +32,5 @@ private:
     std::atomic<bool> run_;
 };
 
-} // namespace concurrency
+} // namespace ipc
 } // namespace antifurto

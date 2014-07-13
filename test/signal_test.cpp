@@ -1,4 +1,4 @@
-#include "concurrency/PosixSignalHandler.hpp"
+#include "ipc/PosixSignalHandler.hpp"
 #include "ipc/Fork.hpp"
 
 #include <iostream>
@@ -6,7 +6,7 @@
 #include <signal.h>
 
 using namespace antifurto;
-using namespace antifurto::concurrency;
+using namespace antifurto::ipc;
 
 // NOTE: Cannot use boost test as it uses execution monitor (not signal friendly)
 void check(bool pred, const char* file, int line)
@@ -132,6 +132,7 @@ int multiHandlerProc()
     return h1.received == SIGUSR1 && h2.received == SIGUSR2;
 }
 
+// test if two different handlers can live together
 void multiHandlerTest()
 {
     ipc::ChildProcess p = ipc::forkAndCall(multiHandlerProc);

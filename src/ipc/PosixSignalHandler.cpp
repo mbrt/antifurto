@@ -9,7 +9,7 @@
 // for an implementation example
 
 namespace antifurto {
-namespace concurrency {
+namespace ipc {
 namespace { // anon
 
 template <typename Container>
@@ -68,5 +68,5 @@ void PosixSignalHandler::leaveSignalHandlingLoop()
     run_.store(false, std::memory_order_acquire);
 }
 
-} // namespace concurrency
+} // namespace ipc
 } // namespace antifurto
