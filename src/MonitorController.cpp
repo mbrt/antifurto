@@ -40,6 +40,7 @@ public:
 
     void startMonitor()
     {
+        LOG_INFO << "Monitoring started";
         loopThread_ = std::thread([this]{ monitor(); });
     }
 
