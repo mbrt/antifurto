@@ -88,6 +88,7 @@ set(ANTIFURTO_COMMON_CPP
     src/concurrency/TimeUtility.cpp
     src/fs/Paths.cpp
     src/ipc/Fork.cpp
+    src/ipc/NamedPipe.cpp
     src/ipc/PosixSignalHandler.cpp
     src/ipc/Process.cpp
     src/text/ToString.cpp
@@ -117,6 +118,7 @@ set(ANTIFURTO_COMMON_HPP
     src/fs/Paths.hpp
     src/ipc/Exception.hpp
     src/ipc/Fork.hpp
+    src/ipc/NamedPipe.hpp
     src/ipc/PosixSignalHandler.hpp
     src/ipc/Process.hpp
     src/meta/Iterator.hpp
