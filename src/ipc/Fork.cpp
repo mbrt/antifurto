@@ -45,8 +45,11 @@ ChildProcess& ChildProcess::operator =(ChildProcess&& other)
 
 ChildProcess::~ChildProcess()
 {
-    if (pid_ > 0)
-        wait();
+    try {
+        if (pid_ > 0)
+            wait();
+    }
+    catch (...) { }
 }
 
 void ChildProcess::kill(int signal)
