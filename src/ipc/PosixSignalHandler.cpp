@@ -46,12 +46,12 @@ void PosixSignalHandler::setSignalHandler(int signal, Handler h)
 
 void PosixSignalHandler::enterSignalHandlingLoop()
 {
-    run_.store(true, std::memory_order_acquire);
+    run_.store(true, std::memory_order_seq_cst);
 
     sigset_t signalMask = addToSigset(signalsToBeHandled_);
     signalsToBeHandled_.clear(); // signals handled not needed anymore
 
-    while (run_.load(std::memory_order_release)) {
+    while (run_.load(std::memory_order_acquire)) {
         siginfo_t info;
         if (::sigwaitinfo(&signalMask, &info) == -1)
             throw Exception("Error waiting for signal");
@@ -65,7 +65,7 @@ void PosixSignalHandler::enterSignalHandlingLoop()
 
 void PosixSignalHandler::leaveSignalHandlingLoop()
 {
-    run_.store(false, std::memory_order_acquire);
+    run_.store(false, std::memory_order_release);
 }
 
 } // namespace ipc
