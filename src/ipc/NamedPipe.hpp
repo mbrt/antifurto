@@ -20,8 +20,7 @@ public:
     { other.filename_.clear(); }
 
     NamedPipe& operator =(NamedPipe&& other) noexcept {
-        filename_ = std::move(other.filename_);
-        other.filename_.clear();
+        std::swap(filename_, other.filename_);
         return *this;
     }
 
