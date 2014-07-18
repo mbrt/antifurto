@@ -2,6 +2,8 @@
 #include <cassert>
 #include <functional>
 #include <thread>
+#include <fstream>
+#include <future>
 
 #include "CvCamera.hpp"
 #include "MotionDetector.hpp"
@@ -11,11 +13,15 @@
 #include "concurrency/TaskScheduler.hpp"
 #include "concurrency/TimeUtility.hpp"
 #include "text/ToString.hpp"
+#include "ipc/NamedPipe.hpp"
+
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace antifurto;
+namespace bfs = boost::filesystem;
 
 
 struct test_error : public std::runtime_error
@@ -236,4 +242,32 @@ BOOST_AUTO_TEST_CASE(timeOps)
     std::cout << "Now: " << text::toString(std::chrono::system_clock::now())
               << "\nTomorrow: " << text::toString(concurrency::tomorrow())
               << std::endl;
+}
+
+std::string readFileContents(const char* name)
+{
+    std::ifstream f{name};
+    std::string result;
+    std::getline(f, result);
+    return result;
+}
+
+void writeToFile(const char* name, const char* contents)
+{
+    std::ofstream f{name};
+    f << contents << std::endl;
+}
+
+BOOST_AUTO_TEST_CASE(namedPipe)
+{
+    const char* filename = "/tmp/tmppipe";
+    BOOST_CHECK(!bfs::exists(filename));
+    {
+        ipc::NamedPipe pipe{filename};
+        BOOST_CHECK(bfs::exists(filename));
+        auto res = std::async(std::launch::async, readFileContents, filename);
+        writeToFile(filename, "try to write");
+        BOOST_CHECK_EQUAL(res.get(), "try to write");
+    }
+    BOOST_CHECK(!bfs::exists(filename));
 }

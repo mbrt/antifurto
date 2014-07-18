@@ -46,7 +46,7 @@ void PosixSignalHandler::setSignalHandler(int signal, Handler h)
 
 void PosixSignalHandler::enterSignalHandlingLoop()
 {
-    run_.store(true, std::memory_order_seq_cst);
+    run_.store(true, std::memory_order_release);
 
     sigset_t signalMask = addToSigset(signalsToBeHandled_);
     signalsToBeHandled_.clear(); // signals handled not needed anymore
