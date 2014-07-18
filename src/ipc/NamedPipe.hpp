@@ -10,6 +10,17 @@ class NamedPipe
 public:
     NamedPipe() {}
     NamedPipe(std::string filename);
+
+    NamedPipe(NamedPipe&& other) noexcept
+        : filename_(std::move(other.filename_))
+    { other.filename_.clear(); }
+
+    NamedPipe& operator =(NamedPipe&& other) noexcept {
+        filename_ = std::move(other.filename_);
+        other.filename_.clear();
+        return *this;
+    }
+
     ~NamedPipe();
 
     NamedPipe(const NamedPipe& ) = delete;
