@@ -66,10 +66,10 @@ private:
 
         switch (state) {
         case State::NO_ALARM:
-            metronome_ = Metronome(config::monitorCycleDuration());
+            metronome_ = Metronome{config::monitorCycleDuration()};
             break;
         case State::PRE_ALARM:
-            metronome_ = Metronome(config::monitorCycleDurationOnAlarm());
+            metronome_ = Metronome{config::monitorCycleDurationOnAlarm()};
             break;
         default:
             break;

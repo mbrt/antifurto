@@ -1,7 +1,6 @@
 #pragma once
 
 #include "meta/SmartPtr.hpp"
-#include "concurrency/fwd.hpp"
 
 namespace antifurto {
 
