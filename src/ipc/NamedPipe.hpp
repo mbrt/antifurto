@@ -5,6 +5,10 @@
 namespace antifurto {
 namespace ipc {
 
+/// This class allows to create a named pipe under Linux.
+///
+/// The constructor creates the pipe with the given filename, the distructor
+/// removes it.
 class NamedPipe
 {
 public:

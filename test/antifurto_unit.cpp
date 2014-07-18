@@ -14,6 +14,7 @@
 #include "concurrency/TimeUtility.hpp"
 #include "text/ToString.hpp"
 #include "ipc/NamedPipe.hpp"
+#include "meta/Observer.hpp"
 
 
 #define BOOST_TEST_MODULE unit
@@ -270,4 +271,14 @@ BOOST_AUTO_TEST_CASE(namedPipe)
         BOOST_CHECK_EQUAL(res.get(), "try to write");
     }
     BOOST_CHECK(!bfs::exists(filename));
+}
+
+BOOST_AUTO_TEST_CASE(observer)
+{
+    meta::Subject<void(int, int)> subject;
+    int a = 0, b = 0;
+    subject.registerObserver([&](int x, int y){ a = x; b = y; });
+    subject.notify(5, 7);
+    BOOST_CHECK_EQUAL(a, 5);
+    BOOST_CHECK_EQUAL(b, 7);
 }

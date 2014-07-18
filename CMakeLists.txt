@@ -123,6 +123,7 @@ set(ANTIFURTO_COMMON_HPP
     src/ipc/Process.hpp
     src/meta/Iterator.hpp
     src/meta/Metronome.hpp
+    src/meta/Observer.hpp
     src/meta/SmartPtr.hpp
     src/meta/TypeTraits.hpp
     src/text/ToString.hpp
