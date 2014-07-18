@@ -275,10 +275,15 @@ BOOST_AUTO_TEST_CASE(namedPipe)
 
 BOOST_AUTO_TEST_CASE(observer)
 {
-    meta::Subject<void(int, int)> subject;
+    meta::Subject<int, int> subject;
     int a = 0, b = 0;
-    subject.registerObserver([&](int x, int y){ a = x; b = y; });
-    subject.notify(5, 7);
+    {
+        auto reg = subject.registerObserver([&](int x, int y){ a = x; b = y; });
+        subject.notify(5, 7);
+        BOOST_CHECK_EQUAL(a, 5);
+        BOOST_CHECK_EQUAL(b, 7);
+    }
+    subject.notify(1, 2);
     BOOST_CHECK_EQUAL(a, 5);
     BOOST_CHECK_EQUAL(b, 7);
 }
