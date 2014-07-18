@@ -10,19 +10,19 @@ namespace meta {
 namespace detail {
 
 template <typename Subject>
-class RegistrationToken
+class SubjectRegistration
 {
 public:
-    RegistrationToken() : subject_(nullptr) { }
+    SubjectRegistration() : subject_(nullptr) { }
 
-    RegistrationToken(Subject& subject, typename Subject::Id id)
+    SubjectRegistration(Subject& subject, typename Subject::Id id)
         : subject_(&subject), id_(id) { }
 
-    RegistrationToken(RegistrationToken&& other) noexcept
+    SubjectRegistration(SubjectRegistration&& other) noexcept
         : subject_(other.subject_), id_(other.id_)
     { other.subject_ = nullptr; }
 
-    RegistrationToken& operator= (RegistrationToken&& other) noexcept
+    SubjectRegistration& operator= (SubjectRegistration&& other) noexcept
     {
         std::swap(subject_, other.subject_);
         std::swap(id_, other.id_);
@@ -35,10 +35,10 @@ public:
         subject_ = nullptr;
     }
 
-    RegistrationToken(const RegistrationToken& ) = delete;
-    RegistrationToken& operator =(const RegistrationToken& ) = delete;
+    SubjectRegistration(const SubjectRegistration& ) = delete;
+    SubjectRegistration& operator =(const SubjectRegistration& ) = delete;
 
-    ~RegistrationToken() {
+    ~SubjectRegistration() {
         try {
             clear();
         }
@@ -60,7 +60,7 @@ class Subject
 public:
     using Observer = std::function<void(Params...)>;
     using Id = std::size_t;
-    using Registration = detail::RegistrationToken<Subject<Params...>>;
+    using Registration = detail::SubjectRegistration<Subject<Params...>>;
 
     /// Register an observer
     Registration registerObserver(Observer o) {
@@ -69,6 +69,7 @@ public:
         return { *this, nextFreeId_++ };
     }
 
+    /// Unregister an observer
     bool unregisterObserver(Id id) {
         std::lock_guard<std::mutex> lock(listM_);
         auto it = observers_.begin();
@@ -88,7 +89,11 @@ public:
         // register or unregister inside their callback
         std::lock_guard<std::mutex> lock(listM_);
         for (auto& item : observers_)
-            item.observer(std::forward<Params>(params)...);
+            // no forward here, because if params is an rvalue and observer
+            // register itself with a function that takes rvalues, the first
+            // call move the param into the observer, and the second... gets a
+            // moved out value
+            item.observer(params...);
     }
 
 private:
