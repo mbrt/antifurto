@@ -21,4 +21,7 @@ TODO LIST
   see: CMAKE_CONFIGURATION_TYPES in
   http://www.cmake.org/Wiki/CMake_Useful_Variables
 - Optimizations
-  - current bottlenek is cv::MatConstIterator::operator++()
+  - current bottleneks are cv::MatConstIterator::operator++() and
+    countMotionPixels()
+- Port CameraController to use TaskScheduler
+  - to do this, a cancellation token for a Task is needed

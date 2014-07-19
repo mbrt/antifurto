@@ -64,12 +64,20 @@ public:
 
     /// Register an observer
     Registration registerObserver(Observer o) {
+        std::size_t ignored;
+        return registerObserver(o, ignored);
+    }
+
+    /// Register an observer and returns the number of observers
+    Registration registerObserver(Observer o, std::size_t& numObservers) {
         std::lock_guard<std::mutex> lock(listM_);
         observers_.emplace_back(nextFreeId_, std::move(o));
+        numObservers = observers_.size();
         return { *this, nextFreeId_++ };
     }
 
     /// Unregister an observer
+    /// @return true if the observer has been succesfully unregistered
     bool unregisterObserver(Id id) {
         std::lock_guard<std::mutex> lock(listM_);
         auto it = observers_.begin();
@@ -84,16 +92,19 @@ public:
     }
 
     /// Notify to all observers
-    void notify(Params&&... params) {
+    /// @return true if some observer has been notified, false otherwise
+    bool notify(Params... params) {
         // WARNING: this could lead to deadlocks if observers tries to
         // register or unregister inside their callback
         std::lock_guard<std::mutex> lock(listM_);
         for (auto& item : observers_)
-            // no forward here, because if params is an rvalue and observer
-            // register itself with a function that takes rvalues, the first
-            // call move the param into the observer, and the second... gets a
-            // moved out value
             item.observer(params...);
+        return !observers_.empty();
+    }
+
+    bool hasObservers() const {
+        std::lock_guard<std::mutex> lock(listM_);
+        return !observers_.empty();
     }
 
 private:
@@ -109,7 +120,7 @@ private:
     using ObserverList = std::vector<ObserverItem>;
     ObserverList observers_;
     Id nextFreeId_ = 0;
-    std::mutex listM_;
+    mutable std::mutex listM_;
 };
 
 } // namespace meta
