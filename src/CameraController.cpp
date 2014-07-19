@@ -25,7 +25,9 @@ void CameraController::setPeriod(std::chrono::milliseconds period)
 auto CameraController::
 addObserver(Observer observer) -> Registration
 {
-    return subject_.registerObserver(std::move(observer));
+    auto registration = subject_.registerObserver(std::move(observer));
+    cv_.notify_one();
+    return registration;
 }
 
 void CameraController::controllerLoop()

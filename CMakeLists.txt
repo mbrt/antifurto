@@ -73,6 +73,7 @@ set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
 
 # common files
 set(ANTIFURTO_COMMON_CPP
+    src/Antifurto.cpp
     src/CameraController.cpp
     src/Config.cpp
     src/DropboxUploader.cpp
@@ -96,6 +97,7 @@ set(ANTIFURTO_COMMON_CPP
     src/text/TextReplace.cpp
 )
 set(ANTIFURTO_COMMON_HPP
+    src/Antifurto.hpp
     src/Camera.hpp
     src/CameraController.hpp
     src/Config.hpp

@@ -21,6 +21,7 @@ using Milliseconds = std::chrono::milliseconds;
 using Minutes = std::chrono::minutes;
 constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
 constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 }; }
+constexpr Milliseconds liveViewCycleDuration() { return Milliseconds{ 200 }; }
 constexpr Minutes minNotificationDelay() { return Minutes{ 10 }; }
 
 std::string exeDir();

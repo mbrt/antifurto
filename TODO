@@ -23,5 +23,11 @@ TODO LIST
 - Optimizations
   - current bottleneks are cv::MatConstIterator::operator++() and
     countMotionPixels()
-- Port CameraController to use TaskScheduler
-  - to do this, a cancellation token for a Task is needed
+- Refactor of CameraController
+  - Port CameraController to use TaskScheduler
+    to do this, a cancellation token for a Task is needed
+  - the setPeriod should take the Registration as parameter, so the period
+    becomes the min of all the periods
+- Use two TaskScheduler
+  - one only for the pictures cycle
+  - one for all the long running tasks

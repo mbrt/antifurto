@@ -1,4 +1,4 @@
-#include "MonitorController.hpp"
+#include "Antifurto.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 #include "Log.hpp"
@@ -29,9 +29,8 @@ int main(int argc, char* argv[])
 
         initLogger(parser.getConfiguration());
         LOG_INFO << "Init of antifurto";
-        MonitorController controller(parser.getConfiguration());
-        controller.performMaintenance();
-        controller.startMonitor();
+        Antifurto app{parser.getConfiguration()};
+        app.startMonitoring();
 
         signalHandler.enterSignalHandlingLoop();
     }
