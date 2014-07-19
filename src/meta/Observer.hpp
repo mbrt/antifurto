@@ -35,6 +35,10 @@ public:
         subject_ = nullptr;
     }
 
+    typename Subject::Id getId() const {
+        return id_;
+    }
+
     SubjectRegistration(const SubjectRegistration& ) = delete;
     SubjectRegistration& operator =(const SubjectRegistration& ) = delete;
 
@@ -61,6 +65,7 @@ public:
     using Observer = std::function<void(Params...)>;
     using Id = std::size_t;
     using Registration = detail::SubjectRegistration<Subject<Params...>>;
+    using UnregistrationHandler = std::function<void(Id)>;
 
     /// Register an observer
     Registration registerObserver(Observer o) {
@@ -79,15 +84,19 @@ public:
     /// Unregister an observer
     /// @return true if the observer has been succesfully unregistered
     bool unregisterObserver(Id id) {
-        std::lock_guard<std::mutex> lock(listM_);
-        auto it = observers_.begin();
-        for (auto end = observers_.end(); it != end; ++it) {
-            if (it->id == id)
-                break;
+        {
+            std::lock_guard<std::mutex> lock(listM_);
+            auto it = observers_.begin();
+            for (auto end = observers_.end(); it != end; ++it) {
+                if (it->id == id)
+                    break;
+            }
+            if (it == observers_.end()) return false;
+            std::swap(*it, observers_.back());
+            observers_.pop_back();
         }
-        if (it == observers_.end()) return false;
-        std::swap(*it, observers_.back());
-        observers_.pop_back();
+        if (unregHandler_)
+            unregHandler_(id);
         return true;
     }
 
@@ -107,6 +116,12 @@ public:
         return !observers_.empty();
     }
 
+    /// Set the handler that will be called whenever an observer unregister
+    /// itself
+    void setUnregistrationHandler(UnregistrationHandler h) {
+        unregHandler_ = std::move(h);
+    }
+
 private:
     struct ObserverItem {
         Id id;
@@ -120,6 +135,7 @@ private:
     using ObserverList = std::vector<ObserverItem>;
     ObserverList observers_;
     Id nextFreeId_ = 0;
+    UnregistrationHandler unregHandler_;
     mutable std::mutex listM_;
 };
 

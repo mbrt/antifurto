@@ -33,7 +33,8 @@ public:
         setMonitorPeriod(config::monitorCycleDuration());
         monitor_.reset(new MonitorController{config_, setPeriodFunction_});
         monitorRegistration_ = camera_.addObserver([&](const Picture& p){
-            monitor_->examinePicture(p); });
+            monitor_->examinePicture(p); },
+            config::monitorCycleDuration());
     }
 
     void stopMonitoring()
@@ -48,7 +49,7 @@ public:
 private:
     void setMonitorPeriod(std::chrono::milliseconds t)
     {
-        camera_.setPeriod(t);
+        camera_.setDesiredPeriod(monitorRegistration_, t);
     }
 
     Configuration config_;
