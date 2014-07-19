@@ -2,6 +2,7 @@
 
 #include "StaticConfig.hpp"
 #include "meta/Observer.hpp"
+#include "meta/Metronome.hpp"
 
 #include <chrono>
 
@@ -15,6 +16,8 @@ public:
     using Observer = Subject::Observer;
     using Registration = Subject::Registration;
 
+    CameraController();
+
     /// Set the rate at wich the pictures has to be taken
     void setPeriod(std::chrono::milliseconds period);
 
@@ -23,6 +26,7 @@ public:
 
 private:
     config::Camera camera_;
+    meta::DefaultMetronome metronome_;
 };
 
 } // namespace antifurto
