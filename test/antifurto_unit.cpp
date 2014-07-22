@@ -10,6 +10,7 @@
 #include "PictureArchive.hpp"
 #include "RecordingController.hpp"
 #include "Config.hpp"
+#include "CameraController.hpp"
 #include "concurrency/TaskScheduler.hpp"
 #include "concurrency/TimeUtility.hpp"
 #include "text/ToString.hpp"
@@ -286,4 +287,45 @@ BOOST_AUTO_TEST_CASE(observer)
     subject.notify(1, 2);
     BOOST_CHECK_EQUAL(a, 5);
     BOOST_CHECK_EQUAL(b, 7);
+}
+
+struct CameraObserver
+{
+    CameraObserver()
+        : start(std::chrono::system_clock::now())
+    { }
+
+    void operator()(const Picture&) {
+        using namespace std::chrono;
+        called = true;
+        auto now = system_clock::now();
+        lastPeriod = duration_cast<milliseconds>(now - start);
+        std::cout << "last period: " << lastPeriod.count() << std::endl;
+        start = now;
+    }
+
+    std::chrono::system_clock::time_point start;
+    std::chrono::milliseconds lastPeriod;
+    bool called = false;
+};
+
+template <typename T>
+bool checkDuration(T actual, T expected, T tolerance = T{30})
+{
+    return expected - tolerance < actual
+            && actual < expected + tolerance;
+}
+
+BOOST_AUTO_TEST_CASE(cameraController)
+{
+    using Milli = std::chrono::milliseconds;
+    Milli max_milli{std::numeric_limits<int>::max()};
+    BOOST_CHECK(std::min(max_milli, Milli(100)) == Milli(100));
+
+    CameraController controller;
+    CameraObserver o1;
+    auto reg = controller.addObserver(std::ref(o1), Milli(100));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    BOOST_CHECK(o1.called);
+    BOOST_CHECK(checkDuration(o1.lastPeriod, Milli(100)));
 }

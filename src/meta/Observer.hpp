@@ -70,7 +70,7 @@ public:
     /// Register an observer
     Registration registerObserver(Observer o) {
         std::size_t ignored;
-        return registerObserver(o, ignored);
+        return registerObserver(std::move(o), ignored);
     }
 
     /// Register an observer and returns the number of observers

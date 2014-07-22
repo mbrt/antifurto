@@ -47,7 +47,11 @@ auto CameraController::
 addObserver(Observer observer, Period desiredPeriod) -> Registration
 {
     auto registration = subject_.registerObserver(std::move(observer));
-    addToDesiredPeriods(registration.getId(), desiredPeriod);
+    {
+        std::lock_guard<std::mutex> lock(desiredPeriodsM_);
+        addToDesiredPeriods(registration.getId(), desiredPeriod);
+        updatePeriodFromDesired();
+    }
     cv_.notify_one();
     return registration;
 }
@@ -92,7 +96,7 @@ void CameraController::removeFromDesiredPeriods(Subject::Id id)
 
 void CameraController::updatePeriodFromDesired()
 {
-    Period result = std::numeric_limits<Period>::max();
+    Period result{std::numeric_limits<int>::max()};
     for (auto& p : desiredPeriods_) {
         result = std::min(p.period, result);
     }
