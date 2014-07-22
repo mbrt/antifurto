@@ -45,13 +45,13 @@ public:
     SpScQueue(F workFunction = F())
         : working_(ATOMIC_FLAG_INIT), done_(false), semaphore_(0)
         , workFunc_(std::move(workFunction))
-        , worker_([this]{ work(); })
+        , worker_(&SpScQueue<T, F, Capacity>::work, this)
 #else
     SpScQueue(F workFunction = F(), std::size_t queueSize = defaultCapacity())
         : working_(ATOMIC_FLAG_INIT), done_(false), semaphore_(0)
         , queue_(queueSize)
         , workFunc_(std::move(workFunction))
-        , worker_([this]{ work(); })
+        , worker_(&SpScQueue<T, F>::work, this)
 #endif
     { }
 

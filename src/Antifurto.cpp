@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "CameraController.hpp"
 #include "MonitorController.hpp"
+#include "Log.hpp"
 
 #include <memory>
 
@@ -30,6 +31,7 @@ public:
         // TODO: better to use another method here, because the caller to
         // start must wait for the timeout
         std::this_thread::sleep_for(config_.startupTimeout);
+        LOG_INFO << "Monitoring started";
         setMonitorPeriod(config::monitorCycleDuration());
         monitor_.reset(new MonitorController{config_, setPeriodFunction_});
         monitorRegistration_ = camera_.addObserver([&](const Picture& p){
@@ -39,8 +41,10 @@ public:
 
     void stopMonitoring()
     {
+        LOG_INFO << "Stopping monitoring";
         monitorRegistration_.clear();
         monitor_.reset();
+        LOG_INFO << "Monitoring stopped";
     }
 
     void startLiveView(){}

@@ -5,7 +5,7 @@ namespace concurrency {
 
 TaskScheduler::TaskScheduler()
     : done_(false)
-    , thread_([this]{ schedulerLoop(); })
+    , thread_(&TaskScheduler::schedulerLoop, this)
 { }
 
 TaskScheduler::~TaskScheduler()
