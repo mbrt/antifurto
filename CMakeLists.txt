@@ -78,6 +78,7 @@ set(ANTIFURTO_COMMON_CPP
     src/Config.cpp
     src/DropboxUploader.cpp
     src/Environment.cpp
+    src/LiveView.cpp
     src/Log.cpp
     src/MonitorController.cpp
     src/MotionDetector.cpp
@@ -88,7 +89,6 @@ set(ANTIFURTO_COMMON_CPP
     src/WhatsappNotifier.cpp
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
-    src/fs/Paths.cpp
     src/ipc/Fork.cpp
     src/ipc/NamedPipe.cpp
     src/ipc/PosixSignalHandler.cpp
@@ -104,6 +104,7 @@ set(ANTIFURTO_COMMON_HPP
     src/DropboxUploader.hpp
     src/Environment.hpp
     src/Exception.hpp
+    src/LiveView.hpp
     src/Log.hpp
     src/MonitorController.hpp
     src/MotionDetector.hpp

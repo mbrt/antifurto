@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "CameraController.hpp"
 #include "MonitorController.hpp"
+#include "LiveView.hpp"
 #include "Log.hpp"
 
 #include <memory>
@@ -32,11 +33,10 @@ public:
         // start must wait for the timeout
         std::this_thread::sleep_for(config_.startupTimeout);
         LOG_INFO << "Monitoring started";
-        setMonitorPeriod(config::monitorCycleDuration());
         monitor_.reset(new MonitorController{config_, setPeriodFunction_});
         monitorRegistration_ = camera_.addObserver([&](const Picture& p){
-            monitor_->examinePicture(p); },
-            config::monitorCycleDuration());
+            monitor_->examinePicture(p);
+        }, config::monitorCycleDuration());
     }
 
     void stopMonitoring()
@@ -47,8 +47,24 @@ public:
         LOG_INFO << "Monitoring stopped";
     }
 
-    void startLiveView(){}
-    void stopLiveView(){}
+    void startLiveView()
+    {
+        LOG_INFO << "Start live view";
+        setMonitorPeriod(config::liveViewCycleDuration());
+        liveView_.reset(new LiveView("/tmp/antifurto/live", 3));
+        liveViewRegistration_ = camera_.addObserver([&](const Picture& p){
+            liveView_->addPicture(p);
+        }, config::liveViewCycleDuration());
+    }
+
+    void stopLiveView()
+    {
+        LOG_INFO << "Stopping live view";
+        liveViewRegistration_.clear();
+        liveView_.reset();
+        LOG_INFO << "Live view stopped";
+
+    }
 
 private:
     void setMonitorPeriod(std::chrono::milliseconds t)
@@ -61,6 +77,8 @@ private:
     std::unique_ptr<MonitorController> monitor_;
     MonitorController::SetPicturesInterval setPeriodFunction_;
     CameraController::Registration monitorRegistration_;
+    std::unique_ptr<LiveView> liveView_;
+    CameraController::Registration liveViewRegistration_;
 };
 
 
