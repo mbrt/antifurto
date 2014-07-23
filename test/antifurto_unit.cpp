@@ -11,6 +11,7 @@
 #include "RecordingController.hpp"
 #include "Config.hpp"
 #include "CameraController.hpp"
+#include "LiveView.hpp"
 #include "concurrency/TaskScheduler.hpp"
 #include "concurrency/TimeUtility.hpp"
 #include "text/ToString.hpp"
@@ -328,4 +329,26 @@ BOOST_AUTO_TEST_CASE(cameraController)
     std::this_thread::sleep_for(std::chrono::seconds(2));
     BOOST_CHECK(o1.called);
     BOOST_CHECK(checkDuration(o1.lastPeriod, Milli(100)));
+}
+
+BOOST_AUTO_TEST_CASE(liveView)
+{
+    config::Camera camera;
+    LiveView liveView{ "/tmp/antifurto/testlive", 3 };
+    auto res = std::async(std::launch::async, [&] {
+        std::vector<uint8_t> img;
+        for (int i = 0; i < 5; ++i)
+        {
+            std::ifstream f{ liveView.getCurrentFilename().c_str() };
+            std::istream_iterator<uint8_t> it(f), end;
+            img.assign(it, end);
+        }
+    });
+
+    Picture p;
+    for (int i = 0; i < 5; ++i) {
+        camera.takePicture(p);
+        liveView.addPicture(p);
+    }
+    res.get();
 }
