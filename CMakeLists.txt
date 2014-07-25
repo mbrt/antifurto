@@ -166,5 +166,8 @@ add_dependencies(antifurto_core ${ANTIFURTO_DEPENDENCIES})
 add_executable(antifurto src/main.cpp)
 target_link_libraries(antifurto antifurto_core)
 
+add_executable(live-view src/LiveViewMain.cpp)
+target_link_libraries(live-view antifurto_core)
+
 # tests
 add_subdirectory(test)

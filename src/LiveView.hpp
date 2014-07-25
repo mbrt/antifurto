@@ -29,9 +29,9 @@ private:
 
     Filenames filenames_;
     Pipes pipes_;
-    Worker worker_;
     unsigned int currentIndex_ = 0;
     mutable std::mutex idxM_;
+    Worker worker_;
 };
 
 } // namespace antifurto

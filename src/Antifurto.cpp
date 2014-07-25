@@ -6,6 +6,8 @@
 #include "Log.hpp"
 
 #include <memory>
+#include <fstream>
+#include <iterator>
 
 
 namespace antifurto {
@@ -61,7 +63,17 @@ public:
     {
         LOG_INFO << "Stopping live view";
         liveViewRegistration_.clear();
-        liveView_.reset();
+        auto token = std::async(std::launch::async, [this] {
+            liveView_.reset();
+        });
+        if (token.wait_for(std::chrono::seconds(1)) != std::future_status::ready) {
+            // consume the current
+            std::ifstream f{liveView_->getCurrentFilename().c_str()};
+            std::istream_iterator<uint8_t> it(f), end;
+            while (it != end)
+                ++it;
+        }
+        token.get();
         LOG_INFO << "Live view stopped";
 
     }
