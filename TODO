@@ -7,6 +7,9 @@ TODO LIST
   - current bottleneks are cv::MatConstIterator::operator++() and
     countMotionPixels()
 * Delete CameraController when it is not needed (i.e. no monitor nor live view)
+* Web server
+  - add start stop monitor
+  - add live view
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
 - Packaging system
@@ -14,8 +17,6 @@ TODO LIST
   - Pack old directories in videos
   - Sync dropbox with archive directories
   - Put not uploaded images in a list and serve it when alarm is off
-- Web server
-  - add live view
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile

@@ -85,7 +85,7 @@ DropboxUploader configureDropboxUploader(const Configuration& c,
     replace.addVariable("OAUTH_TOKEN", c.dropbox.oauthToken);
     replace.addVariable("OAUTH_TOKEN_SECRET", c.dropbox.oauthTokenSecret);
     replace.replaceVariables(in, out);
-    out.close(); // explicitly close out file to catch errors
+    out.close(); // explicitly close out file to catch errors and flush
     return DropboxUploader(baseDir, cfg);
 }
 

@@ -21,7 +21,8 @@ int main(int argc, char* argv[])
             parser.parseConfigFile(config::configFile().c_str());
         }
         catch (std::exception& e) {
-            LOG_ERROR << "Error in config file or command line params";
+            LOG_ERROR << "Error in config file or command line params: "
+                      << e.what();
             return EXIT_FAILURE;
         }
 

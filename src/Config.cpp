@@ -140,7 +140,7 @@ private:
              "start monitor by default on startup")
             ("startup.monitor-timeout", po::value<unsigned int>(),
              "seconds before start monitoring")
-            ("recording.arhive-dir", po::value<std::string>(),
+            ("recording.archive-dir", po::value<std::string>(),
              "picture archive directory")
             ("recording.max-days", po::value<unsigned int>(),
              "max number of recording days to maintain")

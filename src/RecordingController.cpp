@@ -102,7 +102,7 @@ void RecordingController::onPictureSaved(const std::string& fileName)
 void RecordingController::uploadFile(const std::string& sourceFile)
 {
     try {
-        std::size_t archiveDirSize = strlen(config::archiveDir());
+        std::size_t archiveDirSize = config_.archiveDir.size();
         assert(sourceFile.size() > archiveDirSize);
         std::string dest{sourceFile.substr(archiveDirSize + 1)};
         uploader_.uploadFile(sourceFile, dest);
