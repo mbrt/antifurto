@@ -8,7 +8,7 @@ namespace antifurto {
 MonitorController::
 MonitorController(Configuration const& c, SetPicturesInterval set)
     : recording_(c, motionDetector_, scheduler_)
-    , notification_(c, motionDetector_)
+    , notification_(c, motionDetector_, scheduler_)
     , setPicturesInterval_(std::move(set))
 {
     motionDetector_.addObserver([this](MotionDetector::State s) {

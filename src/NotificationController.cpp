@@ -2,15 +2,20 @@
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 #include "Log.hpp"
+#include "MotionDetector.hpp"
+#include "concurrency/TaskScheduler.hpp"
 
 #include <iostream>
 
 namespace antifurto {
 
 NotificationController::
-NotificationController(const Configuration& c, MotionDetector& detector)
+NotificationController(const Configuration& c,
+                       MotionDetector& detector,
+                       concurrency::TaskScheduler& scheduler)
     : whatsapp_(configureWhatsappNotifier(c, config::exeDir()))
     , contacts_(c.whatsapp.destinations.begin(), c.whatsapp.destinations.end())
+    , scheduler_(scheduler)
     , lastNotificationTime_(std::chrono::system_clock::now() - config::minNotificationDelay())
 {
     if (!contacts_.empty()) {
@@ -78,8 +83,12 @@ void NotificationController::processNotificationResults()
             LOG_ERROR << "Notification failed " << e.what() << std::endl;
         }
     }
-    if (!notifications_.empty())
-        LOG_ERROR << "Notifications not completed\n";
+    if (!notifications_.empty()) {
+        LOG_WARNING << "Notifications not completed. New check scheduled";
+        scheduler_.scheduleAfter(std::chrono::minutes(15), [this] {
+            processNotificationResults();
+        });
+    }
 }
 
 } // namespace antifurto
