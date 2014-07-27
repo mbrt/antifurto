@@ -8,6 +8,8 @@
 #include <memory>
 #include <fstream>
 #include <iterator>
+#include <mutex>
+#include <future>
 
 
 namespace antifurto {
@@ -16,7 +18,7 @@ class AntifurtoImpl
 {
 public:
     AntifurtoImpl(const Configuration& c, bool maintenanceNeeded)
-        : config_(c)
+        : config_(c), stopMonitorRequest_(false)
     {
         setPeriodFunction_ = [this](std::chrono::milliseconds t) {
             setMonitorPeriod(t);
@@ -34,28 +36,63 @@ public:
             startMonitoring();
     }
 
+    ~AntifurtoImpl()
+    {
+        try {
+            stopMonitoring();
+            stopLiveView();
+        }
+        catch (...) { }
+    }
+
     void startMonitoring()
     {
-        // TODO: better to use another method here, because the caller to
-        // start must wait for the timeout
-        std::this_thread::sleep_for(config_.startup.monitorTimeout);
-        LOG_INFO << "Monitoring started";
-        monitor_.reset(new MonitorController{config_, setPeriodFunction_});
-        monitorRegistration_ = camera_.addObserver([&](const Picture& p){
-            monitor_->examinePicture(p);
-        }, config::monitorCycleDuration());
+        std::lock_guard<std::mutex> lock{m_};
+        stopMonitorRequest_ = false;
+        startMonitorFuture_ = std::async(std::launch::async, [this] {
+            // wait startup timeout
+            int waitedSecs = 0, toWait = config_.startup.monitorTimeout.count();
+            LOG_INFO << "Wait " << toWait << " seconds before start monitor";
+            while (waitedSecs < toWait && !stopMonitorRequest_) {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                ++waitedSecs;
+            }
+
+            // check for shutdown request
+            std::lock_guard<std::mutex> lock{m_};
+            if (stopMonitorRequest_) {
+                stopMonitorRequest_ = false;
+                return;
+            }
+
+            LOG_INFO << "Monitoring started";
+            monitor_.reset(new MonitorController{config_, setPeriodFunction_});
+            monitorRegistration_ = camera_.addObserver([&](const Picture& p){
+                monitor_->examinePicture(p);
+            }, config::monitorCycleDuration());
+        });
     }
 
     void stopMonitoring()
     {
-        LOG_INFO << "Stopping monitoring";
-        monitorRegistration_.clear();
-        monitor_.reset();
-        LOG_INFO << "Monitoring stopped";
+        if (startMonitorFuture_.valid()) {
+            LOG_INFO << "Cancel start monitoring";
+            stopMonitorRequest_ = true;
+            startMonitorFuture_.get();
+        }
+
+        std::lock_guard<std::mutex> lock{m_};
+        if (monitor_) {
+            LOG_INFO << "Stopping monitoring";
+            monitorRegistration_.clear();
+            monitor_.reset();
+            LOG_INFO << "Monitoring stopped";
+        }
     }
 
     void startLiveView()
     {
+        std::lock_guard<std::mutex> lock{m_};
         LOG_INFO << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
         liveView_.reset(new LiveView("/tmp/antifurto/live", 3));
@@ -66,6 +103,10 @@ public:
 
     void stopLiveView()
     {
+        std::lock_guard<std::mutex> lock{m_};
+        if (!liveView_)
+            return;
+
         LOG_INFO << "Stopping live view";
         liveViewRegistration_.clear();
         auto token = std::async(std::launch::async, [this] {
@@ -96,6 +137,9 @@ private:
     CameraController::Registration monitorRegistration_;
     std::unique_ptr<LiveView> liveView_;
     CameraController::Registration liveViewRegistration_;
+    std::mutex m_;
+    bool stopMonitorRequest_;
+    std::future<void> startMonitorFuture_;
 };
 
 

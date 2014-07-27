@@ -16,8 +16,15 @@ int main(int argc, char* argv[])
         ipc::PosixSignalHandler signalHandler{SignalHandler::getSignalsNeeded()};
 
         ConfigurationParser parser;
-        parser.parseCmdLine(argc, argv);
-        parser.parseConfigFile(config::configFile().c_str());
+        try {
+            parser.parseCmdLine(argc, argv);
+            parser.parseConfigFile(config::configFile().c_str());
+        }
+        catch (std::exception& e) {
+            LOG_ERROR << "Error in config file or command line params";
+            return EXIT_FAILURE;
+        }
+
         if (!parser.canContinue())
             return 1;
 
@@ -30,5 +37,5 @@ int main(int argc, char* argv[])
     }
 
     LOG_INFO << "Exit now";
-    return 0;
+    return EXIT_SUCCESS;
 }

@@ -7,7 +7,6 @@ TODO LIST
   - current bottleneks are cv::MatConstIterator::operator++() and
     countMotionPixels()
 * Delete CameraController when it is not needed (i.e. no monitor nor live view)
-* Do not wait in startMonitoring
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
 - Packaging system
