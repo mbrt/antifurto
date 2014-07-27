@@ -27,13 +27,18 @@ public:
             MonitorController monitor{c, setPeriodFunction_};
             monitor.performMaintenance();
         }
+
+        if (config_.startup.liveView)
+            startLiveView();
+        if (config_.startup.monitor)
+            startMonitoring();
     }
 
     void startMonitoring()
     {
         // TODO: better to use another method here, because the caller to
         // start must wait for the timeout
-        std::this_thread::sleep_for(config_.startupTimeout);
+        std::this_thread::sleep_for(config_.startup.monitorTimeout);
         LOG_INFO << "Monitoring started";
         monitor_.reset(new MonitorController{config_, setPeriodFunction_});
         monitorRegistration_ = camera_.addObserver([&](const Picture& p){

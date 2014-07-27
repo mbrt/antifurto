@@ -15,6 +15,11 @@ public:
     Configuration();
 
     using StringList = std::vector<std::string>;
+    struct Startup {
+        bool liveView;
+        bool monitor;
+        std::chrono::seconds monitorTimeout;
+    };
     struct Whatsapp {
         std::string cc;
         std::string src;
@@ -39,7 +44,7 @@ public:
         std::string archiveDir;
     };
 
-    std::chrono::seconds startupTimeout;
+    Startup startup;
     Whatsapp whatsapp;
     Dropbox dropbox;
     Log log;

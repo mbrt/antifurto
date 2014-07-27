@@ -5,9 +5,6 @@ TODO LIST
   provide conversion operators to InputArray and OutputArray
 - Kill subprocess
 - Packaging system
-- Log system
-  - log rotate
-  - write to single file
 - Archive refactor
   - Pack old directories in videos
   - Sync dropbox with archive directories
@@ -31,3 +28,5 @@ TODO LIST
 - Use two TaskScheduler
   - one only for the pictures cycle
   - one for all the long running tasks
+- Delete CameraController when it is not needed (i.e. no monitor nor live view)
+- Paramter to start monitoring by default or not

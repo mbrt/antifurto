@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "../text/ToString.hpp"
+#include "../Log.hpp"
 
 // see http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_sigmask.html
 // for an implementation example
@@ -37,7 +38,8 @@ PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
 
 void PosixSignalHandler::setSignalHandler(int signal, Handler h)
 {
-    if (!std::binary_search(std::begin(signalsToBeHandled_), std::end(signalsToBeHandled_), signal))
+    if (!std::binary_search(std::begin(signalsToBeHandled_),
+            std::end(signalsToBeHandled_), signal))
         throw Exception(text::toString(
                 "Cannot add signal ", signal,
                 ", as it was not specified in construction"));
@@ -57,9 +59,11 @@ void PosixSignalHandler::enterSignalHandlingLoop()
             throw Exception("Error waiting for signal");
         int signum = info.si_signo;
         Handler& h = handlerList_[signum];
-        if (!h)
-            throw Exception(text::toString("Unexpected signal ", signum));
-        h(signum);
+        if (h)
+            h(signum);
+        else
+            LOG_WARNING << "Got signal without handler ("
+                        << signum << ") ignored";
     }
 }
 

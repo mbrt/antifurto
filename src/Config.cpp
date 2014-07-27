@@ -11,11 +11,13 @@ namespace antifurto {
 // default configuration
 Configuration::Configuration()
 {
+    startup.liveView = false;
+    startup.monitor = true;
+    startup.monitorTimeout = std::chrono::seconds(5);
     log.level = Log::Level::INFO;
     log.dir = config::logDir();
     recording.maxDays = config::maxArchiveDays();
     recording.archiveDir = config::archiveDir();
-    startupTimeout = std::chrono::seconds(5);
 }
 
 
@@ -40,6 +42,14 @@ public:
             std::cout << ANTIFURTO_VERSION_STRING << std::endl;
             canContinue_ = false;
         }
+        else if (vm_.count("monitor")) {
+            config_.startup.monitor = true;
+            config_.startup.liveView = false;
+        }
+        else if (vm_.count("live-view")) {
+            config_.startup.monitor = false;
+            config_.startup.liveView = true;
+        }
     }
 
     void parseConfigFile(const char* configFile)
@@ -50,12 +60,15 @@ public:
 
     Configuration getConfiguration()
     {
-        Configuration::Recording& rec  =config_.recording;
+        Configuration::Startup& strt = config_.startup;
+        Configuration::Recording& rec  = config_.recording;
         Configuration::Log& log = config_.log;
         Configuration::Whatsapp& whatsapp = config_.whatsapp;
         Configuration::Dropbox& dropbox = config_.dropbox;
 
-        storeOptionOrDefault("startupTimeout", config_.startupTimeout);
+        storeOptionOrDefault("startup.live-view", strt.liveView);
+        storeOptionOrDefault("startup.monitor", strt.monitor);
+        storeOptionOrDefault("startup.monitor-timeout", strt.monitorTimeout);
         storeOptionOrDefault("recording.archive-dir", rec.archiveDir);
         storeOptionOrDefault("recording.max-days", rec.maxDays);
         storeOptionOrDefault("log.level", log.level);
@@ -103,6 +116,8 @@ private:
         generic.add_options()
             ("help,h", "produce help message")
             ("version,v", "print version string")
+            ("live-view", "start live view only")
+            ("monitor", "start monitoring only")
             ;
         // declare a group of options available both on command line and in
         // config file
