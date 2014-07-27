@@ -42,14 +42,6 @@ public:
             std::cout << ANTIFURTO_VERSION_STRING << std::endl;
             canContinue_ = false;
         }
-        else if (vm_.count("monitor")) {
-            config_.startup.monitor = true;
-            config_.startup.liveView = false;
-        }
-        else if (vm_.count("live-view")) {
-            config_.startup.monitor = false;
-            config_.startup.liveView = true;
-        }
     }
 
     void parseConfigFile(const char* configFile)
@@ -82,6 +74,16 @@ public:
         storeOptionOrDefault("dropbox.oauth-token", dropbox.oauthToken);
         storeOptionOrDefault("dropbox.oauth-secret", dropbox.oauthTokenSecret);
 
+        // handle mutually exclusive options
+        if (vm_.count("live-view")) {
+            strt.liveView = true;
+            strt.monitor = false;
+        }
+        else if (vm_.count("monitor")) {
+            strt.liveView = false;
+            strt.monitor = true;
+        }
+
         return config_;
     }
 
@@ -109,6 +111,15 @@ private:
         return true;
     }
 
+    bool storeOptionOrDefault(const char* option, std::chrono::seconds& out)
+    {
+        unsigned int value;
+        if (!storeOptionOrDefault(option, value))
+            return false;
+        out = std::chrono::seconds{value};
+        return true;
+    }
+
     void initOptions()
     {
         // declare a group of options available only on command line
@@ -123,7 +134,11 @@ private:
         // config file
         po::options_description config("Configuration");
         config.add_options()
-            ("startup-timeout", po::value<unsigned int>(),
+            ("startup.live-view", po::value<bool>(),
+             "start live view by default on startup")
+            ("startup.monitor", po::value<bool>(),
+             "start monitor by default on startup")
+            ("startup.monitor-timeout", po::value<unsigned int>(),
              "seconds before start monitoring")
             ("recording.arhive-dir", po::value<std::string>(),
              "picture archive directory")

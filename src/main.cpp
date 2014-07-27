@@ -26,7 +26,6 @@ int main(int argc, char* argv[])
         Antifurto app{parser.getConfiguration()};
         SignalHandler appSignalHandler{signalHandler, app};
 
-        app.startMonitoring();
         signalHandler.enterSignalHandlingLoop();
     }
 
