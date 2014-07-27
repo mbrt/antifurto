@@ -2,24 +2,18 @@
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 #include "Log.hpp"
+#include "SignalHandler.hpp"
 #include "ipc/PosixSignalHandler.hpp"
 
 #include <thread>
 #include <iostream>
-#include <signal.h>
 
 using namespace antifurto;
 
 int main(int argc, char* argv[])
 {
     {   // this block force destruction before logging exit
-        ipc::PosixSignalHandler signalHandler{SIGTERM, SIGINT};
-        auto termSignalHandler = [&](int signal){
-            LOG_INFO << "Received signal " << signal << ". Shutting down...";
-            signalHandler.leaveSignalHandlingLoop();
-        };
-        signalHandler.setSignalHandler(SIGTERM, termSignalHandler);
-        signalHandler.setSignalHandler(SIGINT, termSignalHandler);
+        ipc::PosixSignalHandler signalHandler{SignalHandler::getSignalsNeeded()};
 
         ConfigurationParser parser;
         parser.parseCmdLine(argc, argv);
@@ -30,8 +24,9 @@ int main(int argc, char* argv[])
         initLogger(parser.getConfiguration());
         LOG_INFO << "Init of antifurto";
         Antifurto app{parser.getConfiguration()};
-        app.startMonitoring();
+        SignalHandler appSignalHandler{signalHandler, app};
 
+        app.startMonitoring();
         signalHandler.enterSignalHandlingLoop();
     }
 
