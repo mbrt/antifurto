@@ -47,6 +47,7 @@ void RecordingController::performMaintenance()
     if (!bfs::exists(config_.archiveDir)) return;
     LOG_INFO << "Performing archive maintenance";
     deleteOlderPictures();
+    LOG_INFO << "Maintenance completed";
 }
 
 void RecordingController::initUploader(const Configuration& cfg)

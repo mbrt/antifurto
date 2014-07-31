@@ -31,3 +31,4 @@ TODO LIST
 - Use two TaskScheduler
   - one only for the pictures cycle
   - one for all the long running tasks
+- Display logs in webserver
