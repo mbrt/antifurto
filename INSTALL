@@ -23,3 +23,8 @@ the password is stored in a file in /path/to/project/config/.lighttpdpassword
 and have the following contents:
 admin:write-your-password-here
 
+add permissions to www-data to send signals to antifurto
+> sudo visudo -f /etc/sudoers.d/antifurto
+  add the following line to the file
+    www-data myhost = (root) NOPASSWD: /usr/bin/killall
+  where myhost is the hostname (e.g. rasberry)
