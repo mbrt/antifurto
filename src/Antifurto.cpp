@@ -18,7 +18,7 @@ class AntifurtoImpl
 {
 public:
     AntifurtoImpl(const Configuration& c, bool maintenanceNeeded)
-        : config_(c), stopMonitorRequest_(false)
+        : config_(c)
     {
         setPeriodFunction_ = [this](std::chrono::milliseconds t) {
             setMonitorPeriod(t);
@@ -45,9 +45,19 @@ public:
         catch (...) { }
     }
 
+    bool isMonitoringActive()
+    {
+        std::lock_guard<std::mutex> lock{m_};
+        return monitorActive_;
+    }
+
     void startMonitoring()
     {
         std::lock_guard<std::mutex> lock{m_};
+        if (monitorActive_) return;
+        monitorActive_ = true;
+        handleCameraControllerNeed();
+
         stopMonitorRequest_ = false;
         startMonitorFuture_ = std::async(std::launch::async, [this] {
             // wait startup timeout
@@ -67,7 +77,7 @@ public:
 
             LOG_INFO << "Monitoring started";
             monitor_.reset(new MonitorController{config_, setPeriodFunction_});
-            monitorRegistration_ = camera_.addObserver([&](const Picture& p){
+            monitorRegistration_ = camera_->addObserver([&](const Picture& p){
                 monitor_->examinePicture(p);
             }, config::monitorCycleDuration());
         });
@@ -75,11 +85,22 @@ public:
 
     void stopMonitoring()
     {
-        if (startMonitorFuture_.valid()) {
-            LOG_INFO << "Cancel start monitoring";
-            stopMonitorRequest_ = true;
-            startMonitorFuture_.get();
+        bool waitStartedNeeded = false;
+        {
+            std::lock_guard<std::mutex> lock{m_};
+            if (!monitorActive_) return;
+            monitorActive_ = false;
+
+            if (startMonitorFuture_.valid()) {
+                LOG_INFO << "Cancel start monitoring";
+                stopMonitorRequest_ = true;
+                waitStartedNeeded = true;
+            }
         }
+
+        // this must be done unlocked
+        if (waitStartedNeeded)
+            startMonitorFuture_.get();
 
         std::lock_guard<std::mutex> lock{m_};
         if (monitor_) {
@@ -88,15 +109,26 @@ public:
             monitor_.reset();
             LOG_INFO << "Monitoring stopped";
         }
+        handleCameraControllerNeed();
+    }
+
+    bool isLiveViewActive()
+    {
+        std::lock_guard<std::mutex> lock{m_};
+        return liveViewActive_;
     }
 
     void startLiveView()
     {
         std::lock_guard<std::mutex> lock{m_};
+        if (liveViewActive_) return;
+        liveViewActive_ = true;
+        handleCameraControllerNeed();
+
         LOG_INFO << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
         liveView_.reset(new LiveView("/tmp/antifurto/live", 3));
-        liveViewRegistration_ = camera_.addObserver([&](const Picture& p){
+        liveViewRegistration_ = camera_->addObserver([&](const Picture& p) {
             liveView_->addPicture(p);
         }, config::liveViewCycleDuration());
     }
@@ -104,8 +136,8 @@ public:
     void stopLiveView()
     {
         std::lock_guard<std::mutex> lock{m_};
-        if (!liveView_)
-            return;
+        if (!liveViewActive_) return;
+        liveViewActive_ = false;
 
         LOG_INFO << "Stopping live view";
         liveViewRegistration_.clear();
@@ -120,6 +152,7 @@ public:
                 ++it;
         }
         token.get();
+        handleCameraControllerNeed();
         LOG_INFO << "Live view stopped";
 
     }
@@ -127,19 +160,29 @@ public:
 private:
     void setMonitorPeriod(std::chrono::milliseconds t)
     {
-        camera_.setDesiredPeriod(monitorRegistration_, t);
+        camera_->setDesiredPeriod(monitorRegistration_, t);
+    }
+
+    void handleCameraControllerNeed()
+    {
+        if ((liveViewActive_ || monitorActive_) && !camera_)
+            camera_.reset(new CameraController());
+        else if (!liveViewActive_ && !monitorActive_)
+            camera_.reset();
     }
 
     Configuration config_;
-    CameraController camera_;
+    std::unique_ptr<CameraController> camera_;
     std::unique_ptr<MonitorController> monitor_;
     MonitorController::SetPicturesInterval setPeriodFunction_;
     CameraController::Registration monitorRegistration_;
     std::unique_ptr<LiveView> liveView_;
     CameraController::Registration liveViewRegistration_;
     std::mutex m_;
-    bool stopMonitorRequest_;
+    bool stopMonitorRequest_ = false;
     std::future<void> startMonitorFuture_;
+    bool liveViewActive_ = false;
+    bool monitorActive_ = false;
 };
 
 

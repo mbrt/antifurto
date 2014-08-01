@@ -6,9 +6,7 @@ TODO LIST
 * Optimizations
   - current bottleneks are cv::MatConstIterator::operator++() and
     countMotionPixels()
-* Delete CameraController when it is not needed (i.e. no monitor nor live view)
 * Web server
-  - add start stop monitor
   - add live view
   - add query to monitor status (posix message queue? socket? pipe?)
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
