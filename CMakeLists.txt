@@ -31,6 +31,7 @@ if(CROSS_COMPILE)
     configure_file(scripts/setup-sysroot.sh setup-sysroot.sh)
     configure_file(scripts/deploy.sh deploy.sh)
     configure_file(scripts/umount-sysroot.sh umount-sysroot.sh)
+    configure_file(scripts/init-script.sh init-script.sh)
 endif()
 
 # third party to build

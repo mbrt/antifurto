@@ -28,3 +28,9 @@ add permissions to www-data to send signals to antifurto
   add the following line to the file
     www-data myhost = (root) NOPASSWD: /usr/bin/killall
   where myhost is the hostname (e.g. rasberry)
+
+setup init script
+> sudo cp /path/to/project/script/init.sh /etc/init.d/antifurto
+> cd /etc/init.d/
+> sudo chmod 755 antifurto
+> sudo update-rc.d antifurto defaults
