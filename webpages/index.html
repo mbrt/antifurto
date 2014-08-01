@@ -10,13 +10,36 @@
         This is Antifurto by berta.
 
         <h2>Monitoring commands</h2>
-        <br>
-        <a href='controller/monitoring.php?start=1' class='button'>Start monitoring</a>
-        <a href='controller/monitoring.php?stop=1' class='button'>Stop monitoring</a>
+        <div>
+            <input id='startcmd' type='button' value='Start monitoring' class='button'/>
+            <input id='stopcmd' type='button' value='Stop monitoring' class='button'/>
+            <a href='controller/monitoring.php?start=1' class='button'>Start monitoring</a>
+            <a href='controller/monitoring.php?stop=1' class='button'>Stop monitoring</a>
+            <div id='cmdresult'></div>
+        </div>
 
         <h2>Main pages</h2>
+        <div>
+            <a href='archive.php' class='button'>Recording archive</a>
+        </div>
 
-        <a href='archive.php' class='button'>Recording archive</a>
-
+        <script type='text/javascript'>
+            document.getElementById('startcmd').onclick = function() {
+                var request = new XMLHttpRequest();
+                request.open('GET', 'controller/monitoring.php?start=1', true);
+                request.onload = function() {
+                    response = JSON.parse(this.responseText);
+                    // response is { result: int, log: string }
+                    var out = document.getElementById('cmdresult');
+                    if (response.result == 0)
+                        out.innerHTML = 'Succesful';
+                    else {
+                        out.innerHTML = 'Error executing command';
+                        console.log(response.log);
+                    }
+                }
+                request.send();
+            }
+        </script>
     </body>
 </html>

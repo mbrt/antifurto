@@ -10,6 +10,7 @@ TODO LIST
 * Web server
   - add start stop monitor
   - add live view
+  - add query to monitor status (posix message queue? socket? pipe?)
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
 - Packaging system
