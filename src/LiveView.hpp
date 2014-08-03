@@ -14,12 +14,15 @@ class LiveView
 {
 public:
     LiveView(const std::string& outFilenamePrefix, unsigned int num);
+    ~LiveView();
+
     bool addPicture(const Picture& p);
     std::string getCurrentFilename() const;
 
 private:
     void prepareOutDir(const std::string& outFilenamePrefix);
     void write(const Picture& p);
+    void consumeFileIfValid(const std::string& fname);
 
     using Filenames = std::vector<std::string>;
     using Pipes = std::vector<ipc::NamedPipe>;

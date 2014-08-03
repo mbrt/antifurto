@@ -2,6 +2,7 @@
 #include "Log.hpp"
 #include "text/ToString.hpp"
 
+#include <fcntl.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;
@@ -19,6 +20,16 @@ LiveView::LiveView(const std::string& outFilenamePrefix, unsigned int num)
         if (bfs::exists(curr))
             bfs::remove(curr);
         pipes_.emplace_back(curr);
+    }
+}
+
+LiveView::~LiveView()
+{
+    for (const auto& fname : filenames_) {
+        try {
+            consumeFileIfValid(fname);
+        }
+        catch (...) { }
     }
 }
 
@@ -52,6 +63,16 @@ void LiveView::write(const Picture& p)
 
     std::lock_guard<std::mutex> lock(idxM_);
     currentIndex_ = (currentIndex_ + 1) % filenames_.size();
+}
+
+void LiveView::consumeFileIfValid(const std::string& fname)
+{
+    int fd = ::open(fname.c_str(), O_RDONLY | O_NONBLOCK);
+    if (fd < 0) return;
+    char buf[1024];
+    int nread;
+    while ((nread = ::read(fd, buf, sizeof(buf))) > 0) { }
+    ::close(fd);
 }
 
 } // namespace antifurto

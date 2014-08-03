@@ -42,17 +42,7 @@ void LiveViewController::stop()
     LOG_INFO << "Stopping live view";
     stopWork_ = std::async(std::launch::async, [this] {
         regFunc_(false); // call this inside async to avoid deadlock
-        auto token = std::async(std::launch::async, [this] {
-            liveView_.reset();
-        });
-        if (token.wait_for(std::chrono::seconds(3)) != std::future_status::ready) {
-            // consume the current picture
-            std::ifstream f{liveView_->getCurrentFilename().c_str()};
-            std::istream_iterator<uint8_t> it(f), end;
-            while (it != end)
-                ++it;
-        }
-        token.get();
+        liveView_.reset();
         LOG_INFO << "Live view stopped";
     });
 }
