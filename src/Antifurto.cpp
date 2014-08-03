@@ -25,9 +25,9 @@ public:
         };
 
         if (maintenanceNeeded) {
-            // create a monitor only for the first maintenance
-            MonitorController monitor{c, setPeriodFunction_};
-            monitor.performMaintenance();
+            // create a recording controller only for the first maintenance
+            RecordingController rec{c};
+            rec.performMaintenance();
         }
 
         if (config_.startup.liveView)

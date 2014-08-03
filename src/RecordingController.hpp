@@ -18,6 +18,7 @@ namespace antifurto {
 class RecordingController
 {
 public:
+    RecordingController(const Configuration& cfg);
     RecordingController(const Configuration& cfg,
                         MotionDetector& detector,
                         concurrency::TaskScheduler& scheduler);

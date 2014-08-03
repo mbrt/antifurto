@@ -12,6 +12,15 @@
 namespace bfs = boost::filesystem;
 
 namespace antifurto {
+namespace {
+    // this is used only to fake a scheduler for the minimal constructor
+    concurrency::TaskScheduler staticScheduler;
+}
+
+RecordingController::RecordingController(const Configuration& cfg)
+    : config_(cfg.recording)
+    , scheduler_(staticScheduler)
+{ }
 
 RecordingController::
 RecordingController(const Configuration& cfg, MotionDetector& detector,

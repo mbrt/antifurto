@@ -16,11 +16,6 @@ MonitorController(Configuration const& c, SetPicturesInterval set)
     });
 }
 
-void MonitorController::performMaintenance()
-{
-    recording_.performMaintenance();
-}
-
 void MonitorController::examinePicture(const Picture& p)
 {
     recording_.addPicture(p);

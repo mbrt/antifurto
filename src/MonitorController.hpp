@@ -20,8 +20,6 @@ public:
     using SetPicturesInterval = std::function<void(std::chrono::milliseconds)>;
 
     MonitorController(const Configuration& c, SetPicturesInterval s);
-
-    void performMaintenance();
     void examinePicture(const Picture& picture);
 
 private:
