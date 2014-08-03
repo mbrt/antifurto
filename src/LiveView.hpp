@@ -14,7 +14,7 @@ class LiveView
 {
 public:
     LiveView(const std::string& outFilenamePrefix, unsigned int num);
-    void addPicture(const Picture& p);
+    bool addPicture(const Picture& p);
     std::string getCurrentFilename() const;
 
 private:

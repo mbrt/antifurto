@@ -80,6 +80,7 @@ set(ANTIFURTO_COMMON_CPP
     src/DropboxUploader.cpp
     src/Environment.cpp
     src/LiveView.cpp
+    src/LiveViewController.cpp
     src/Log.cpp
     src/MonitorController.cpp
     src/MotionDetector.cpp
@@ -107,6 +108,7 @@ set(ANTIFURTO_COMMON_HPP
     src/Environment.hpp
     src/Exception.hpp
     src/LiveView.hpp
+    src/LiveViewController.hpp
     src/Log.hpp
     src/MonitorController.hpp
     src/MotionDetector.hpp

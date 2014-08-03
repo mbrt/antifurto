@@ -43,12 +43,18 @@ public:
         unsigned int maxDays;
         std::string archiveDir;
     };
+    struct LiveView {
+        unsigned int numPictures;
+        std::string filePrefix;
+        std::chrono::seconds inactivityTimeout;
+    };
 
     Startup startup;
     Whatsapp whatsapp;
     Dropbox dropbox;
     Log log;
     Recording recording;
+    LiveView liveView;
 };
 
 

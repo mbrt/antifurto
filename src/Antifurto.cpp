@@ -127,7 +127,8 @@ public:
 
         LOG_INFO << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
-        liveView_.reset(new LiveView("/tmp/antifurto/live", 3));
+        liveView_.reset(new LiveView(config_.liveView.filePrefix,
+                                     config_.liveView.numPictures));
         liveViewRegistration_ = camera_->addObserver([&](const Picture& p) {
             liveView_->addPicture(p);
         }, config::liveViewCycleDuration());

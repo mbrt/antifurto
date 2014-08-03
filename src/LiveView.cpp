@@ -22,9 +22,9 @@ LiveView::LiveView(const std::string& outFilenamePrefix, unsigned int num)
     }
 }
 
-void LiveView::addPicture(const Picture& p)
+bool LiveView::addPicture(const Picture& p)
 {
-    worker_.enqueue(p);
+    return worker_.enqueue(p);
 }
 
 std::string LiveView::getCurrentFilename() const

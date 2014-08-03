@@ -31,6 +31,7 @@ std::string configFile();
 constexpr const char* archiveDir() { return "/tmp/antifurto/archive"; }
 constexpr const char* logDir() { return "/tmp/antifurto/log"; }
 constexpr const char* tmpDir() { return "/tmp"; }
+constexpr const char* liveViewFilePrefix() { return "/tmp/antifurto/live"; }
 
 constexpr unsigned int maxArchiveDays() { return 7; }
 
