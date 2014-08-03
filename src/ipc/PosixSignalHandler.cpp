@@ -25,7 +25,7 @@ sigset_t addToSigset(Container signs)
 
 } // anon namespace
 
-PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
+PosixSignalHandler::PosixSignalHandler(std::vector<int> signs)
     : handlerList_(SIGRTMAX)
     , signalsToBeHandled_(signs)
     , run_(false)
@@ -35,6 +35,10 @@ PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
     if (::pthread_sigmask(SIG_BLOCK, &signalMask, NULL) != 0)
         throw Exception("Cannot block signals");
 }
+
+PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
+    : PosixSignalHandler(signs)
+{ }
 
 void PosixSignalHandler::setSignalHandler(int signal, Handler h)
 {

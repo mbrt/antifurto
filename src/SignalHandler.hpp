@@ -16,7 +16,7 @@ class Antifurto;
 class SignalHandler
 {
 public:
-    using SignalList = std::initializer_list<int>;
+    using SignalList = std::vector<int>;
     static SignalList getSignalsNeeded();
 
     SignalHandler(ipc::PosixSignalHandler& handler, Antifurto& controller);

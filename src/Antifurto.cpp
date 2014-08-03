@@ -2,12 +2,10 @@
 #include "Config.hpp"
 #include "CameraController.hpp"
 #include "MonitorController.hpp"
-#include "LiveView.hpp"
+#include "LiveViewController.hpp"
 #include "Log.hpp"
 
 #include <memory>
-#include <fstream>
-#include <iterator>
 #include <mutex>
 #include <future>
 
@@ -127,11 +125,13 @@ public:
 
         LOG_INFO << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
-        liveView_.reset(new LiveView(config_.liveView.filePrefix,
-                                     config_.liveView.numPictures));
-        liveViewRegistration_ = camera_->addObserver([&](const Picture& p) {
-            liveView_->addPicture(p);
-        }, config::liveViewCycleDuration());
+        liveView_.reset(new LiveViewController(config_, [&](bool reg) {
+            if (reg)
+                registerLiveView();
+            else
+                liveViewRegistration_.clear();
+        }));
+        registerLiveView();
     }
 
     void stopLiveView()
@@ -139,23 +139,7 @@ public:
         std::lock_guard<std::mutex> lock{m_};
         if (!liveViewActive_) return;
         liveViewActive_ = false;
-
-        LOG_INFO << "Stopping live view";
-        liveViewRegistration_.clear();
-        auto token = std::async(std::launch::async, [this] {
-            liveView_.reset();
-        });
-        if (token.wait_for(std::chrono::seconds(1)) != std::future_status::ready) {
-            // consume the current
-            std::ifstream f{liveView_->getCurrentFilename().c_str()};
-            std::istream_iterator<uint8_t> it(f), end;
-            while (it != end)
-                ++it;
-        }
-        token.get();
-        handleCameraControllerNeed();
-        LOG_INFO << "Live view stopped";
-
+        liveView_->stop();
     }
 
 private:
@@ -172,12 +156,19 @@ private:
             camera_.reset();
     }
 
+    void registerLiveView()
+    {
+        liveViewRegistration_ = camera_->addObserver([&](const Picture& p) {
+            liveView_->addPicture(p);
+        }, config::liveViewCycleDuration());
+    }
+
     Configuration config_;
     std::unique_ptr<CameraController> camera_;
     std::unique_ptr<MonitorController> monitor_;
     MonitorController::SetPicturesInterval setPeriodFunction_;
     CameraController::Registration monitorRegistration_;
-    std::unique_ptr<LiveView> liveView_;
+    std::unique_ptr<LiveViewController> liveView_;
     CameraController::Registration liveViewRegistration_;
     std::mutex m_;
     bool stopMonitorRequest_ = false;
