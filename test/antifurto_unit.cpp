@@ -331,24 +331,39 @@ BOOST_AUTO_TEST_CASE(cameraController)
     BOOST_CHECK(checkDuration(o1.lastPeriod, Milli(100)));
 }
 
-BOOST_AUTO_TEST_CASE(liveView)
+void liveViewTest(int nreads)
 {
-    config::Camera camera;
-    LiveView liveView{ "/tmp/antifurto/testlive", 3 };
-    auto res = std::async(std::launch::async, [&] {
-        std::vector<uint8_t> img;
-        for (int i = 0; i < 5; ++i)
-        {
-            std::ifstream f{ liveView.getCurrentFilename().c_str() };
-            std::istream_iterator<uint8_t> it(f), end;
-            img.assign(it, end);
-        }
-    });
+#define PREFIX "/tmp/testlive"
+    std::future<void> res;
+    const char* filenames[] {
+        PREFIX "0.jpg",
+        PREFIX "1.jpg",
+        PREFIX "2.jpg",
+    };
+    {
+        LiveView liveView{PREFIX, 3};
+        res = std::async(std::launch::async, [&] {
+            std::vector<uint8_t> img;
+            for (int i = 0; i < nreads; ++i)
+            {
+                std::ifstream f{filenames[i % 3]};
+                std::istream_iterator<uint8_t> it(f), end;
+                img.assign(it, end);
+            }
+        });
 
-    Picture p;
-    for (int i = 0; i < 5; ++i) {
-        camera.takePicture(p);
-        liveView.addPicture(p);
+        Picture p{makeWhiteImg()};
+        for (int i = 0; i < 5; ++i) {
+            liveView.addPicture(p);
+        }
     }
     res.get();
+#undef PREFIX
+}
+
+BOOST_AUTO_TEST_CASE(liveView)
+{
+    liveViewTest(3);
+    liveViewTest(2);
+    liveViewTest(0);
 }

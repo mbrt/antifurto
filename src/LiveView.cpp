@@ -11,7 +11,8 @@ namespace bfs = boost::filesystem;
 namespace antifurto {
 
 LiveView::LiveView(const std::string& outFilenamePrefix, unsigned int num)
-    : worker_([&](const Picture& p){ write(p); }, num)
+    : stopping_(false)
+    , worker_([&](const Picture& p){ write(p); }, num)
 {
     prepareOutDir(outFilenamePrefix);
     for (unsigned int i = 0; i < num; ++i) {
@@ -25,12 +26,8 @@ LiveView::LiveView(const std::string& outFilenamePrefix, unsigned int num)
 
 LiveView::~LiveView()
 {
-    for (const auto& fname : filenames_) {
-        try {
-            consumeFileIfValid(fname);
-        }
-        catch (...) { }
-    }
+    stopping_ = true;
+    consumeCurrentFileIfValid();
 }
 
 bool LiveView::addPicture(const Picture& p)
@@ -38,7 +35,7 @@ bool LiveView::addPicture(const Picture& p)
     return worker_.enqueue(p);
 }
 
-std::string LiveView::getCurrentFilename() const
+const std::string &LiveView::getCurrentFilename() const
 {
     std::lock_guard<std::mutex> lock(idxM_);
     return filenames_[currentIndex_];
@@ -54,6 +51,8 @@ void LiveView::prepareOutDir(const std::string& outFilenamePrefix)
 
 void LiveView::write(const Picture& p)
 {
+    if (stopping_) return;
+
     try {
         cv::imwrite(filenames_[currentIndex_], p, {CV_IMWRITE_JPEG_QUALITY, 90});
     }
@@ -65,14 +64,12 @@ void LiveView::write(const Picture& p)
     currentIndex_ = (currentIndex_ + 1) % filenames_.size();
 }
 
-void LiveView::consumeFileIfValid(const std::string& fname)
+void LiveView::consumeCurrentFileIfValid()
 {
-    int fd = ::open(fname.c_str(), O_RDONLY | O_NONBLOCK);
-    if (fd < 0) return;
     char buf[1024];
-    int nread;
-    while ((nread = ::read(fd, buf, sizeof(buf))) > 0) { }
-    ::close(fd);
+    int fd = ::open(getCurrentFilename().c_str(), O_RDONLY | O_NONBLOCK);
+    if (fd <= 0) return;
+    while (::read(fd, buf, sizeof(buf)) > 0) { }
 }
 
 } // namespace antifurto

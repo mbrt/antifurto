@@ -6,6 +6,7 @@
 
 #include <string>
 #include <mutex>
+#include <atomic>
 
 namespace antifurto {
 
@@ -17,12 +18,12 @@ public:
     ~LiveView();
 
     bool addPicture(const Picture& p);
-    std::string getCurrentFilename() const;
+    std::string const& getCurrentFilename() const;
 
 private:
     void prepareOutDir(const std::string& outFilenamePrefix);
     void write(const Picture& p);
-    void consumeFileIfValid(const std::string& fname);
+    void consumeCurrentFileIfValid();
 
     using Filenames = std::vector<std::string>;
     using Pipes = std::vector<ipc::NamedPipe>;
@@ -33,6 +34,7 @@ private:
     Filenames filenames_;
     Pipes pipes_;
     unsigned int currentIndex_ = 0;
+    std::atomic<bool> stopping_;
     mutable std::mutex idxM_;
     Worker worker_;
 };
