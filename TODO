@@ -8,6 +8,10 @@ TODO LIST
     countMotionPixels()
 * Web server
   - add live view
+    - refresh image with new
+      http://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url
+    - set cache control lighttpd
+      http://www.cyberciti.biz/faq/lighttpd-send-cache-control-maxage-headers-of-staticfiles/
   - add query to monitor status (posix message queue? socket? pipe?)
 * Autorun
   - add command to /etc/rc.local script

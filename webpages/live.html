@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <title>Antifurto</title>
+    </head>
+
+    <body>
+        <h1>Antifurto</h1>
+        
+        This is Antifurto by berta.
+
+        <h2>Live view</h2>
+
+        <div id='cmdresult'></div>
+        <div>
+            <img id='liveimg' src='' width=640 height=480>
+        </div>
+
+        <script type='text/javascript'>
+            function makeLoadImageLoop(url, imageObj, target) {
+                function loadImageLoop(url, imageObj, target) {
+                    imageObj.onload = function() {
+                        target.setAttribute('src', this.src);
+                        loadImageLoop(url, imageObj, target);
+                    };
+                    imageObj.src = url;
+                }
+                loadImageLoop(url, imageObj, target);
+            }
+
+            var img = document.getElementById('liveimg');
+            for (var i = 0; i < 3; i++)
+                makeLoadImageLoop('live/live' + i + '.jpg', img, new Image);
+        </script>
+
+    </body>
+</html>
