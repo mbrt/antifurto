@@ -20,6 +20,7 @@
             var numLoaders = 3;
             var delayMs = 300;
             var delayForEachMs = delayMs * numLoaders;
+            var counter = 0;
 
             function makeLoadImage(url, imageObj, target) {
                 return function() {
@@ -27,7 +28,7 @@
                         imageObj.onload = function() {
                             target.setAttribute('src', this.src);
                         };
-                        imageObj.src = url;
+                        imageObj.src = url + '?t=' + counter++;
                     }
                     setInterval(work, delayForEachMs);
                 }
