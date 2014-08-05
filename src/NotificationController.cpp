@@ -70,6 +70,7 @@ void NotificationController::notifyContacts()
 
 void NotificationController::processNotificationResults()
 {
+    auto toRemove = notifications_.begin();
     for (auto& f : notifications_) {
         try {
             if (f.wait_for(std::chrono::milliseconds(500))
@@ -80,8 +81,9 @@ void NotificationController::processNotificationResults()
         catch (std::exception& e) {
             LOG_ERROR << "Notification failed " << e.what() << std::endl;
         }
-        notifications_.pop_front();
+        ++toRemove;
     }
+    notifications_.erase(notifications_.begin(), toRemove);
     if (!notifications_.empty()) {
         LOG_WARNING << "Notifications not completed. New check scheduled";
         scheduler_.scheduleAfter(std::chrono::minutes(15), [this] {
