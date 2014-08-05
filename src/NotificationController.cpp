@@ -75,13 +75,12 @@ void NotificationController::processNotificationResults()
             if (f.wait_for(std::chrono::milliseconds(500))
                     != std::future_status::ready)
                 continue;
-
             f.get();
-            notifications_.pop_front();
         }
         catch (std::exception& e) {
             LOG_ERROR << "Notification failed " << e.what() << std::endl;
         }
+        notifications_.pop_front();
     }
     if (!notifications_.empty()) {
         LOG_WARNING << "Notifications not completed. New check scheduled";

@@ -7,6 +7,9 @@ See https://wiki.ubuntu.com/Lighttpd+PHP
 > sudo lighty-enable-mod fastcgi-php
 > sudo service lighttpd force-reload
 
+install python dependencies
+> sudo apt-get install python-flup
+
 copy the web interface in /var/www
 > cp -r lib/pics_web_interface/webinterface/* /var/www/
 
