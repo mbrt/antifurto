@@ -17,20 +17,32 @@
         </div>
 
         <script type='text/javascript'>
-            function makeLoadImageLoop(url, imageObj, target) {
-                function loadImageLoop(url, imageObj, target) {
-                    imageObj.onload = function() {
-                        target.setAttribute('src', this.src);
-                        loadImageLoop(url, imageObj, target);
-                    };
-                    imageObj.src = url;
+            var numLoaders = 3;
+            var delayMs = 300;
+            var delayForEachMs = delayMs * numLoaders;
+
+            function makeLoadImage(url, imageObj, target) {
+                return function() {
+                    function work() {
+                        imageObj.onload = function() {
+                            target.setAttribute('src', this.src);
+                        };
+                        imageObj.src = url;
+                    }
+                    setInterval(work, delayForEachMs);
                 }
-                loadImageLoop(url, imageObj, target);
             }
 
             var img = document.getElementById('liveimg');
-            for (var i = 0; i < 3; i++)
-                makeLoadImageLoop('live/live' + i + '.jpg', img, new Image);
+            var delay = 0;
+            for (var i = 0; i < numLoaders; i++) {
+                var f = makeLoadImage('live/live' + i + '.jpg', img, new Image);
+                if (delay == 0)
+                    f();
+                else
+                    setTimeout(f, delay);
+                delay += delayMs;
+            }
         </script>
 
     </body>
