@@ -31,6 +31,7 @@ if(CROSS_COMPILE)
     configure_file(scripts/setup-sysroot.sh setup-sysroot.sh)
     configure_file(scripts/deploy.sh deploy.sh)
     configure_file(scripts/umount-sysroot.sh umount-sysroot.sh)
+    configure_file(scripts/init-script.sh init-script.sh)
 endif()
 
 # third party to build
@@ -73,32 +74,41 @@ set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
 
 # common files
 set(ANTIFURTO_COMMON_CPP
+    src/Antifurto.cpp
+    src/CameraController.cpp
     src/Config.cpp
     src/DropboxUploader.cpp
     src/Environment.cpp
+    src/LiveView.cpp
+    src/LiveViewController.cpp
     src/Log.cpp
     src/MonitorController.cpp
     src/MotionDetector.cpp
     src/NotificationController.cpp
     src/PictureArchive.cpp
     src/RecordingController.cpp
+    src/SignalHandler.cpp
     src/StaticConfig.cpp
     src/WhatsappNotifier.cpp
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
-    src/fs/Paths.cpp
     src/ipc/Fork.cpp
+    src/ipc/NamedPipe.cpp
     src/ipc/PosixSignalHandler.cpp
     src/ipc/Process.cpp
     src/text/ToString.cpp
     src/text/TextReplace.cpp
 )
 set(ANTIFURTO_COMMON_HPP
+    src/Antifurto.hpp
     src/Camera.hpp
+    src/CameraController.hpp
     src/Config.hpp
     src/DropboxUploader.hpp
     src/Environment.hpp
     src/Exception.hpp
+    src/LiveView.hpp
+    src/LiveViewController.hpp
     src/Log.hpp
     src/MonitorController.hpp
     src/MotionDetector.hpp
@@ -106,6 +116,7 @@ set(ANTIFURTO_COMMON_HPP
     src/Picture.hpp
     src/PictureArchive.hpp
     src/RecordingController.hpp
+    src/SignalHandler.hpp
     src/StaticConfig.hpp
     src/WhatsappNotifier.hpp
     src/concurrency/Exception.hpp
@@ -117,10 +128,13 @@ set(ANTIFURTO_COMMON_HPP
     src/fs/Paths.hpp
     src/ipc/Exception.hpp
     src/ipc/Fork.hpp
+    src/ipc/NamedPipe.hpp
     src/ipc/PosixSignalHandler.hpp
     src/ipc/Process.hpp
+    src/meta/Algorithm.hpp
     src/meta/Iterator.hpp
     src/meta/Metronome.hpp
+    src/meta/Observer.hpp
     src/meta/SmartPtr.hpp
     src/meta/TypeTraits.hpp
     src/text/ToString.hpp

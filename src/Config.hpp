@@ -15,6 +15,11 @@ public:
     Configuration();
 
     using StringList = std::vector<std::string>;
+    struct Startup {
+        bool liveView;
+        bool monitor;
+        std::chrono::seconds monitorTimeout;
+    };
     struct Whatsapp {
         std::string cc;
         std::string src;
@@ -38,12 +43,18 @@ public:
         unsigned int maxDays;
         std::string archiveDir;
     };
+    struct LiveView {
+        unsigned int numPictures;
+        std::string filePrefix;
+        std::chrono::seconds inactivityTimeout;
+    };
 
-    std::chrono::seconds startupTimeout;
+    Startup startup;
     Whatsapp whatsapp;
     Dropbox dropbox;
     Log log;
     Recording recording;
+    LiveView liveView;
 };
 
 

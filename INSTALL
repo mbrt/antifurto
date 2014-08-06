@@ -7,6 +7,9 @@ See https://wiki.ubuntu.com/Lighttpd+PHP
 > sudo lighty-enable-mod fastcgi-php
 > sudo service lighttpd force-reload
 
+install python dependencies
+> sudo apt-get install python-flup
+
 copy the web interface in /var/www
 > cp -r lib/pics_web_interface/webinterface/* /var/www/
 
@@ -23,3 +26,17 @@ the password is stored in a file in /path/to/project/config/.lighttpdpassword
 and have the following contents:
 admin:write-your-password-here
 
+add permissions to www-data to send signals to antifurto
+> sudo visudo -f /etc/sudoers.d/antifurto
+  add the following line to the file
+    www-data myhost = (root) NOPASSWD: /usr/bin/killall
+  where myhost is the hostname (e.g. rasberry)
+
+setup init script
+- edit /etc/rc.local
+- add this line before "exit 0"
+  /path/to/antifurto &
+> sudo cp /path/to/project/script/init.sh /etc/init.d/antifurto
+> cd /etc/init.d/
+> sudo chmod 755 antifurto
+> sudo update-rc.d antifurto defaults

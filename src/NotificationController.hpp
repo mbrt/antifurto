@@ -13,11 +13,16 @@ namespace antifurto {
 
 // fwd reference
 class Configuration;
+namespace concurrency {
+class TaskScheduler;
+}
 
 class NotificationController
 {
 public:
-    NotificationController(const Configuration& c, MotionDetector& detector);
+    NotificationController(const Configuration& c,
+                           MotionDetector& detector,
+                           concurrency::TaskScheduler& scheduler);
     ~NotificationController();
 
     void onAlarmStateChanged(MotionDetector::State state);
@@ -32,6 +37,7 @@ private:
     WhatsappNotifier whatsapp_;
     ContactList contacts_;
     Notifications notifications_;
+    concurrency::TaskScheduler& scheduler_;
     std::chrono::system_clock::time_point lastNotificationTime_;
 };
 

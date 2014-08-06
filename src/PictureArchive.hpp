@@ -16,6 +16,7 @@ namespace antifurto {
 class PictureArchive
 {
 public:
+    PictureArchive() { }
     PictureArchive(std::string folder, unsigned int recordBuffer = 5);
 
     void addPicture(Picture p);

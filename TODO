@@ -1,24 +1,36 @@
 TODO LIST
 ---------
 
+* Kill subprocess
+  - used to kill notification processes
+* Optimizations
+  - current bottleneks are cv::MatConstIterator::operator++() and
+    countMotionPixels()
+* Web server
+  - add live view
+  - add query to monitor status (posix message queue? socket? pipe?)
+* Autorun
+  - add command to /etc/rc.local script
+* Bug fix
+  - in RecordingController::initUploader(), if no connection is available, the
+    function blocks;
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
-- Kill subprocess
 - Packaging system
-- Log system
-  - log rotate
-  - write to single file
 - Archive refactor
   - Pack old directories in videos
   - Sync dropbox with archive directories
   - Put not uploaded images in a list and serve it when alarm is off
-- Web server
-  - add live view
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile
 - Add cmake configurations for profile and distribution
   see: CMAKE_CONFIGURATION_TYPES in
   http://www.cmake.org/Wiki/CMake_Useful_Variables
-- Optimizations
-  - current bottlenek is cv::MatConstIterator::operator++()
+- Refactor of CameraController
+  - Port CameraController to use TaskScheduler
+    to do this, a cancellation token for a Task is needed
+- Use two TaskScheduler
+  - one only for the pictures cycle
+  - one for all the long running tasks
+- Display logs in webserver

@@ -31,6 +31,10 @@ else()
     # signal test
     add_executable(signal_test signal_test.cpp)
     target_link_libraries(signal_test antifurto_core)
+
+    # pipe test
+    add_executable(pipe_test pipe_test.cpp)
+    target_link_libraries(pipe_test antifurto_core)
 endif(CROSS_COMPILE)
 
 # cross tests

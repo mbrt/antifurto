@@ -21,6 +21,7 @@ using Milliseconds = std::chrono::milliseconds;
 using Minutes = std::chrono::minutes;
 constexpr Milliseconds monitorCycleDuration() { return Milliseconds{ 500 }; }
 constexpr Milliseconds monitorCycleDurationOnAlarm() { return Milliseconds{ 200 }; }
+constexpr Milliseconds liveViewCycleDuration() { return Milliseconds{ 200 }; }
 constexpr Minutes minNotificationDelay() { return Minutes{ 10 }; }
 
 std::string exeDir();
@@ -30,6 +31,7 @@ std::string configFile();
 constexpr const char* archiveDir() { return "/tmp/antifurto/archive"; }
 constexpr const char* logDir() { return "/tmp/antifurto/log"; }
 constexpr const char* tmpDir() { return "/tmp"; }
+constexpr const char* liveViewFilePrefix() { return "/tmp/antifurto/live"; }
 
 constexpr unsigned int maxArchiveDays() { return 7; }
 

@@ -2,15 +2,19 @@
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 #include "Log.hpp"
-
-#include <iostream>
+#include "MotionDetector.hpp"
+#include "concurrency/TaskScheduler.hpp"
+#include "meta/Algorithm.hpp"
 
 namespace antifurto {
 
 NotificationController::
-NotificationController(const Configuration& c, MotionDetector& detector)
+NotificationController(const Configuration& c,
+                       MotionDetector& detector,
+                       concurrency::TaskScheduler& scheduler)
     : whatsapp_(configureWhatsappNotifier(c, config::exeDir()))
     , contacts_(c.whatsapp.destinations.begin(), c.whatsapp.destinations.end())
+    , scheduler_(scheduler)
     , lastNotificationTime_(std::chrono::system_clock::now() - config::minNotificationDelay())
 {
     if (!contacts_.empty()) {
@@ -65,21 +69,27 @@ void NotificationController::notifyContacts()
 
 void NotificationController::processNotificationResults()
 {
-    for (auto& f : notifications_) {
-        try {
-            if (f.wait_for(std::chrono::milliseconds(500))
-                    != std::future_status::ready)
-                continue;
+    using namespace std::chrono;
 
-            f.get();
-            notifications_.pop_front();
-        }
-        catch (std::exception& e) {
-            LOG_ERROR << "Notification failed " << e.what() << std::endl;
-        }
+    meta::removeIf(notifications_,
+        [](std::future<void>& f) {
+            try {
+                // remove if the answer is ready (result or exception)
+                if (f.wait_for(milliseconds(10)) != std::future_status::ready)
+                    return false;
+                f.get();
+            }
+            catch (std::exception& e) {
+                LOG_ERROR << "Notification failed " << e.what() << std::endl;
+            }
+            return true;
+        });
+    if (!notifications_.empty()) {
+        LOG_WARNING << "Notifications not completed. New check scheduled";
+        scheduler_.scheduleAfter(minutes(15), [this] {
+            processNotificationResults();
+        });
     }
-    if (!notifications_.empty())
-        LOG_ERROR << "Notifications not completed\n";
 }
 
 } // namespace antifurto

@@ -12,6 +12,15 @@
 namespace bfs = boost::filesystem;
 
 namespace antifurto {
+namespace {
+    // this is used only to fake a scheduler for the minimal constructor
+    concurrency::TaskScheduler staticScheduler;
+}
+
+RecordingController::RecordingController(const Configuration& cfg)
+    : config_(cfg.recording)
+    , scheduler_(staticScheduler)
+{ }
 
 RecordingController::
 RecordingController(const Configuration& cfg, MotionDetector& detector,
@@ -47,6 +56,7 @@ void RecordingController::performMaintenance()
     if (!bfs::exists(config_.archiveDir)) return;
     LOG_INFO << "Performing archive maintenance";
     deleteOlderPictures();
+    LOG_INFO << "Maintenance completed";
 }
 
 void RecordingController::initUploader(const Configuration& cfg)
@@ -102,7 +112,7 @@ void RecordingController::onPictureSaved(const std::string& fileName)
 void RecordingController::uploadFile(const std::string& sourceFile)
 {
     try {
-        std::size_t archiveDirSize = strlen(config::archiveDir());
+        std::size_t archiveDirSize = config_.archiveDir.size();
         assert(sourceFile.size() > archiveDirSize);
         std::string dest{sourceFile.substr(archiveDirSize + 1)};
         uploader_.uploadFile(sourceFile, dest);

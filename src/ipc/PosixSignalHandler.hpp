@@ -16,6 +16,7 @@ namespace ipc {
 class PosixSignalHandler
 {
 public:
+    PosixSignalHandler(std::vector<int> signs);
     PosixSignalHandler(std::initializer_list<int> signs);
     PosixSignalHandler(const PosixSignalHandler& ) = delete;
     PosixSignalHandler& operator =(const PosixSignalHandler& ) = delete;

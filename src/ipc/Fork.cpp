@@ -1,5 +1,6 @@
 #include "Fork.hpp"
 #include "Exception.hpp"
+#include "../text/ToString.hpp"
 
 #include <cstring>
 #include <unistd.h>
@@ -62,10 +63,8 @@ int ChildProcess::wait()
 #if defined(USE_WAITID)
     ::siginfo_t info;
     std::memset(&info, 0, sizeof(::siginfo_t));
-    if (::waitid(P_PID, pid_, &info, WEXITED) == -1) {
-        perror("waitid");
-        throw Exception("wait failed");
-    }
+    if (::waitid(P_PID, pid_, &info, WEXITED) == -1)
+        throw Exception(text::toString("wait failed. errno: ", errno));
     pid_ = 0;
     return info.si_status;
 #else

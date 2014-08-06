@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "../text/ToString.hpp"
+#include "../Log.hpp"
 
 // see http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_sigmask.html
 // for an implementation example
@@ -24,7 +25,7 @@ sigset_t addToSigset(Container signs)
 
 } // anon namespace
 
-PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
+PosixSignalHandler::PosixSignalHandler(std::vector<int> signs)
     : handlerList_(SIGRTMAX)
     , signalsToBeHandled_(signs)
     , run_(false)
@@ -35,9 +36,14 @@ PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
         throw Exception("Cannot block signals");
 }
 
+PosixSignalHandler::PosixSignalHandler(std::initializer_list<int> signs)
+    : PosixSignalHandler(signs)
+{ }
+
 void PosixSignalHandler::setSignalHandler(int signal, Handler h)
 {
-    if (!std::binary_search(std::begin(signalsToBeHandled_), std::end(signalsToBeHandled_), signal))
+    if (!std::binary_search(std::begin(signalsToBeHandled_),
+            std::end(signalsToBeHandled_), signal))
         throw Exception(text::toString(
                 "Cannot add signal ", signal,
                 ", as it was not specified in construction"));
@@ -46,26 +52,28 @@ void PosixSignalHandler::setSignalHandler(int signal, Handler h)
 
 void PosixSignalHandler::enterSignalHandlingLoop()
 {
-    run_.store(true, std::memory_order_acquire);
+    run_.store(true, std::memory_order_release);
 
     sigset_t signalMask = addToSigset(signalsToBeHandled_);
     signalsToBeHandled_.clear(); // signals handled not needed anymore
 
-    while (run_.load(std::memory_order_release)) {
+    while (run_.load(std::memory_order_acquire)) {
         siginfo_t info;
         if (::sigwaitinfo(&signalMask, &info) == -1)
             throw Exception("Error waiting for signal");
         int signum = info.si_signo;
         Handler& h = handlerList_[signum];
-        if (!h)
-            throw Exception(text::toString("Unexpected signal ", signum));
-        h(signum);
+        if (h)
+            h(signum);
+        else
+            LOG_WARNING << "Got signal without handler ("
+                        << signum << ") ignored";
     }
 }
 
 void PosixSignalHandler::leaveSignalHandlingLoop()
 {
-    run_.store(false, std::memory_order_acquire);
+    run_.store(false, std::memory_order_release);
 }
 
 } // namespace ipc

@@ -54,3 +54,11 @@ HTML5 video player: http://www.videojs.com/
 picture gallery: http://blog.cedric.ws/raspberry-pi-opencv-create-a-security-system-web-interface
     installare apache + php: http://www.instructables.com/id/Raspberry-Pi-Web-Server/step7/Install-Apache-with-PHP/
     installare lighttpd + php: https://wiki.ubuntu.com/Lighttpd+PHP
+FastCGI with lighttpd: http://redmine.lighttpd.net/projects/1/wiki/Docs_ModFastCGI
+    used to interface antifurto with lighttpd
+    how to use it with python: https://docs.python.org/2/howto/webservers.html
+    fifo in python: http://stackoverflow.com/questions/17449110/fifo-reading-in-a-loop
+refresh image with new at same url:
+    http://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url
+set cache control lighttpd:
+    http://www.cyberciti.biz/faq/lighttpd-send-cache-control-maxage-headers-of-staticfiles/

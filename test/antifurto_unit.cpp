@@ -2,20 +2,29 @@
 #include <cassert>
 #include <functional>
 #include <thread>
+#include <fstream>
+#include <future>
 
 #include "CvCamera.hpp"
 #include "MotionDetector.hpp"
 #include "PictureArchive.hpp"
 #include "RecordingController.hpp"
 #include "Config.hpp"
+#include "CameraController.hpp"
+#include "LiveView.hpp"
 #include "concurrency/TaskScheduler.hpp"
 #include "concurrency/TimeUtility.hpp"
 #include "text/ToString.hpp"
+#include "ipc/NamedPipe.hpp"
+#include "meta/Observer.hpp"
+
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace antifurto;
+namespace bfs = boost::filesystem;
 
 
 struct test_error : public std::runtime_error
@@ -236,4 +245,125 @@ BOOST_AUTO_TEST_CASE(timeOps)
     std::cout << "Now: " << text::toString(std::chrono::system_clock::now())
               << "\nTomorrow: " << text::toString(concurrency::tomorrow())
               << std::endl;
+}
+
+std::string readFileContents(const char* name)
+{
+    std::ifstream f{name};
+    std::string result;
+    std::getline(f, result);
+    return result;
+}
+
+void writeToFile(const char* name, const char* contents)
+{
+    std::ofstream f{name};
+    f << contents << std::endl;
+}
+
+BOOST_AUTO_TEST_CASE(namedPipe)
+{
+    const char* filename = "/tmp/tmppipe";
+    BOOST_CHECK(!bfs::exists(filename));
+    {
+        ipc::NamedPipe pipe{filename};
+        BOOST_CHECK(bfs::exists(filename));
+        auto res = std::async(std::launch::async, readFileContents, filename);
+        writeToFile(filename, "try to write");
+        BOOST_CHECK_EQUAL(res.get(), "try to write");
+    }
+    BOOST_CHECK(!bfs::exists(filename));
+}
+
+BOOST_AUTO_TEST_CASE(observer)
+{
+    meta::Subject<int, int> subject;
+    int a = 0, b = 0;
+    {
+        auto reg = subject.registerObserver([&](int x, int y){ a = x; b = y; });
+        subject.notify(5, 7);
+        BOOST_CHECK_EQUAL(a, 5);
+        BOOST_CHECK_EQUAL(b, 7);
+    }
+    subject.notify(1, 2);
+    BOOST_CHECK_EQUAL(a, 5);
+    BOOST_CHECK_EQUAL(b, 7);
+}
+
+struct CameraObserver
+{
+    CameraObserver()
+        : start(std::chrono::system_clock::now())
+    { }
+
+    void operator()(const Picture&) {
+        using namespace std::chrono;
+        called = true;
+        auto now = system_clock::now();
+        lastPeriod = duration_cast<milliseconds>(now - start);
+        std::cout << "last period: " << lastPeriod.count() << std::endl;
+        start = now;
+    }
+
+    std::chrono::system_clock::time_point start;
+    std::chrono::milliseconds lastPeriod;
+    bool called = false;
+};
+
+template <typename T>
+bool checkDuration(T actual, T expected, T tolerance = T{30})
+{
+    return expected - tolerance < actual
+            && actual < expected + tolerance;
+}
+
+BOOST_AUTO_TEST_CASE(cameraController)
+{
+    using Milli = std::chrono::milliseconds;
+    Milli max_milli{std::numeric_limits<int>::max()};
+    BOOST_CHECK(std::min(max_milli, Milli(100)) == Milli(100));
+
+    CameraController controller;
+    CameraObserver o1;
+    auto reg = controller.addObserver(std::ref(o1), Milli(100));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    BOOST_CHECK(o1.called);
+    BOOST_CHECK(checkDuration(o1.lastPeriod, Milli(100)));
+}
+
+void liveViewTest(int nreads)
+{
+#define PREFIX "/tmp/testlive"
+    std::future<void> res;
+    const char* filenames[] {
+        PREFIX "0.jpg",
+        PREFIX "1.jpg",
+        PREFIX "2.jpg",
+    };
+    {
+        LiveView liveView{PREFIX, 3};
+        res = std::async(std::launch::async, [&] {
+            std::vector<uint8_t> img;
+            for (int i = 0; i < nreads; ++i)
+            {
+                std::ifstream f{filenames[i % 3]};
+                std::istream_iterator<uint8_t> it(f), end;
+                img.assign(it, end);
+            }
+        });
+
+        Picture p{makeWhiteImg()};
+        for (int i = 0; i < 5; ++i) {
+            liveView.addPicture(p);
+        }
+    }
+    res.get();
+#undef PREFIX
+}
+
+BOOST_AUTO_TEST_CASE(liveView)
+{
+    liveViewTest(3);
+    liveViewTest(2);
+    liveViewTest(0);
 }

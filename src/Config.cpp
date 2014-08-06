@@ -11,11 +11,16 @@ namespace antifurto {
 // default configuration
 Configuration::Configuration()
 {
+    startup.liveView = false;
+    startup.monitor = true;
+    startup.monitorTimeout = std::chrono::seconds(5);
     log.level = Log::Level::INFO;
     log.dir = config::logDir();
     recording.maxDays = config::maxArchiveDays();
     recording.archiveDir = config::archiveDir();
-    startupTimeout = std::chrono::seconds(5);
+    liveView.numPictures = 3;
+    liveView.filePrefix = config::liveViewFilePrefix();
+    liveView.inactivityTimeout = std::chrono::seconds(15);
 }
 
 
@@ -50,12 +55,16 @@ public:
 
     Configuration getConfiguration()
     {
-        Configuration::Recording& rec  =config_.recording;
+        Configuration::Startup& strt = config_.startup;
+        Configuration::Recording& rec  = config_.recording;
         Configuration::Log& log = config_.log;
         Configuration::Whatsapp& whatsapp = config_.whatsapp;
         Configuration::Dropbox& dropbox = config_.dropbox;
+        Configuration::LiveView& liveView = config_.liveView;
 
-        storeOptionOrDefault("startupTimeout", config_.startupTimeout);
+        storeOptionOrDefault("startup.live-view", strt.liveView);
+        storeOptionOrDefault("startup.monitor", strt.monitor);
+        storeOptionOrDefault("startup.monitor-timeout", strt.monitorTimeout);
         storeOptionOrDefault("recording.archive-dir", rec.archiveDir);
         storeOptionOrDefault("recording.max-days", rec.maxDays);
         storeOptionOrDefault("log.level", log.level);
@@ -68,6 +77,19 @@ public:
         storeOptionOrDefault("dropbox.appsecret", dropbox.appSecret);
         storeOptionOrDefault("dropbox.oauth-token", dropbox.oauthToken);
         storeOptionOrDefault("dropbox.oauth-secret", dropbox.oauthTokenSecret);
+        storeOptionOrDefault("live-view.num-pictures", liveView.numPictures);
+        storeOptionOrDefault("live-view.file-prefix", liveView.filePrefix);
+        storeOptionOrDefault("live-view.inactivity-timeout", liveView.inactivityTimeout);
+
+        // handle mutually exclusive options
+        if (vm_.count("live-view")) {
+            strt.liveView = true;
+            strt.monitor = false;
+        }
+        else if (vm_.count("monitor")) {
+            strt.liveView = false;
+            strt.monitor = true;
+        }
 
         return config_;
     }
@@ -96,6 +118,15 @@ private:
         return true;
     }
 
+    bool storeOptionOrDefault(const char* option, std::chrono::seconds& out)
+    {
+        unsigned int value;
+        if (!storeOptionOrDefault(option, value))
+            return false;
+        out = std::chrono::seconds{value};
+        return true;
+    }
+
     void initOptions()
     {
         // declare a group of options available only on command line
@@ -103,14 +134,20 @@ private:
         generic.add_options()
             ("help,h", "produce help message")
             ("version,v", "print version string")
+            ("live-view", "start live view only")
+            ("monitor", "start monitoring only")
             ;
         // declare a group of options available both on command line and in
         // config file
         po::options_description config("Configuration");
         config.add_options()
-            ("startup-timeout", po::value<unsigned int>(),
+            ("startup.live-view", po::value<bool>(),
+             "start live view by default on startup")
+            ("startup.monitor", po::value<bool>(),
+             "start monitor by default on startup")
+            ("startup.monitor-timeout", po::value<unsigned int>(),
              "seconds before start monitoring")
-            ("recording.arhive-dir", po::value<std::string>(),
+            ("recording.archive-dir", po::value<std::string>(),
              "picture archive directory")
             ("recording.max-days", po::value<unsigned int>(),
              "max number of recording days to maintain")
@@ -127,6 +164,12 @@ private:
             ("dropbox.oauth-token", po::value<std::string>(), "dropbox oauth token")
             ("dropbox.oauth-secret", po::value<std::string>(),
              "dropbox oauth token secret")
+            ("live-view.num-pictures", po::value<unsigned int>(), "number of "
+             "pictures to buffer for live view")
+            ("live-view.file-prefix", po::value<std::string>(), "file name "
+             "prefix in which store the live view pictures")
+            ("live-view.inactivity-timeout", po::value<unsigned int>(),
+             "number of seconds of inactivity before stopping live view")
             ;
 
         cmdLineOpts_.add(generic).add(config);
