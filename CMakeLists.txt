@@ -131,6 +131,7 @@ set(ANTIFURTO_COMMON_HPP
     src/ipc/NamedPipe.hpp
     src/ipc/PosixSignalHandler.hpp
     src/ipc/Process.hpp
+    src/meta/Algorithm.hpp
     src/meta/Iterator.hpp
     src/meta/Metronome.hpp
     src/meta/Observer.hpp
