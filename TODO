@@ -8,6 +8,7 @@ TODO LIST
     countMotionPixels()
 * Web server
   - add live view
+    - try to use fastcgi to get pictures
   - add query to monitor status (posix message queue? socket? pipe?)
 * Autorun
   - add command to /etc/rc.local script
