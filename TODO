@@ -9,8 +9,6 @@ TODO LIST
 * Web server
   - add live view
   - add query to monitor status (posix message queue? socket? pipe?)
-* Autorun
-  - add command to /etc/rc.local script
 * Bug fix
   - in RecordingController::initUploader(), if no connection is available, the
     function blocks;
