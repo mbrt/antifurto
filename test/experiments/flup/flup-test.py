@@ -1,8 +1,16 @@
 #!/usr/bin/env python
-def myapp(environ, start_response):
-    start_response('200 OK', [('Content-Type', 'text/plain')])
-    return ['Hello World!\n']
 
-if __name__ == '__main__':
-    from flup.server.fcgi import WSGIServer
-    WSGIServer(myapp, bindAddress='/tmp/myapp-fastcgi.socket').run()
+from cgi import escape
+import sys, os
+from flup.server.fcgi import WSGIServer
+
+def app(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/html')])
+
+    yield '<h1>FastCGI Environment</h1>'
+    yield '<table>'
+    for k, v in sorted(environ.items()):
+         yield '<tr><th>%s</th><td>%s</td></tr>' % (escape(k), escape(v))
+    yield '</table>'
+
+WSGIServer(app).run()
