@@ -25,6 +25,7 @@ public:
     using Observer = std::function<void(State)>;
     void addObserver(Observer o);
     void clearObservers();
+    void reset();
 
     void dumpState(std::ostream& out) const;
 
