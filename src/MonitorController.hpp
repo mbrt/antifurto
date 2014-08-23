@@ -19,7 +19,14 @@ class MonitorController
 public:
     using SetPicturesInterval = std::function<void(std::chrono::milliseconds)>;
 
-    MonitorController(const Configuration& c, SetPicturesInterval s);
+    /// This callback is called with a parameter 'true' when a registration
+    /// is needed, 'false' when it is no more needed
+    using PictureRegistrationRequest = std::function<void(bool)>;
+
+    MonitorController(const Configuration& c, SetPicturesInterval s,
+                      PictureRegistrationRequest r);
+    void startMonitor();
+    void stopMonitor();
     void examinePicture(const Picture& picture);
 
 private:
@@ -30,6 +37,7 @@ private:
     RecordingController recording_;
     NotificationController notification_;
     SetPicturesInterval setPicturesInterval_;
+    PictureRegistrationRequest pictureRegistrationRequest_;
 };
 
 } // namespace antifurto

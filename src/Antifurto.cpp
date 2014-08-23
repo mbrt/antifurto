@@ -73,11 +73,18 @@ public:
                 return;
             }
 
+            if (!monitor_) {
+                monitor_.reset(new MonitorController{
+                                   config_, setPeriodFunction_,
+                                   [&](bool reg) {
+                    if (reg)
+                        registerMonitor();
+                    else
+                        monitorRegistration_.clear();
+                }});
+            }
+            monitor_->startMonitor();
             LOG_INFO << "Monitoring started";
-            monitor_.reset(new MonitorController{config_, setPeriodFunction_});
-            monitorRegistration_ = camera_->addObserver([&](const Picture& p){
-                monitor_->examinePicture(p);
-            }, config::monitorCycleDuration());
         });
     }
 
@@ -103,8 +110,7 @@ public:
         std::lock_guard<std::mutex> lock{m_};
         if (monitor_) {
             LOG_INFO << "Stopping monitoring";
-            monitorRegistration_.clear();
-            monitor_.reset();
+            monitor_->stopMonitor();
             LOG_INFO << "Monitoring stopped";
         }
         handleCameraControllerNeed();
@@ -161,6 +167,13 @@ private:
         liveViewRegistration_ = camera_->addObserver([&](const Picture& p) {
             liveView_->addPicture(p);
         }, config::liveViewCycleDuration());
+    }
+
+    void registerMonitor()
+    {
+        monitorRegistration_ = camera_->addObserver([&](const Picture& p){
+            monitor_->examinePicture(p);
+        }, config::monitorCycleDuration());
     }
 
     Configuration config_;

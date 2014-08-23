@@ -56,6 +56,12 @@ void MotionDetector::clearObservers()
     observerList_.clear();
 }
 
+void MotionDetector::reset()
+{
+    curr_ = cv::Mat();
+    prevDiff_ = cv::Mat();
+}
+
 void MotionDetector::dumpState(std::ostream& out) const
 {
     out << state_;
