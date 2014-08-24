@@ -7,11 +7,8 @@ TODO LIST
   - current bottleneks are cv::MatConstIterator::operator++() and
     countMotionPixels()
 * Web server
-  - add live view
-    - try to use fastcgi to get pictures
+  - refactor live view to use sockets instead of fifo
   - add query to monitor status (posix message queue? socket? pipe?)
-* Autorun
-  - add command to /etc/rc.local script
 * Bug fix
   - in RecordingController::initUploader(), if no connection is available, the
     function blocks;
@@ -21,7 +18,6 @@ TODO LIST
 - Archive refactor
   - Pack old directories in videos
   - Sync dropbox with archive directories
-  - Put not uploaded images in a list and serve it when alarm is off
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile
