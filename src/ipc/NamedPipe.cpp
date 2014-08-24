@@ -13,7 +13,7 @@ namespace ipc {
 NamedPipe::NamedPipe(std::string filename)
     : filename_(std::move(filename))
 {
-    if (::mkfifo(filename_.c_str(), S_IWUSR | S_IRUSR) == -1)
+    if (::mkfifo(filename_.c_str(), S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH) == -1)
         throw Exception(text::toString("Cannot create pipe. errno: ", errno));
 }
 

@@ -134,8 +134,11 @@ public:
         liveView_.reset(new LiveViewController(config_, [&](bool reg) {
             if (reg)
                 registerLiveView();
-            else
+            else {
                 liveViewRegistration_.clear();
+                liveViewActive_ = false;
+                handleCameraControllerNeed();
+            }
         }));
         registerLiveView();
     }
