@@ -34,16 +34,35 @@
                 }
             }
 
-            var img = document.getElementById('liveimg');
-            var delay = 0;
-            for (var i = 0; i < numLoaders; i++) {
-                var f = makeLoadImage('live/live' + i + '.jpg', img, new Image);
-                if (delay == 0)
-                    f();
-                else
-                    setTimeout(f, delay);
-                delay += delayMs;
+            function startupRequest(outDiv, onSuccess) {
+                var request = new XMLHttpRequest();
+                request.open('GET', 'controller/live.php', true);
+                request.onload = function() {
+                    response = JSON.parse(this.responseText);
+                    // response is { result: int, log: string }
+                    var out = document.getElementById(outDiv);
+                    if (response.result == 0)
+                        setTimeout(onSuccess, 3000);
+                    else {
+                        out.innerHTML = 'Error executing command';
+                        console.log(response.log);
+                    }
+                }
+                request.send();
             }
+
+            startupRequest('cmdresult', function() {
+                var img = document.getElementById('liveimg');
+                var delay = 0;
+                for (var i = 0; i < numLoaders; i++) {
+                    var f = makeLoadImage('live/live' + i + '.jpg', img, new Image);
+                    if (delay == 0)
+                        f();
+                    else
+                        setTimeout(f, delay);
+                    delay += delayMs;
+                }
+            });
         </script>
 
     </body>
