@@ -64,3 +64,5 @@ refresh image with new at same url:
     http://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url
 set cache control lighttpd:
     http://www.cyberciti.biz/faq/lighttpd-send-cache-control-maxage-headers-of-staticfiles/
+Whatchdog daemon: http://www.sat.dundee.ac.uk/psc/watchdog/watchdog-background.html
+    on raspberry: http://www.bayerschmidt.com/raspberry-pi/89-auto-reboot-a-hung-raspberry-pi-using-the-on-board-watchdog-timer.html
