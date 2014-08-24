@@ -23,6 +23,7 @@ GPIO:
 intro: http://www.themagpi.com/issue/issue-2/article/in-control/
 libs in C: http://www.raspberrypi.org/forums/viewtopic.php?f=33&t=9729
 Low level: http://elinux.org/RPi_Low-level_peripherals#GPIO_Driving_Example_.28C.29
+python + web server: http://davstott.me.uk/index.php/2013/03/17/raspberry-pi-controlling-gpio-from-the-web/
 
 Software:
 Cross compile Raspberry: http://stackoverflow.com/questions/19162072/installing-raspberry-pi-cross-compiler
@@ -57,6 +58,7 @@ picture gallery: http://blog.cedric.ws/raspberry-pi-opencv-create-a-security-sys
 FastCGI with lighttpd: http://redmine.lighttpd.net/projects/1/wiki/Docs_ModFastCGI
     used to interface antifurto with lighttpd
     how to use it with python: https://docs.python.org/2/howto/webservers.html
+    wsgi with flup: http://lucumr.pocoo.org/2007/5/21/getting-started-with-wsgi/
     fifo in python: http://stackoverflow.com/questions/17449110/fifo-reading-in-a-loop
 refresh image with new at same url:
     http://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url
