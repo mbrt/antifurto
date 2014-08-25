@@ -62,3 +62,7 @@ refresh image with new at same url:
     http://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url
 set cache control lighttpd:
     http://www.cyberciti.biz/faq/lighttpd-send-cache-control-maxage-headers-of-staticfiles/
+signal handling info:
+    http://www.cs.utah.edu/dept/old/texinfo/glibc-manual-0.02/library_21.html#SEC358
+    http://stackoverflow.com/questions/17942034/simple-linux-signal-handling
+    http://cboard.cprogramming.com/linux-programming/150239-when-re-enable-signal-handlers.html
