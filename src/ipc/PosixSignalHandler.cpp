@@ -56,11 +56,13 @@ void PosixSignalHandler::enterSignalHandlingLoop()
 
     sigset_t signalMask = addToSigset(signalsToBeHandled_);
     signalsToBeHandled_.clear(); // signals handled not needed anymore
+    siginfo_t info;
 
     while (run_.load(std::memory_order_acquire)) {
-        siginfo_t info;
         if (::sigwaitinfo(&signalMask, &info) == -1)
             throw Exception("Error waiting for signal");
+        ::sigprocmask(SIG_BLOCK, &signalMask, nullptr); // block the signals now
+
         int signum = info.si_signo;
         Handler& h = handlerList_[signum];
         if (h)
@@ -68,6 +70,8 @@ void PosixSignalHandler::enterSignalHandlingLoop()
         else
             LOG_WARNING << "Got signal without handler ("
                         << signum << ") ignored";
+
+        ::sigprocmask(SIG_UNBLOCK, &signalMask, nullptr); // unblock signals
     }
 }
 

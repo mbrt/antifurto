@@ -143,6 +143,30 @@ void multiHandlerTest()
     CHECK(result != 0);
 }
 
+int blockProc()
+{
+    bool called = false;
+    PosixSignalHandler handler{SIGUSR1};
+    handler.setSignalHandler(SIGUSR1, [&] (int){
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        called = true;
+    });
+    handler.enterSignalHandlingLoop();
+    return called;
+}
+
+// test block signals without terminate
+void blockTest()
+{
+    ipc::ChildProcess p = ipc::forkAndCall(blockProc);
+    std::this_thread::sleep_for(std::chrono::milliseconds(60));
+    p.kill(SIGUSR1);
+    p.kill(SIGUSR1);
+    int result = p.wait();
+    CHECK(result != 0);
+}
+
+
 int main(int argc, char**)
 {
     if (argc > 1) {
@@ -153,5 +177,6 @@ int main(int argc, char**)
     threadsTest();
     signalHandledTest();
     multiHandlerTest();
+    blockTest();
     return 0;
 }
