@@ -12,13 +12,21 @@ TODO LIST
 * Bug fix
   - in RecordingController::initUploader(), if no connection is available, the
     function blocks;
+  - fix start stop monitoring
+        mmal: mmal_vc_port_enable: failed to enable port vc.ril.camera:out:1(I420):
+        ENOSPC
+        mmal: mmal_port_enable: failed to enable port
+        vc.ril.camera:out:1(I420)(0xb17044a0) (ENOSPC)
+        mmal: camera video callback2 error
+        mmal: raspiCamCvCreateCameraCapture: Failed to create camera component
+    the problem is that the shutdown of the camera is not right
+
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
 - Packaging system
 - Archive refactor
   - Pack old directories in videos
   - Sync dropbox with archive directories
-  - Put not uploaded images in a list and serve it when alarm is off
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile
