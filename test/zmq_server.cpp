@@ -6,20 +6,20 @@
 #include <string.h>
 #include <assert.h>
 
-int main (void)
+int main()
 {
     // Socket to talk to clients
-    void *context = zmq_ctx_new ();
-    void *responder = zmq_socket (context, ZMQ_REP);
-    int rc = zmq_bind (responder, "ipc:////tmp/hello.ipc");
-    assert (rc == 0);
+    void *context = zmq_ctx_new();
+    void *responder = zmq_socket(context, ZMQ_REP);
+    int rc = zmq_bind(responder, "ipc:////tmp/hello.ipc");
+    assert(rc == 0);
 
     while (1) {
         char buffer [10];
-        zmq_recv (responder, buffer, 10, 0);
-        printf ("Received Hello\n");
-        sleep (1); // Do some 'work'
-        zmq_send (responder, "World", 5, 0);
+        zmq_recv(responder, buffer, 10, 0);
+        printf("Received Hello\n");
+        sleep(1); // Do some 'work'
+        zmq_send(responder, "World", 5, 0);
     }
     return 0;
 }
