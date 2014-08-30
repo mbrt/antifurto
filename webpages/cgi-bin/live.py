@@ -19,35 +19,33 @@ def connect_socket():
     poll = zmq.Poller()
     poll.register(socket, zmq.POLLIN)
 
+def close_socket():
+    global socket, poll
+    socket.setsockopt(zmq.LINGER, 0)
+    socket.close()
+    poll.unregister(socket)
+
 def app(environ, start_response):
     retries_left = REQUEST_RETRIES
     while retries_left:
         socket.send(REQUEST_MSG)
 
-        expect_reply = True
-        while expect_reply:
-            socks = dict(poll.poll(REQUEST_TIMEOUT))
-            if socks.get(socket) == zmq.POLL_IN:
-                reply = client.recv()
-                if not reply:
-                    # timeout: retry to send
-                    break
+        socks = dict(poll.poll(REQUEST_TIMEOUT))
+        if socks.get(socket) == zmq.POLL_IN:
+            reply = client.recv()
+            if not reply:
+                # timeout: retry to send
+                break
 
-                # ok, got an answer
-                start_response('200 OK', [('Content-Type', 'image/jpeg'), ('Cache-Control', 'no-cache')])
-                retries_left = REQUEST_RETRIES
-                expect_reply = False
-                return reply
-            else:
-                # socket gets confused. reconnect it
-                socket.setsockopt(zmq.LINGER, 0)
-                socket.close()
-                poll.unregister(socket)
-                retries_left -= 1
-                # create new connection
-                connect_socket()
-                if retries_left:
-                    socket_send(REQUEST_MSG)
+            # ok, got an answer
+            start_response('200 OK', [('Content-Type', 'image/jpeg'), ('Cache-Control', 'no-cache')])
+            return reply
+        else:
+            # socket gets confused. reconnect it
+            close_socket()
+            retries_left -= 1
+            # create new connection
+            connect_socket()
 
     # no more retries
     start_response('404 Not Found', [('Content-Type', 'text/html')])
@@ -55,4 +53,7 @@ def app(environ, start_response):
 
 connect_socket()
 WSGIServer(app).run()
+
+# cleanup on server exit
+close_socket()
 context.term()
