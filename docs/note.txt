@@ -66,3 +66,4 @@ signal handling info:
     http://www.cs.utah.edu/dept/old/texinfo/glibc-manual-0.02/library_21.html#SEC358
     http://stackoverflow.com/questions/17942034/simple-linux-signal-handling
     http://cboard.cprogramming.com/linux-programming/150239-when-re-enable-signal-handlers.html
+    http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_sigmask.html
