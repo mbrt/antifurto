@@ -35,6 +35,10 @@ else()
     # pipe test
     add_executable(pipe_test pipe_test.cpp)
     target_link_libraries(pipe_test antifurto_core)
+
+    # zmq test
+    add_executable(zmq_server zmq_server.cpp)
+    target_link_libraries(zmq_server zmq)
 endif(CROSS_COMPILE)
 
 # cross tests

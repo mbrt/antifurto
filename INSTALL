@@ -40,3 +40,6 @@ setup init script
 > cd /etc/init.d/
 > sudo chmod 755 antifurto
 > sudo update-rc.d antifurto defaults
+
+install zeromq dependencies:
+> sudo apt-get install libzmq3-dev python-zmq

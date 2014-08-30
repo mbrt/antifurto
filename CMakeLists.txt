@@ -69,7 +69,8 @@ include_directories(lib/folly/include)
 set(GLOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glog)
 include_directories(${GLOG_DIR}/src)
 link_directories(${GLOG_DIR}/build/${ARCHITECTURE})
-set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog pthread)
+
+set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog pthread zmq)
 set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
 
 # common files
