@@ -62,3 +62,7 @@ refresh image with new at same url:
     http://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url
 set cache control lighttpd:
     http://www.cyberciti.biz/faq/lighttpd-send-cache-control-maxage-headers-of-staticfiles/
+
+Signals:
+    - http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_sigmask.html
+

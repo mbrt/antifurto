@@ -19,6 +19,10 @@ void check(bool pred, const char* file, int line)
 
 #define CHECK(PRED) check(PRED, __FILE__, __LINE__)
 
+constexpr std::chrono::milliseconds pollingTime() {
+    return std::chrono::milliseconds{1};
+}
+
 
 void handleSignal(int sig)
 {
@@ -29,7 +33,7 @@ void handleSignal(int sig)
 int termChild()
 {
     bool usr2Called = false;
-    PosixSignalHandler handler{SIGUSR1, SIGUSR2, SIGTERM, SIGINT};
+    PosixSignalHandler handler{pollingTime()};
     handler.setSignalHandler(SIGUSR1, &handleSignal);
     handler.setSignalHandler(SIGTERM, [&](int signal){
         handleSignal(signal);
@@ -108,7 +112,7 @@ struct Handler
 
     void operator()()
     {
-        PosixSignalHandler handler{signal};
+        PosixSignalHandler handler{pollingTime()};
         handler.setSignalHandler(signal, [&](int sig){
             received = sig;
             handler.leaveSignalHandlingLoop();
@@ -146,13 +150,19 @@ void multiHandlerTest()
 int blockProc()
 {
     bool called = false;
-    PosixSignalHandler handler{SIGUSR1};
-    handler.setSignalHandler(SIGUSR1, [&] (int){
+    bool term = false;
+    PosixSignalHandler handler{pollingTime()};
+    handler.setSignalHandler(SIGUSR1, [&](int){
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
         called = true;
     });
+    handler.ignoreSignal(SIGUSR2);
+    handler.setSignalHandler(SIGTERM, [&](int){
+        term = true;
+        handler.leaveSignalHandlingLoop();
+    });
     handler.enterSignalHandlingLoop();
-    return called;
+    return called && term;
 }
 
 // test block signals without terminate
@@ -162,8 +172,10 @@ void blockTest()
     std::this_thread::sleep_for(std::chrono::milliseconds(60));
     p.kill(SIGUSR1);
     p.kill(SIGUSR1);
+    p.kill(SIGUSR2);
+    p.kill(SIGTERM);
     int result = p.wait();
-    CHECK(result != 0);
+    CHECK(result);
 }
 
 
@@ -176,7 +188,7 @@ int main(int argc, char**)
     termTest();
     threadsTest();
     signalHandledTest();
-    multiHandlerTest();
+    //multiHandlerTest(); // this fails: no multi handlers allowed now
     blockTest();
     return 0;
 }
