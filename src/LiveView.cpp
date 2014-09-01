@@ -2,7 +2,6 @@
 #include "Log.hpp"
 #include "text/ToString.hpp"
 
-#include <fcntl.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;
@@ -10,24 +9,21 @@ namespace bfs = boost::filesystem;
 
 namespace antifurto {
 
-LiveView::LiveView(const std::string& outFilenamePrefix, unsigned int num)
-    : stopping_(false)
-    , worker_([&](const Picture& p){ write(p); }, num)
+LiveView::LiveView(const std::string& socketPath)
+    : context_(1)
+    , socket_(context_, ZMQ_REP)
+    , running_(true)
+    , worker_([&](const Picture& p){ write(p); }, 3)
 {
-    prepareOutDir(outFilenamePrefix);
-    for (unsigned int i = 0; i < num; ++i) {
-        filenames_.emplace_back(text::toString(outFilenamePrefix, i, ".jpg"));
-        std::string const& curr = filenames_.back();
-        if (bfs::exists(curr))
-            bfs::remove(curr);
-        pipes_.emplace_back(curr);
-    }
+    prepareSocketDir(socketPath);
+    int timeout = 2500;
+    socket_.setsockopt(ZMQ_SNDTIMEO, &timeout, sizeof(timeout));
+    socket_.bind(("ipc:///" + socketPath).c_str());
 }
 
 LiveView::~LiveView()
 {
-    stopping_ = true;
-    consumeCurrentFileIfValid();
+    running_.store(false, std::memory_order_release);
 }
 
 bool LiveView::addPicture(const Picture& p)
@@ -35,15 +31,9 @@ bool LiveView::addPicture(const Picture& p)
     return worker_.enqueue(p);
 }
 
-const std::string &LiveView::getCurrentFilename() const
+void LiveView::prepareSocketDir(const std::string& filename)
 {
-    std::lock_guard<std::mutex> lock(idxM_);
-    return filenames_[currentIndex_];
-}
-
-void LiveView::prepareOutDir(const std::string& outFilenamePrefix)
-{
-    bfs::path prefixPath{outFilenamePrefix};
+    bfs::path prefixPath{filename};
     bfs::path basePath = prefixPath.parent_path();
     if (!bfs::exists(basePath))
         bfs::create_directories(basePath);
@@ -51,25 +41,25 @@ void LiveView::prepareOutDir(const std::string& outFilenamePrefix)
 
 void LiveView::write(const Picture& p)
 {
-    if (stopping_) return;
+    if (!running_.load(std::memory_order_acquire)) return;
 
     try {
-        cv::imwrite(filenames_[currentIndex_], p, {CV_IMWRITE_JPEG_QUALITY, 90});
+        // first of all encode
+        if (!cv::imencode(".jpg", p, imageBuffer_, {CV_IMWRITE_JPEG_QUALITY, 90}))
+            throw Exception("Cannot save image to buffer in live view");
+
+        // now wait the request
+        zmq::message_t request;
+        socket_.recv(&request);
+
+        // reply with the contents
+        zmq::message_t reply{imageBuffer_.size()};
+        ::memcpy((void*)reply.data(), &imageBuffer_[0], imageBuffer_.size());
+        while (!socket_.send(reply) && running_.load(std::memory_order_acquire)) { }
     }
     catch (std::exception& e) {
         LOG_ERROR << "Error saving image for live view: " << e.what();
     }
-
-    std::lock_guard<std::mutex> lock(idxM_);
-    currentIndex_ = (currentIndex_ + 1) % filenames_.size();
-}
-
-void LiveView::consumeCurrentFileIfValid()
-{
-    char buf[1024];
-    int fd = ::open(getCurrentFilename().c_str(), O_RDONLY | O_NONBLOCK);
-    if (fd <= 0) return;
-    while (::read(fd, buf, sizeof(buf)) > 0) { }
 }
 
 } // namespace antifurto

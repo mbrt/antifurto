@@ -331,39 +331,39 @@ BOOST_AUTO_TEST_CASE(cameraController)
     BOOST_CHECK(checkDuration(o1.lastPeriod, Milli(100)));
 }
 
-void liveViewTest(int nreads)
-{
-#define PREFIX "/tmp/testlive"
-    std::future<void> res;
-    const char* filenames[] {
-        PREFIX "0.jpg",
-        PREFIX "1.jpg",
-        PREFIX "2.jpg",
-    };
-    {
-        LiveView liveView{PREFIX, 3};
-        res = std::async(std::launch::async, [&] {
-            std::vector<uint8_t> img;
-            for (int i = 0; i < nreads; ++i)
-            {
-                std::ifstream f{filenames[i % 3]};
-                std::istream_iterator<uint8_t> it(f), end;
-                img.assign(it, end);
-            }
-        });
-
-        Picture p{makeWhiteImg()};
-        for (int i = 0; i < 5; ++i) {
-            liveView.addPicture(p);
-        }
-    }
-    res.get();
-#undef PREFIX
-}
-
-BOOST_AUTO_TEST_CASE(liveView)
-{
-    liveViewTest(3);
-    liveViewTest(2);
-    liveViewTest(0);
-}
+// void liveViewTest(int nreads)
+// {
+// #define PREFIX "/tmp/testlive"
+//     std::future<void> res;
+//     const char* filenames[] {
+//         PREFIX "0.jpg",
+//         PREFIX "1.jpg",
+//         PREFIX "2.jpg",
+//     };
+//     {
+//         LiveView liveView{PREFIX, 3};
+//         res = std::async(std::launch::async, [&] {
+//             std::vector<uint8_t> img;
+//             for (int i = 0; i < nreads; ++i)
+//             {
+//                 std::ifstream f{filenames[i % 3]};
+//                 std::istream_iterator<uint8_t> it(f), end;
+//                 img.assign(it, end);
+//             }
+//         });
+//
+//         Picture p{makeWhiteImg()};
+//         for (int i = 0; i < 5; ++i) {
+//             liveView.addPicture(p);
+//         }
+//     }
+//     res.get();
+// #undef PREFIX
+// }
+//
+// BOOST_AUTO_TEST_CASE(liveView)
+// {
+//     liveViewTest(3);
+//     liveViewTest(2);
+//     liveViewTest(0);
+// }

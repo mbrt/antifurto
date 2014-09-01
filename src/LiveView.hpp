@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Picture.hpp"
+#include "Exception.hpp"
 #include "concurrency/SpScQueue.hpp"
-#include "ipc/NamedPipe.hpp"
 
 #include <string>
-#include <mutex>
+#include <vector>
 #include <atomic>
+#include <zmq.hpp>
 
 namespace antifurto {
 
@@ -14,28 +15,23 @@ namespace antifurto {
 class LiveView
 {
 public:
-    LiveView(const std::string& outFilenamePrefix, unsigned int num);
+    LiveView(const std::string& socketPath);
     ~LiveView();
 
     bool addPicture(const Picture& p);
-    std::string const& getCurrentFilename() const;
 
 private:
-    void prepareOutDir(const std::string& outFilenamePrefix);
+    void prepareSocketDir(const std::string& filename);
     void write(const Picture& p);
-    void consumeCurrentFileIfValid();
 
-    using Filenames = std::vector<std::string>;
-    using Pipes = std::vector<ipc::NamedPipe>;
     using Worker =
         concurrency::SpScQueue<Picture,
             std::function<void(const Picture&)>>;
 
-    Filenames filenames_;
-    Pipes pipes_;
-    unsigned int currentIndex_ = 0;
-    std::atomic<bool> stopping_;
-    mutable std::mutex idxM_;
+    zmq::context_t context_;
+    zmq::socket_t socket_;
+    std::vector<unsigned char> imageBuffer_;
+    std::atomic<bool> running_;
     Worker worker_;
 };
 

@@ -12,7 +12,7 @@ namespace antifurto {
 LiveViewController::
 LiveViewController(Configuration& c, PictureRegistrationRequest regF)
     : regFunc_(regF), timeout_(c.liveView.inactivityTimeout)
-    , liveView_(new LiveView{c.liveView.filePrefix, c.liveView.numPictures})
+    , liveView_(new LiveView{c.liveView.socketPath})
 { }
 
 LiveViewController::~LiveViewController()

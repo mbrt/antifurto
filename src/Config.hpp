@@ -44,8 +44,7 @@ public:
         std::string archiveDir;
     };
     struct LiveView {
-        unsigned int numPictures;
-        std::string filePrefix;
+        std::string socketPath;
         std::chrono::seconds inactivityTimeout;
     };
 

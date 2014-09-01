@@ -43,7 +43,7 @@ if(NOT CROSS_COMPILE)
     find_package(Boost COMPONENTS
                  unit_test_framework filesystem system program_options)
     find_package(OpenCV REQUIRED core highgui imgproc)
-    set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
+    list(APPEND ANTIFURTO_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
 else()
     # find_package OpenCV does not work well when cross compiling
     set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc)
@@ -61,17 +61,20 @@ else()
     link_directories(${raspicamcv_LIBRARY_DIRS})
     include_directories(. ${raspicamcv_INCLUDE_DIRS})
 
-    set(ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS} ${Boost_LIBRARIES})
-    set(ANTIFURTO_DEPENDENCIES raspicam_cv)
+    list(APPEND ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS} ${Boost_LIBRARIES})
+    list(APPEND ANTIFURTO_DEPENDENCIES raspicam_cv)
 endif()
+list(APPEND ANTIFURTO_LIBS pthread)
 include_directories(lib/folly/include)
 # glog
 set(GLOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glog)
 include_directories(${GLOG_DIR}/src)
 link_directories(${GLOG_DIR}/build/${ARCHITECTURE})
-
-set(ANTIFURTO_LIBS ${ANTIFURTO_LIBS} google-glog pthread zmq)
-set(ANTIFURTO_DEPENDENCIES ${ANTIFURTO_DEPENDENCIES} glog)
+list(APPEND ANTIFURTO_LIBS google-glog)
+list(APPEND ANTIFURTO_DEPENDENCIES glog)
+# zeromq
+include_directories(lib/cppzmq)
+list(APPEND ANTIFURTO_LIBS zmq)
 
 # common files
 set(ANTIFURTO_COMMON_CPP
