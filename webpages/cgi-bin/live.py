@@ -2,6 +2,12 @@
 
 # lazy pirate pattern
 # http://zguide.zeromq.org/page:all#Client-Side-Reliability-Lazy-Pirate-Pattern
+#
+# bearing in mind that in our case:
+# - the socket is always connected;
+# - when no more retries are allowed, we can return 404.
+#
+# so, only one loop is needed, and not two like in the zmq docs
 
 from flup.server.fcgi import WSGIServer
 import zmq
