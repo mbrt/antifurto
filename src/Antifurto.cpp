@@ -131,16 +131,18 @@ public:
 
         LOG_INFO << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
-        liveView_.reset(new LiveViewController(config_, [&](bool reg) {
-            if (reg)
-                registerLiveView();
-            else {
-                liveViewRegistration_.clear();
-                liveViewActive_ = false;
-                handleCameraControllerNeed();
-            }
-        }));
-        registerLiveView();
+        if (!liveView_) {
+            liveView_.reset(new LiveViewController(config_, [&](bool reg) {
+                if (reg)
+                    registerLiveView();
+                else {
+                    liveViewRegistration_.clear();
+                    liveViewActive_ = false;
+                    handleCameraControllerNeed();
+                }
+            }));
+        }
+        liveView_->start();
     }
 
     void stopLiveView()

@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
         SignalHandler appSignalHandler{signalHandler, app};
 
         signalHandler.enterSignalHandlingLoop();
+        //std::this_thread::sleep_for(std::chrono::hours(1));
     }
 
     LOG_INFO << "Exit now";

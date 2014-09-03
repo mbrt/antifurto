@@ -4,6 +4,7 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <string>
 
 namespace antifurto {
 
@@ -21,18 +22,20 @@ public:
     /// is needed, 'false' when it is no more needed
     using PictureRegistrationRequest = std::function<void(bool)>;
 
-    LiveViewController(Configuration& c, PictureRegistrationRequest regF);
+    LiveViewController(const Configuration& c, PictureRegistrationRequest regF);
     ~LiveViewController();
 
     void addPicture(const Picture& p);
+    void start();
     void stop();
 
 private:
     PictureRegistrationRequest regFunc_;
+    std::string socketPath_;
     std::chrono::seconds timeout_;
     std::unique_ptr<LiveView> liveView_;
     std::chrono::system_clock::time_point lastPictureWrittenTime_;
-    bool running_ = true;
+    bool running_ = false;
     std::future<void> stopWork_;
 };
 

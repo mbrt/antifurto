@@ -18,6 +18,7 @@ LiveView::LiveView(const std::string& socketPath)
     prepareSocketDir(socketPath);
     int timeout = 2500;
     socket_.setsockopt(ZMQ_SNDTIMEO, &timeout, sizeof(timeout));
+    socket_.setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
     socket_.bind(("ipc:///" + socketPath).c_str());
 }
 
@@ -50,7 +51,8 @@ void LiveView::write(const Picture& p)
 
         // now wait the request
         zmq::message_t request;
-        socket_.recv(&request);
+        while (!socket_.recv(&request) && running_.load(std::memory_order_acquire)) { }
+        if (!running_.load(std::memory_order_acquire)) return;
 
         // reply with the contents
         zmq::message_t reply{imageBuffer_.size()};

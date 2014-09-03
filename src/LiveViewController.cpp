@@ -10,9 +10,10 @@
 namespace antifurto {
 
 LiveViewController::
-LiveViewController(Configuration& c, PictureRegistrationRequest regF)
-    : regFunc_(regF), timeout_(c.liveView.inactivityTimeout)
-    , liveView_(new LiveView{c.liveView.socketPath})
+LiveViewController(const Configuration& c, PictureRegistrationRequest regF)
+    : regFunc_(regF), socketPath_(c.liveView.socketPath)
+    , timeout_(c.liveView.inactivityTimeout)
+
 { }
 
 LiveViewController::~LiveViewController()
@@ -32,6 +33,15 @@ void LiveViewController::addPicture(const Picture& p)
         lastPictureWrittenTime_ = system_clock::now();
     else if (system_clock::now() - lastPictureWrittenTime_ > timeout_)
         stop();
+}
+
+void LiveViewController::start()
+{
+    if (running_) return;
+    running_ = true;
+
+    regFunc_(true);
+    liveView_.reset(new LiveView{socketPath_});
 }
 
 void LiveViewController::stop()
