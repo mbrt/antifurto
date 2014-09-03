@@ -17,21 +17,14 @@
         </div>
 
         <script type='text/javascript'>
-            var numLoaders = 3;
-            var delayMs = 300;
-            var delayForEachMs = delayMs * numLoaders;
             var counter = 0;
 
-            function makeLoadImage(url, imageObj, target) {
-                return function() {
-                    function work() {
-                        imageObj.onload = function() {
-                            target.setAttribute('src', this.src);
-                        };
-                        imageObj.src = url + '?t=' + counter++;
-                    }
-                    setInterval(work, delayForEachMs);
-                }
+            function loadImage(url, imageObj, target) {
+                imageObj.onload = function() {
+                    target.setAttribute('src', this.src);
+                    loadImage(url, imageObj, target);
+                };
+                imageObj.src = url + '?t=' + counter++;
             }
 
             function startupRequest(outDiv, onSuccess) {
@@ -42,7 +35,7 @@
                     // response is { result: int, log: string }
                     var out = document.getElementById(outDiv);
                     if (response.result == 0)
-                        setTimeout(onSuccess, 3000);
+                        onSuccess();
                     else {
                         out.innerHTML = 'Error executing command';
                         console.log(response.log);
@@ -53,15 +46,7 @@
 
             startupRequest('cmdresult', function() {
                 var img = document.getElementById('liveimg');
-                var delay = 0;
-                for (var i = 0; i < numLoaders; i++) {
-                    var f = makeLoadImage('live/live' + i + '.jpg', img, new Image);
-                    if (delay == 0)
-                        f();
-                    else
-                        setTimeout(f, delay);
-                    delay += delayMs;
-                }
+                loadImage('live/live.jpg', img, new Image);
             });
         </script>
 

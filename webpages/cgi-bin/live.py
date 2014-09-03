@@ -12,11 +12,12 @@
 from flup.server.fcgi import WSGIServer
 import zmq
 
-context = zmq.Context()
-ADDRESS = "ipc:////tmp/antifurto/live.ipc"
+ADDRESS = "tcp://localhost:4679"
 REQUEST_TIMEOUT = 2500
 REQUEST_RETRIES = 3
-REQUEST_MSG = True
+REQUEST_MSG = "1"
+
+context = zmq.Context()
 
 def connect_socket():
     global socket, poll
@@ -37,8 +38,8 @@ def app(environ, start_response):
         socket.send(REQUEST_MSG)
 
         socks = dict(poll.poll(REQUEST_TIMEOUT))
-        if socks.get(socket) == zmq.POLL_IN:
-            reply = client.recv()
+        if socks.get(socket) == zmq.POLLIN:
+            reply = socket.recv()
             if not reply:
                 # timeout: retry to send
                 break
@@ -54,7 +55,8 @@ def app(environ, start_response):
             connect_socket()
 
     # no more retries
-    start_response('404 Not Found', [('Content-Type', 'text/html')])
+    start_response('503 Service Unavailable', [('Content-Type', 'text/html')])
+    return ""
 
 
 connect_socket()

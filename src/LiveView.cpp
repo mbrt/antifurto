@@ -19,7 +19,13 @@ LiveView::LiveView(const std::string& socketPath)
     int timeout = 2500;
     socket_.setsockopt(ZMQ_SNDTIMEO, &timeout, sizeof(timeout));
     socket_.setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
-    socket_.bind(("ipc:///" + socketPath).c_str());
+    try {
+        socket_.bind("tcp://127.0.0.1:4679");
+    }
+    catch (std::exception& e) {
+        LOG_ERROR << "Error binding live view socket: " << e.what();
+        throw;
+    }
 }
 
 LiveView::~LiveView()
