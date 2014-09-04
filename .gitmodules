@@ -13,6 +13,3 @@
 [submodule "lib/glog"]
 	path = lib/glog
 	url = git@github.com:michele-bertasi/glog-cmake.git
-[submodule "lib/cppzmq"]
-	path = lib/cppzmq
-	url = https://github.com/zeromq/cppzmq.git

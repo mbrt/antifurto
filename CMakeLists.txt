@@ -73,7 +73,6 @@ link_directories(${GLOG_DIR}/build/${ARCHITECTURE})
 list(APPEND ANTIFURTO_LIBS google-glog)
 list(APPEND ANTIFURTO_DEPENDENCIES glog)
 # zeromq
-include_directories(lib/cppzmq)
 list(APPEND ANTIFURTO_LIBS zmq)
 
 # common files
