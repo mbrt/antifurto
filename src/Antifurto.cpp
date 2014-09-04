@@ -158,8 +158,10 @@ private:
     {
         if ((liveViewActive_ || monitorActive_) && !camera_)
             camera_.reset(new CameraController());
-        else if (!liveViewActive_ && !monitorActive_)
-            camera_.reset();
+        // FIXME: when the PiCamera can be safely destroyed
+        //        you can enable the following lines
+        //else if (!liveViewActive_ && !monitorActive_)
+        //    camera_.reset();
     }
 
     void registerLiveView()
