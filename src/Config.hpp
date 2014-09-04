@@ -44,7 +44,7 @@ public:
         std::string archiveDir;
     };
     struct LiveView {
-        std::string socketPath;
+        std::string socketAddress;
         std::chrono::seconds inactivityTimeout;
     };
 

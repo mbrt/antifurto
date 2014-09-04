@@ -31,7 +31,7 @@ std::string configFile();
 constexpr const char* archiveDir() { return "/tmp/antifurto/archive"; }
 constexpr const char* logDir() { return "/tmp/antifurto/log"; }
 constexpr const char* tmpDir() { return "/tmp"; }
-constexpr const char* liveViewSocketPath() { return "/tmp/antifurto/live.ipc"; }
+constexpr const char* liveViewSocketAddress() { return "127.0.0.1:4679"; }
 
 constexpr unsigned int maxArchiveDays() { return 7; }
 

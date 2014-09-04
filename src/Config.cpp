@@ -18,7 +18,7 @@ Configuration::Configuration()
     log.dir = config::logDir();
     recording.maxDays = config::maxArchiveDays();
     recording.archiveDir = config::archiveDir();
-    liveView.socketPath = config::liveViewSocketPath();
+    liveView.socketAddress = config::liveViewSocketAddress();
     liveView.inactivityTimeout = std::chrono::seconds(15);
 }
 
@@ -76,7 +76,7 @@ public:
         storeOptionOrDefault("dropbox.appsecret", dropbox.appSecret);
         storeOptionOrDefault("dropbox.oauth-token", dropbox.oauthToken);
         storeOptionOrDefault("dropbox.oauth-secret", dropbox.oauthTokenSecret);
-        storeOptionOrDefault("live-view.socket-path", liveView.socketPath);
+        storeOptionOrDefault("live-view.socket-address", liveView.socketAddress);
         storeOptionOrDefault("live-view.inactivity-timeout", liveView.inactivityTimeout);
 
         // handle mutually exclusive options
@@ -162,8 +162,8 @@ private:
             ("dropbox.oauth-token", po::value<std::string>(), "dropbox oauth token")
             ("dropbox.oauth-secret", po::value<std::string>(),
              "dropbox oauth token secret")
-            ("live-view.socket-path", po::value<std::string>(), "path to the "
-             "socket file to send pictures")
+            ("live-view.socket-address", po::value<std::string>(), "address of the "
+             "socket used to send pictures")
             ("live-view.inactivity-timeout", po::value<unsigned int>(),
              "number of seconds of inactivity before stopping live view")
             ;

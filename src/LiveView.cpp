@@ -9,18 +9,17 @@ namespace bfs = boost::filesystem;
 
 namespace antifurto {
 
-LiveView::LiveView(const std::string& socketPath)
+LiveView::LiveView(const std::string& socketAddress)
     : context_(1)
     , socket_(context_, ZMQ_REP)
     , running_(true)
     , worker_([&](const Picture& p){ write(p); }, 3)
 {
-    prepareSocketDir(socketPath);
     int timeout = 2500;
     socket_.setsockopt(ZMQ_SNDTIMEO, &timeout, sizeof(timeout));
     socket_.setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
     try {
-        socket_.bind("tcp://127.0.0.1:4679");
+        socket_.bind(("tcp://" + socketAddress).c_str());
     }
     catch (std::exception& e) {
         LOG_ERROR << "Error binding live view socket: " << e.what();
@@ -36,14 +35,6 @@ LiveView::~LiveView()
 bool LiveView::addPicture(const Picture& p)
 {
     return worker_.enqueue(p);
-}
-
-void LiveView::prepareSocketDir(const std::string& filename)
-{
-    bfs::path prefixPath{filename};
-    bfs::path basePath = prefixPath.parent_path();
-    if (!bfs::exists(basePath))
-        bfs::create_directories(basePath);
 }
 
 void LiveView::write(const Picture& p)

@@ -15,13 +15,12 @@ namespace antifurto {
 class LiveView
 {
 public:
-    LiveView(const std::string& socketPath);
+    LiveView(const std::string& socketAddress);
     ~LiveView();
 
     bool addPicture(const Picture& p);
 
 private:
-    void prepareSocketDir(const std::string& filename);
     void write(const Picture& p);
 
     using Worker =
