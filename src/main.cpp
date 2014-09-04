@@ -13,7 +13,7 @@ using namespace antifurto;
 int main(int argc, char* argv[])
 {
     {   // this block force destruction before logging exit
-        ipc::PosixSignalHandler signalHandler{SignalHandler::getSignalsNeeded()};
+        ipc::PosixSignalHandler signalHandler;
 
         ConfigurationParser parser;
         try {

@@ -163,8 +163,12 @@ private:
     {
         if ((liveViewActive_ || monitorActive_) && !camera_)
             camera_.reset(new CameraController());
+// FIXME: when the PiCamera can be safely destroyed
+//        you can enable the following lines
+#if !defined(ANTIFURTO_RASPBERRY)
         else if (!liveViewActive_ && !monitorActive_)
             camera_.reset();
+#endif
     }
 
     void registerLiveView()
