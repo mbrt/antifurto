@@ -3,16 +3,48 @@ body {
   padding-bottom: 30px;
 }
 
+/* Customize container */
+@media (min-width: 768px) {
+  .container {
+    max-width: 730px;
+  }
+}
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+/* Main marketing message */
+.jumbotron {
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+.jumbotron .btn {
+  padding: 14px 24px;
+  font-size: 21px;
+}
+
 .theme-dropdown .dropdown-menu {
   position: static;
   display: block;
   margin-bottom: 20px;
 }
 
-.theme-showcase > p > .btn {
-  margin: 5px 0;
-}
-
 .theme-showcase .navbar .container {
   width: auto;
+}
+
+.on-off > div > .btn {
+  width: 100%;
+  margin-top: 10px;
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .on-off > div > .btnl {
+    width: auto;
+    float: right;
+  }
+  .on-off > div > .btnr {
+    width: auto;
+    float: left;
+  }
 }

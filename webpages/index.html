@@ -24,7 +24,50 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+
+  <body role="document">
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="..">Antifurto</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="..">Home</a></li>
+            <li><a href="../live.html">Live view</a></li>
+            <li><a href="../archive.php">Archive</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container theme-showcase" role="main">
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h1>Antifurto home</h1>
+        <p>View the status and issue commands.</p>
+      </div>
+
+      <!-- contents -->
+      <div class="row on-off">
+        <div class="col-sm-6">
+            <button type="button" class="btn btnl btn-lg btn-primary">Start monitoring</button>
+        </div>
+        <div class="col-sm-6">
+            <button type="button" class="btn btnr btn-lg btn-primary">Stop monitoring</button>
+        </div>
+      </div>
+
+    </div> <!-- /container -->
 
 
     <!-- Bootstrap core JavaScript
