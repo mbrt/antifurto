@@ -16,14 +16,28 @@ copy the web interface in /var/www
 link the archive dir
 > ln -s /path/to/archive /var/www/pics
 
-add authentication
+apply configuration
 > cd /etc/lighttpd/
 > sudo cp lighttpd.conf lighttpd.conf.bak
-> sudo patch lighttpd < /path/to/project/config/lighttpd.conf.patch
+use one of the following options:
+option 1: patch
+    > diff -Naur lighttpd.conf /path/to/project/config/lighttpd.conf.patched > patch
+    > sudo patch lighttpd < patch
+option 2: merge
+    > sudo merge lighttpd.conf /.../lighttpd.conf.original /.../lighttpd.conf.patched
+option 3: overwrite
+    > sudo cp /.../lighttpd.conf.patched lighttpd.conf
+restart service
 > sudo service lighttpd restart
 
-the password is stored in a file in /path/to/project/config/.lighttpdpassword
-and have the following contents:
+copy and edit the password file
+> cd /etct/lighttpd
+> sudo cp /path/to/project/config/lighttpd.passwd .
+> sudo chown root:root lighttpd.passwd
+> sudo chmod 644 lighttpd.passwd
+edit the file
+> sudo vi lighttpd.passwd
+writing your password:
 admin:write-your-password-here
 
 add permissions to www-data to send signals to antifurto
