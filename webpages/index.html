@@ -1,50 +1,27 @@
-<html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
-        <title>Antifurto</title>
-    </head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
 
-    <body>
-        <h1>Antifurto</h1>
-        
-        This is Antifurto by berta.
+    <!-- Bootstrap -->
+    <link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-        <h2>Monitoring commands</h2>
-        <div>
-            <input id='startcmd' type='button' value='Start monitoring' class='button'/>
-            <input id='stopcmd' type='button' value='Stop monitoring' class='button'/>
-            <div id='cmdresult'></div>
-        </div>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
 
-        <h2>Main pages</h2>
-        <div>
-            <a href='archive.php' class='button'>Recording archive</a>
-            <a href='live.html' class='button'>Live view</a>
-        </div>
-
-        <script type='text/javascript'>
-            function getUrl(url, outDiv) {
-                return function() {
-                    var request = new XMLHttpRequest();
-                    request.open('GET', url, true);
-                    request.onload = function() {
-                        response = JSON.parse(this.responseText);
-                        // response is { result: int, log: string }
-                        var out = document.getElementById(outDiv);
-                        if (response.result == 0)
-                            out.innerHTML = 'Succesful';
-                        else {
-                            out.innerHTML = 'Error executing command';
-                            console.log(response.log);
-                        }
-                    }
-                    request.send();
-                }
-            }
-            document.getElementById('startcmd').onclick =
-                getUrl('controller/monitoring.php?start=1', 'cmdresult');
-            document.getElementById('stopcmd').onclick =
-                getUrl('controller/monitoring.php?stop=1', 'cmdresult');
-        </script>
-    </body>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="libs/jquery/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+  </body>
 </html>
