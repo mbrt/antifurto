@@ -43,7 +43,7 @@ void LiveView::write(const Picture& p)
 
     try {
         // first of all encode
-        if (!cv::imencode(".jpg", p, imageBuffer_, {CV_IMWRITE_JPEG_QUALITY, 90}))
+        if (!cv::imencode(".jpg", p, imageBuffer_, {CV_IMWRITE_JPEG_QUALITY, 75}))
             throw Exception("Cannot save image to buffer in live view");
 
         // now wait the request
