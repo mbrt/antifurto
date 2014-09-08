@@ -33,18 +33,7 @@ body {
   width: auto;
 }
 
-.on-off > div > .btn {
-  width: 100%;
+.on-off .btn {
   margin-top: 10px;
   text-align: center;
-}
-@media (min-width: 768px) {
-  .on-off > div > .btnl {
-    width: auto;
-    float: right;
-  }
-  .on-off > div > .btnr {
-    width: auto;
-    float: left;
-  }
 }
