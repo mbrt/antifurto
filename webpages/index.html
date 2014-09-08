@@ -60,14 +60,16 @@
       <!-- contents -->
       <div class="row on-off">
         <div class="col-sm-6">
-          <button id="start" type="button" class="btn btnl btn-lg btn-primary" onclick="onStartClick()">
+          <button id='start' type="button" data-loading-text="Starting..." class="btn btnl btn-lg btn-primary">
             Start monitoring
           </button>
         </div>
         <div class="col-sm-6">
-          <button id="stop" type="button" class="btn btnr btn-lg btn-primary">Stop monitoring</button>
+          <button id='stop' type="button" data-loading-text="Stopping..." class="btn btnr btn-lg btn-primary">
+            Stop monitoring
+          </button>
         </div>
-        <div id="message" class="col-sm-12 spaced"></div>
+        <div id="message" class="col-sm-12" style="margin-top: 10px"></div>
       </div>
 
     </div> <!-- /container -->
@@ -98,23 +100,53 @@
                 '  <button type="button" class="close" data-dismiss="alert">' +
                 '    <span aria-hidden="true">&times;</span>' +
                 '    <span class="sr-only">Close</span>' +
-                '  </button>' + msg +
+                '  </button>' +
+                   msg +
                 '</div>');
         }
-        function onStartClick() {
-            // response is { result: int, log: string }
-            $.ajax('controller/monitoring.php?start=1')
-                .done(function() {
-                    displayMessage('#message',
-                        '<h4>Success</h4><p>Monitoring started.</p>',
-                        'alert-success');
+
+        $('.on-off button').click(function() {
+            var target = $(this);
+            var all = $('.on-off button');
+            if (target.attr('id') == 'start') {
+                var msg = 'Monitoring started.';
+                var params = { start: 1 };
+            }
+            else {
+                var msg = 'Monitoring stopped.';
+                var params = { stop: 1 };
+            }
+
+            target.button('loading');
+            all.attr('disabled', 'disabled');
+            $.ajax({
+                    url: 'controller/monitoring.php',
+                    data: params,
+                    dataType: 'json',
+                    cache: false
                 })
-                .fail(function() {
+                .done(function(data) {
+                    // data is { result: int, log: string }
+                    if (data.result == 0)
+                        displayMessage('#message',
+                            '<h4>Success</h4><p>' + msg + '</p>',
+                            'alert-success');
+                    else
+                        displayMessage('#message',
+                            '<h4>Error</h4><p>' + data.log + '.</p>',
+                            'alert-danger');
+                })
+                .fail(function(jqxhr, textStatus, errorThrown) {
                     displayMessage('#message',
-                        '<h4>Error</h4><p>Error executing command.</p>',
+                        '<h4>Error</h4>' +
+                        '<p>' + errorThrown + '.</p>',
                         'alert-danger');
+                })
+                .always(function() {
+                    target.button('reset');
+                    all.removeAttr('disabled');
                 });
-        }
+        });
     </script>
 
   </body>

@@ -9,8 +9,6 @@
         $retvar = -1;
     }
 
-    // write json result
-    echo '{ "result": ' . $retvar . ', "log": "' . $out[0] . '" }';
-    //echo "Result $retvar.<br>";
-    //echo var_dump($out);
+    // sleep(2); // debug purpose
+    echo json_encode(array('result' => $retvar, 'log' => $out[0]));
 ?>
