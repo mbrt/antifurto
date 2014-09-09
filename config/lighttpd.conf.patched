@@ -41,7 +41,7 @@ include_shell "/usr/share/lighttpd/use-ipv6.pl " + server.port
 include_shell "/usr/share/lighttpd/create-mime.assign.pl"
 include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 
-fastcgi.server += ( "/live/" =>
+fastcgi.server += ( "/live/live.jpg" =>
 ((
     "socket" => "/var/run/lighttpd/live.socket",
     "bin-path" => "/var/www/cgi-bin/live.py",
