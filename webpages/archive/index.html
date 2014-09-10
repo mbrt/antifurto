@@ -65,10 +65,10 @@
       
       <!-- Tab panes -->
       <div class="tab-content">
-        <div class="tab-pane active" id="thumbnails">
+        <div class="tab-pane active" id="thumbnails-tab">
         
           <!-- thumbnails panel -->
-          <div class="row on-off" style="margin-top: 20px">
+          <div class="row" style="margin-top: 20px">
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
                 <img class="img-responsive" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
@@ -77,26 +77,26 @@
             </div>
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
-                <img class="img-responsive" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                <img class="img-responsive" index="0" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
                 <div class="caption"><p>07:04:30.0536</p></div>
               </div>
             </div>
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
-                <img class="img-responsive" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                <img class="img-responsive" index="1" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
                 <div class="caption"><p>07:04:30.0536</p></div>
               </div>
             </div>
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
-                <img class="img-responsive" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                <img class="img-responsive" index="2" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
                 <div class="caption"><p>07:04:30.0536</p></div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="tab-pane" id="carousel">
+        <div class="tab-pane" id="carousel-tab">
           <!-- carousel panel -->
 
           <div id="carousel-archive" class="carousel slide" data-ride="carousel">
@@ -147,6 +147,10 @@
 
     <!-- Page custom JavaScript -->
     <script type="text/javascript">
+        $(".thumbnail img").click(function() {
+            $('#carousel-tab').tab('show');
+            $('#carousel-archive').carousel($(this).attr('index'));
+        });
     </script>
 
   </body>
