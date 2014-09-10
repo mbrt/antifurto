@@ -37,3 +37,7 @@ body {
   margin-top: 10px;
   text-align: center;
 }
+
+.tab-content > .tab-pane > div {
+  margin-top: 20px;
+}

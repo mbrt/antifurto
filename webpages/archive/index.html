@@ -59,8 +59,8 @@
 
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
-        <li class="active"><a href="#thumbnails" role="tab" data-toggle="tab">Thumbnails</a></li>
-        <li><a href="#carousel" role="tab" data-toggle="tab">Carousel</a></li>
+        <li class="active"><a href="#thumbnails-tab" role="tab" data-toggle="tab">Thumbnails</a></li>
+        <li><a href="#carousel-tab" role="tab" data-toggle="tab">Carousel</a></li>
       </ul>
       
       <!-- Tab panes -->
@@ -68,28 +68,28 @@
         <div class="tab-pane active" id="thumbnails-tab">
         
           <!-- thumbnails panel -->
-          <div class="row" style="margin-top: 20px">
+          <div class="row">
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
-                <img class="img-responsive" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                <img class="img-responsive" data-index="0" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
                 <div class="caption"><p>07:04:30.0536</p></div>
               </div>
             </div>
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
-                <img class="img-responsive" index="0" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                <img class="img-responsive" data-index="1" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
                 <div class="caption"><p>07:04:30.0536</p></div>
               </div>
             </div>
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
-                <img class="img-responsive" index="1" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                <img class="img-responsive" data-index="2" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
                 <div class="caption"><p>07:04:30.0536</p></div>
               </div>
             </div>
             <div class="col-xs-6 col-sm-3">
               <div class="thumbnail">
-                <img class="img-responsive" index="2" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                <img class="img-responsive" data-index="3" src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
                 <div class="caption"><p>07:04:30.0536</p></div>
               </div>
             </div>
@@ -149,7 +149,7 @@
     <script type="text/javascript">
         $(".thumbnail img").click(function() {
             $('#carousel-tab').tab('show');
-            $('#carousel-archive').carousel($(this).attr('index'));
+            $('#carousel-archive').carousel($(this).attr('data-index'));
         });
     </script>
 
