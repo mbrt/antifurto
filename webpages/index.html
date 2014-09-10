@@ -60,12 +60,12 @@
       <!-- contents -->
       <div class="row on-off">
         <div class="col-sm-4 col-sm-offset-2">
-          <button id='start' type="button" data-loading-text="Starting..." class="btn btn-block btn-lg btn-primary">
+          <button type="button" data-loading-text="Starting..." class="btn btn-block btn-lg btn-primary start">
             Start monitoring
           </button>
         </div>
         <div class="col-sm-4">
-          <button id='stop' type="button" data-loading-text="Stopping..." class="btn btn-block btn-lg btn-primary">
+          <button type="button" data-loading-text="Stopping..." class="btn btn-block btn-lg btn-primary stop">
             Stop monitoring
           </button>
         </div>
@@ -88,12 +88,6 @@
 
     <!-- Page custom JavaScript -->
     <script type="text/javascript">
-        function enableButton(element) {
-            element.disabled = 'disabled';
-        }
-        function disableButton(element) {
-            element.removeAttribute('disabled');
-        }
         function displayMessage(elem, msg, style) {
             $(elem).html(
                 '<div class="alert fade in ' + style + '" role="alert">' +
@@ -104,21 +98,9 @@
                    msg +
                 '</div>');
         }
-
-        $('.on-off button').click(function() {
-            var target = $(this);
-            var all = $('.on-off button');
-            if (target.attr('id') == 'start') {
-                var msg = 'Monitoring started.';
-                var params = { start: 1 };
-            }
-            else {
-                var msg = 'Monitoring stopped.';
-                var params = { stop: 1 };
-            }
-
+        function startStopPressed(target, other, msg, params) {
             target.button('loading');
-            all.attr('disabled', 'disabled');
+            other.attr('disabled', 'disabled');
             $.ajax({
                     url: 'controller/monitoring.php',
                     data: params,
@@ -144,8 +126,17 @@
                 })
                 .always(function() {
                     target.button('reset');
-                    all.removeAttr('disabled');
+                    other.removeAttr('disabled');
                 });
+        }
+        
+        $('.on-off .start').click(function() {
+            startStopPressed($('.on-off .start'), $('.on-off .stop'),
+                'Monitoring started.', { start: 1 });
+        });
+        $('.on-off .stop').click(function() {
+            startStopPressed($('.on-off .stop'), $('.on-off .start'),
+                'Monitoring stopped.', { stop: 1 });
         });
     </script>
 
