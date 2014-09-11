@@ -58,7 +58,7 @@
       </div>
 
       <!-- Nav tabs -->
-      <ul class="nav nav-tabs" role="tablist">
+      <ul id="nav-tab" class="nav nav-tabs" role="tablist">
         <li class="active"><a href="#thumbnails-tab" role="tab" data-toggle="tab">Thumbnails</a></li>
         <li><a href="#carousel-tab" role="tab" data-toggle="tab">Carousel</a></li>
       </ul>
@@ -148,8 +148,8 @@
     <!-- Page custom JavaScript -->
     <script type="text/javascript">
         $(".thumbnail img").click(function() {
-            $('#carousel-tab').tab('show');
-            $('#carousel-archive').carousel($(this).attr('data-index'));
+            $('#nav-tab a[href="#carousel-tab"]').tab('show');
+            $('#carousel-archive').carousel(parseInt($(this).attr('data-index')));
         });
     </script>
 
