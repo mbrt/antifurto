@@ -41,3 +41,7 @@ body {
 .tab-content > .tab-pane > div {
   margin-top: 20px;
 }
+
+.archive-thumb-grid .thumbnail .img-responsive {
+  cursor: pointer;
+}
