@@ -45,3 +45,11 @@ body {
 .archive-thumb-grid .thumbnail .img-responsive {
   cursor: pointer;
 }
+
+.archive-thumb-grid .caption {
+  text-align: center;
+}
+
+.archive-pages {
+  margin-bottom: 20px;
+}
