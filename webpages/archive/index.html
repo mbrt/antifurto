@@ -12,8 +12,6 @@
 
     <!-- Bootstrap -->
     <link href="../libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap theme -->
-    <link href="../libs/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Custom styles taken from template -->
     <link href="../assets/css/theme.css" rel="stylesheet">
 
@@ -57,16 +55,36 @@
         <p>View the recording archive of triggered alarms.</p>
       </div>
 
-      <div class="text-center">
-        <ul class="pagination archive-pages">
-          <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span> Older</a></li>
-          <li class="active"><a href="#">1</a></li>
-          <li><a href="#">2</a></li>
-          <li><a href="#">3</a></li>
-          <li class="hidden-xs"><a href="#">4</a></li>
-          <li class="hidden-xs"><a href="#">5</a></li>
-          <li><a href="#">Newer <span class="glyphicon glyphicon-chevron-right"></span></a></li>
-        </ul>
+      <!-- days and pages navigation -->
+      <div class="row">
+        <!-- days -->
+        <div class="col-sm-4 text-center">
+          <div class="btn-group days">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              Today <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Today</a></li>
+              <li class="divider"></li>
+              <li><a href="#">09/09/2014</a></li>
+              <li><a href="#">15/08/2014</a></li>
+              <li><a href="#">14/08/2014</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- pages -->
+        <div class="col-sm-8 text-center">
+          <ul class="pagination archive-pages">
+            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span> Older</a></li>
+            <li class="active"><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li class="hidden-xs"><a href="#">4</a></li>
+            <li class="hidden-xs"><a href="#">5</a></li>
+            <li><a href="#">Newer <span class="glyphicon glyphicon-chevron-right"></span></a></li>
+          </ul>
+        </div>
       </div>
 
       <!-- Nav tabs -->

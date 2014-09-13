@@ -3,6 +3,13 @@ body {
   padding-bottom: 30px;
 }
 
+.header,
+.on-off,
+.alert {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 /* Customize container */
 @media (min-width: 768px) {
   .container {
@@ -18,7 +25,8 @@ body {
   text-align: center;
   border-bottom: 1px solid #e5e5e5;
 }
-.jumbotron .btn {
+.jumbotron .btn,
+.jumbotron .btn-group {
   padding: 14px 24px;
   font-size: 21px;
 }
@@ -38,11 +46,15 @@ body {
   text-align: center;
 }
 
-.tab-content > .tab-pane > div {
+.alert-msg {
+  margin-top: 15px;
+}
+
+.archive-thumb-grid {
   margin-top: 20px;
 }
 
-.archive-thumb-grid .thumbnail .img-responsive {
+.archive-thumb-grid .thumbnail img {
   cursor: pointer;
 }
 
@@ -52,4 +64,17 @@ body {
 
 .archive-pages {
   margin-bottom: 20px;
+}
+
+.days .btn {
+  min-width: 160px;
+}
+@media (min-width: 768px) {
+  .btn-group.days {
+    margin: 20px auto;
+  }
+}
+
+.carousel {
+  margin-top: 20px;
 }
