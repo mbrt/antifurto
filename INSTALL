@@ -14,7 +14,7 @@ copy the web interface in /var/www
 > cp -r lib/pics_web_interface/webinterface/* /var/www/
 
 link the archive dir
-> ln -s /path/to/archive /var/www/pics
+> ln -s /path/to/archive /var/www/archive/pics
 
 apply configuration
 > cd /etc/lighttpd/

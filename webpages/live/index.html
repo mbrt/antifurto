@@ -49,9 +49,18 @@
 
     <div class="container theme-showcase" role="main">
 
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h1>Antifurto live</h1>
+        <p>View the live stream from the camera.</p>
+      </div>
+
+      <div class="live-container">
+       <span class="loading glyphicon glyphicon-refresh"></span> 
+        <!-- <img id='liveimg' class="img-responsive" src=''></img> -->
+      </div>
 
     </div> <!-- /container -->
-
 
 
     <!-- Bootstrap core JavaScript
@@ -63,9 +72,43 @@
     <script src="../assets/js/docs.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- displayMessage utility -->
+    <script src="../assets/js/message.js"></script>
 
     <!-- Page custom JavaScript -->
     <script type="text/javascript">
+      function loadImage(url, imageObj, target) {
+          imageObj.onload = function() {
+              target.setAttribute('src', this.src);
+              loadImage(url, imageObj, target);
+          };
+          imageObj.src = url + '?_=' + new Date().getTime();
+      }
+
+      $.ajax({ url: '../controller/live.php',
+               dataType: 'json',
+               cache: false
+             })
+          .done(function(data) {
+              if (data.result == 0) {
+                  $('.live-container').html(
+                      '<img id="liveimg" class="img-responsive"></img>'
+                  );
+                  var img = document.getElementById('liveimg');
+                  loadImage('live.jpg', img, new Image);
+              }
+              else
+                  displayMessage('.live-container',
+                      '<h4>Ooops...</h4>' +
+                      '<p>' + data.log + '</p>',
+                      'alert-danger');
+          })
+          .fail(function(jqxhr, textStatus, errorThrown) {
+              displayMessage('.live-container',
+                  '<h4>Ooops...</h4>' +
+                  '<p>' + errorThrown + '</p>',
+                  'alert-danger');
+          });
     </script>
 
   </body>

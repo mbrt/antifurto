@@ -83,19 +83,11 @@
     <script src="assets/js/docs.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- displayMessage utility -->
+    <script src="assets/js/message.js"></script>
 
     <!-- Page custom JavaScript -->
     <script type="text/javascript">
-        function displayMessage(elem, msg, style) {
-            $(elem).html(
-                '<div class="alert fade in ' + style + '" role="alert">' +
-                '  <button type="button" class="close" data-dismiss="alert">' +
-                '    <span aria-hidden="true">&times;</span>' +
-                '    <span class="sr-only">Close</span>' +
-                '  </button>' +
-                   msg +
-                '</div>');
-        }
         function startStopPressed(target, other, msg, params) {
             target.button('loading');
             other.attr('disabled', 'disabled');
