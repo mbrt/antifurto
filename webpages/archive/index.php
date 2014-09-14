@@ -110,6 +110,7 @@
   // compute pictures to display
   $first_pic_index = ($page - 1) * $pics_per_page;
   $last_pic_index = min($first_pic_index + $pics_per_page, sizeof($all_pics));
+  $num_pics_in_page = $last_pic_index - $first_pic_index;
 
   // DEBUG
   // echo "DAYS\n";
@@ -303,22 +304,39 @@
           <div id="carousel-archive" class="carousel slide" data-ride="carousel">
             <!-- Indicators -->
             <ol class="carousel-indicators">
-              <li data-target="#carousel-archive" data-slide-to="0" class="active"></li>
-              <li data-target="#carousel-archive" data-slide-to="1"></li>
-              <li data-target="#carousel-archive" data-slide-to="2"></li>
+              <?php
+                for ($i = 0; $i < $num_pics_in_page; $i++) {
+                  echo '<li data-target="#carousel-archive" data-slide-to="'. $i .'"';
+                  if ($i == 0)
+                    echo ' class="active"';
+                  echo '></li>';
+                }
+                // example
+                // <li data-target="#carousel-archive" data-slide-to="0" class="active"></li>
+                // <li data-target="#carousel-archive" data-slide-to="1"></li>
+              ?>
             </ol>
           
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
-              <div class="item active">
-                <img src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
-              </div>
-              <div class="item">
-                <img src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
-              </div>
-              <div class="item">
-                <img src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
-              </div>
+              <?php
+                for ($i = $first_pic_index, $data_index = 0; $i < $last_pic_index; $i++, $data_index++) {
+                  if ($data_index == 0)
+                    echo '<div class="item active">';
+                  else
+                    echo '<div class="item">';
+                  echo '<img src="'. "$curr_day_dir/". $all_pics[$i]
+                      .'" alt="'. from_pic_file_to_time($all_pics[$i])
+                      .'"/></div>';
+                }
+                // example
+                // <div class="item active">
+                //   <img src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                // </div>
+                // <div class="item">
+                //   <img src="pics/2014-09-09/2014-09-09_07:04:30.0536.jpg" alt="07:04:30.0536"/>
+                // </div>
+              ?>
             </div>
           
             <!-- Controls -->
