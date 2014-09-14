@@ -10,5 +10,6 @@
     }
 
     // sleep(2); // debug purpose
+    $log = sizeof($out) > 0 ? $out[0] : "";
     echo json_encode(array('result' => $retvar, 'log' => $out[0]));
 ?>
