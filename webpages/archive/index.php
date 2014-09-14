@@ -2,6 +2,7 @@
     // settings
     $pics_path = 'pics';
     $pics_per_page = 16;
+    $pages_in_nav = 5;
 
     // helper functions
     function get_or_default(&$var, $default = null) {
@@ -33,6 +34,13 @@
         return $a[2] .'/'. $a[1] .'/'. $a[0];
     }
 
+    // input: yyyymmdd
+    // output: yyyy-mm-dd
+    function from_compact_to_dir($compd) {
+        $a = split_compact_date($compd);
+        return $a[0] .'-'. $a[1] .'-'. $a[2];
+    }
+
     // count files in directory
     function count_files($dir) {
         $count = 0;
@@ -61,6 +69,7 @@
     $sel_day = substr($sel_date, 6, 2);
 
     // collect days from newer to older
+    // TODO: Remove warning
     $days = array();
     if ($pics_handle = opendir($pics_path)) {
         while (false !== ($entry = readdir($pics_handle)))
@@ -70,18 +79,35 @@
     }
 
     // collect pictures of selected day from older to newer
+    // TODO: Remove warning
+    $curr_day_dir = "$pics_path/". from_compact_to_dir($sel_date);
     $all_pics = array();
-    if ($pics_handle = opendir($sel_date)) {
+    if ($pics_handle = opendir($curr_day_dir)) {
         while (false !== ($entry = readdir($pics_handle)))
             if ($entry != '.' && $entry != '..')
                 array_push($all_pics, $entry);
         sort($all_pics);
     }
 
-    $num_pages = ceil(floatval(sizeof($all_pics)) / $pics_per_page);
-    if ($page > $num_pages)
+    // compute pages to display
+    $num_pages = ceil(sizeof($all_pics) / $pics_per_page);
+    if ($page > $num_pages || $page < 1)
         $page = 1;
+    $first_page = intval(($page - 1) / $pages_in_nav) * $pages_in_nav + 1;
+    $last_page = min($num_pages + 1, $first_page + $pages_in_nav);
+
+    // compute pictures to display
     $first_pic_index = ($page - 1) * $pics_per_page;
+    $last_pic_index = min($first_pic_index + $pics_per_page, sizeof($all_pics));
+
+    // DEBUG
+    // echo "DAYS\n";
+    // var_dump($days);
+    // echo "ALL PICS\n";
+    // var_dump($all_pics);
+    // echo "NUM PAGES $num_pages\n";
+    // echo "FIRST PAGE $first_page\n";
+    // echo "LAST PAGE $last_page\n";
 ?>
 
 <!DOCTYPE html>
@@ -184,13 +210,34 @@
         <!-- pages -->
         <div class="col-sm-8 text-center">
           <ul class="pagination archive-pages">
-            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span><span class="hidden-xs"> Older</span></a></li>
-            <li class="active"><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#"><span class="hidden-xs">Newer </span><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+            <?php
+                echo '<li';
+                if ($page == 1)
+                    echo ' class="disabled"><a>';
+                else
+                    echo '><a href="?day='. $sel_date .'&page='. ($page - 1) .'">';
+                echo '<span class="glyphicon glyphicon-chevron-left"></span><span class="hidden-xs"> Older</span></a></li>';
+                for ($i = $first_page; $i < $last_page; $i++) {
+                    echo '<li';
+                    if ($i == $page)
+                        echo ' class="active"';
+                    echo '><a href=?day='. $sel_date .'&page='. $i .'>'. $i .'</a></li>';
+                }
+                echo '<li';
+                if ($page == $num_pages)
+                    echo ' class="disabled"><a>';
+                else
+                    echo '><a href="?day='. $sel_date .'&page='. ($page + 1) .'">';
+                echo '<span class="hidden-xs">Newer </span><span class="glyphicon glyphicon-chevron-right"></span></a></li>';
+                // example:
+                // <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span><span class="hidden-xs"> Older</span></a></li>
+                // <li class="active"><a href="#">1</a></li>
+                // <li><a href="#">2</a></li>
+                // <li><a href="#">3</a></li>
+                // <li><a href="#">4</a></li>
+                // <li><a href="#">5</a></li>
+                // <li><a href="#"><span class="hidden-xs">Newer </span><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+            ?>
           </ul>
         </div>
       </div>
