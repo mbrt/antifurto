@@ -173,13 +173,15 @@
       <!-- Main jumbotron for a primary marketing message or call to action -->
       <div class="jumbotron">
         <h1>Antifurto archive</h1>
-        <p>View the recording archive of triggered alarms.</p>
+        <p>View the recording archive for alarms.</p>
       </div>
 
       <!-- days and pages navigation -->
       <div class="row">
         <!-- days -->
         <div class="col-sm-4 text-center">
+          <h3>Days</h3>
+          <p>Select one of the available recording, grouped by day.</p>
           <div class="btn-group days">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
               <?php

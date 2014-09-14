@@ -1,5 +1,7 @@
         <!-- pages -->
         <div class="col-sm-8 text-center">
+          <h3>Pages</h3>
+          <p>Select a page among the available for the selected day, ordered from older to newer.</p>
           <ul class="pagination archive-pages">
             <?php
               echo '<li';
