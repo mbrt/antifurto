@@ -70,6 +70,13 @@ constexpr int numLevels() {
     return 3;
 }
 
+// global state
+std::mutex mutex;
+std::ofstream fileStream;
+onullstream nullStream;
+// settings
+std::string logFilePath;
+
 /// This is a no op sink
 class NullSink : public LoggerSink
 {
@@ -135,24 +142,19 @@ class CerrSink : public ValidSink
 
 // unique sinks
 NullSink nullSink;
-std::array<CerrSink, numLevels()> defaultSinkVector = {
+std::array<CerrSink, numLevels()> defaultSinkVector {
     CerrSink{"ERROR"},
     CerrSink{"INFO"},
     CerrSink{"DEBUG"}
 };
 
-// global state
-std::mutex mutex;
-std::ofstream fileStream;
-std::onullstream nullStream;
-std::array<LoggerSink*, numLevels()> sinkVector = {
+
+std::array<LoggerSink*, numLevels()> sinkVector {
     &defaultSinkVector[0],
     &defaultSinkVector[1],
     &defaultSinkVector[2]
 };
 
-// settings
-std::string logFilePath;
 
 Logger getLogger(int level)
 {
