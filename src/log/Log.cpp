@@ -2,6 +2,7 @@
 #include "Logger.hpp"
 #include "ConcreteLoggerSink.hpp"
 #include "../Config.hpp"
+#include "../fs/Paths.hpp"
 
 #include <array>
 #include <boost/filesystem.hpp>
@@ -53,9 +54,18 @@ StaticInitializer initializer;
 } // anon namespace
 
 
-void init(const Configuration& )
+void init(const Configuration& config)
 {
-    // ... init sink vector and log dir if needed
+    if (!config.log.dir.empty()) {
+        if (!bfs::exists(config.log.dir))
+            bfs::create_directories(config.log.dir);
+        logFilePath = fs::concatPaths(config.log.dir, "antifurto.log");
+        fileSink.setFile(logFilePath.c_str());
+        for (auto& s : sinkVector)
+            s.sink = &fileSink;
+    }
+    if (config.log.level != Configuration::Log::Level::DEBUG)
+        sinkVector[numLevels() - 1].sink = &nullSink;
 }
 
 void reload()

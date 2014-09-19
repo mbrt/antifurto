@@ -1,4 +1,6 @@
 #include "Logger.hpp"
+#include "../text/ToString.hpp"
+#include <chrono>
 
 namespace antifurto {
 namespace log {
@@ -9,9 +11,8 @@ Logger::Logger(LoggerSink* sink, const char* name)
     if (sink_->isValid()) {
         sink_->lock();
         std::ostream& out = sink_->getStream();
-        // dump date time
-        // ...
-        out << name << ": ";
+        out << text::toString(std::chrono::system_clock::now())
+            << " - " << name << ": ";
     }
 }
 
