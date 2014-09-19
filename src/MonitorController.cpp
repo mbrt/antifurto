@@ -1,7 +1,7 @@
 #include "MonitorController.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
-#include "Log.hpp"
+#include "log/Log.hpp"
 
 namespace antifurto {
 
@@ -50,7 +50,7 @@ void MonitorController::onAlarmStateChanged(MotionDetector::State state)
     default:
         break;
     }
-    LOG_INFO << "Alarm state: " << state;
+    log::info() << "Alarm state: " << state;
 }
 
 } // namespace antifurto

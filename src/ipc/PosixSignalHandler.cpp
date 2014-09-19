@@ -1,9 +1,10 @@
 #include "PosixSignalHandler.hpp"
 #include "Exception.hpp"
+#include "../log/Log.hpp"
 #include "../text/ToString.hpp"
-#include "../Log.hpp"
 
 #include <csignal>
+#include <cstring>
 #include <algorithm>
 #include <thread>
 
@@ -83,8 +84,8 @@ void PosixSignalHandler::signalHandlingLoop()
             if (handlerList_[signum])
                 handlerList_[signum](signum);
             else
-                LOG_WARNING << "Got signal without handler ("
-                            << signum << ") ignored";
+                log::warning() << "Got signal without handler ("
+                               << signum << ") ignored";
         }
         std::this_thread::sleep_for(pollingTime_);
     }

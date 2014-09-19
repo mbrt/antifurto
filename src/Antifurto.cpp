@@ -3,7 +3,7 @@
 #include "CameraController.hpp"
 #include "MonitorController.hpp"
 #include "LiveViewController.hpp"
-#include "Log.hpp"
+#include "log/Log.hpp"
 
 #include <memory>
 #include <mutex>
@@ -60,7 +60,7 @@ public:
         startMonitorFuture_ = std::async(std::launch::async, [this] {
             // wait startup timeout
             int waitedSecs = 0, toWait = config_.startup.monitorTimeout.count();
-            LOG_INFO << "Wait " << toWait << " seconds before start monitor";
+            log::info() << "Wait " << toWait << " seconds before start monitor";
             while (waitedSecs < toWait && !stopMonitorRequest_) {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 ++waitedSecs;
@@ -84,7 +84,7 @@ public:
                 }});
             }
             monitor_->startMonitor();
-            LOG_INFO << "Monitoring started";
+            log::info() << "Monitoring started";
         });
     }
 
@@ -97,7 +97,7 @@ public:
             monitorActive_ = false;
 
             if (startMonitorFuture_.valid()) {
-                LOG_INFO << "Cancel start monitoring";
+                log::info() << "Cancel start monitoring";
                 stopMonitorRequest_ = true;
                 waitStartedNeeded = true;
             }
@@ -109,9 +109,9 @@ public:
 
         std::lock_guard<std::mutex> lock{m_};
         if (monitor_) {
-            LOG_INFO << "Stopping monitoring";
+            log::info() << "Stopping monitoring";
             monitor_->stopMonitor();
-            LOG_INFO << "Monitoring stopped";
+            log::info() << "Monitoring stopped";
         }
         handleCameraControllerNeed();
     }
@@ -129,7 +129,7 @@ public:
         liveViewActive_ = true;
         handleCameraControllerNeed();
 
-        LOG_INFO << "Start live view";
+        log::info() << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
         if (!liveView_) {
             liveView_.reset(new LiveViewController(config_, [&](bool reg) {

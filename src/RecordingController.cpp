@@ -1,9 +1,9 @@
 #include "RecordingController.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
-#include "Log.hpp"
 #include "concurrency/TaskScheduler.hpp"
 #include "concurrency/TimeUtility.hpp"
+#include "log/Log.hpp"
 #include "meta/Iterator.hpp"
 
 #include <utility>
@@ -48,15 +48,15 @@ RecordingController(const Configuration& cfg, MotionDetector& detector,
 void RecordingController::addPicture(Picture p)
 {
     if (!recordingWorker_.enqueue(std::move(p)))
-        LOG_ERROR << "Failed to save the picture, queue is full";
+        log::error() << "Failed to save the picture, queue is full";
 }
 
 void RecordingController::performMaintenance()
 {
     if (!bfs::exists(config_.archiveDir)) return;
-    LOG_INFO << "Performing archive maintenance";
+    log::info() << "Performing archive maintenance";
     deleteOlderPictures();
-    LOG_INFO << "Maintenance completed";
+    log::info() << "Maintenance completed";
 }
 
 void RecordingController::initUploader(const Configuration& cfg)
@@ -71,11 +71,11 @@ void RecordingController::initUploader(const Configuration& cfg)
             });
         }
         else
-            LOG_INFO << "Failed initialization of Dropbox uploader";
+            log::info() << "Failed initialization of Dropbox uploader";
     }
     catch (std::exception& e) {
         // ignore uploader errors
-        LOG_INFO << "Failed initialization of Dropbox uploader. "
+        log::info() << "Failed initialization of Dropbox uploader. "
                  << "Exception: " << e.what();
     }
 }
@@ -103,7 +103,7 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
 void RecordingController::onPictureSaved(const std::string& fileName)
 {
     if (!uploadWorker_.enqueue(fileName)) {
-        LOG_INFO << "Failed to upload picture to Dropbox: queue is full";
+        log::info() << "Failed to upload picture to Dropbox: queue is full";
         std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
         toUploadAfterQueue_.emplace(fileName);
     }
@@ -118,7 +118,7 @@ void RecordingController::uploadFile(const std::string& sourceFile)
         uploader_.uploadFile(sourceFile, dest);
     }
     catch (std::exception& e) {
-        LOG_ERROR << "Error uploading file: " << e.what() << std::endl;
+        log::error() << "Error uploading file: " << e.what();
     }
 }
 
@@ -130,7 +130,7 @@ void RecordingController::deleteOlderPictures()
     int toDelete = ndirs - config_.maxDays;
     if (toDelete <= 0) return;
 
-    LOG_INFO << "Deleting " << toDelete << " archive days";
+    log::info() << "Deleting " << toDelete << " archive days";
     std::vector<bfs::path> dirs;
     std::copy(bfs::directory_iterator(config_.archiveDir),
               bfs::directory_iterator(), std::back_inserter(dirs));
@@ -144,7 +144,7 @@ void RecordingController::enqueueOlderPictures()
     std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
     if (toUploadAfterQueue_.empty())
         return;
-    LOG_INFO << "Start uploading older pictures";
+    log::info() << "Start uploading older pictures";
 
     while (!toUploadAfterQueue_.empty()) {
         if (uploadWorker_.enqueue(toUploadAfterQueue_.front()))
@@ -154,13 +154,13 @@ void RecordingController::enqueueOlderPictures()
     }
     // if the queue is not empty, we need to schedule an upload after
     if (!toUploadAfterQueue_.empty()) {
-        LOG_INFO << "Cannot empty the upload queue. Schedule a new upload";
+        log::info() << "Cannot empty the upload queue. Schedule a new upload";
         scheduler_.scheduleAfter(std::chrono::minutes(10), [this] {
             enqueueOlderPictures();
         });
     }
     else
-        LOG_INFO << "Upload of older pictures completed";
+        log::info() << "Upload of older pictures completed";
 }
 
 } // namespace antifurto

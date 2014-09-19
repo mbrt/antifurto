@@ -1,7 +1,7 @@
 #include "SignalHandler.hpp"
-#include "Log.hpp"
 #include "Antifurto.hpp"
 #include "ipc/PosixSignalHandler.hpp"
+#include "log/Log.hpp"
 
 #include <signal.h>
 
@@ -25,12 +25,12 @@ SignalHandler(ipc::PosixSignalHandler& handler, Antifurto& controller)
 
 void SignalHandler::onSignal(int signal)
 {
-    LOG_INFO << "Received signal " << signal;
+    log::info() << "Received signal " << signal;
     switch (signal) {
     case SIGTERM:
     case SIGINT:
         {
-            LOG_INFO << "Shutting down...";
+            log::info() << "Shutting down...";
             handler_.leaveSignalHandlingLoop();
         }
         break;
@@ -48,7 +48,7 @@ void SignalHandler::onSignal(int signal)
             else if (signal == SIGRTMIN + 4)
                 controller_.stopLiveView();
             else
-                LOG_ERROR << "Unexpected signal";
+                log::error() << "Unexpected signal";
         }
         break;
     }
