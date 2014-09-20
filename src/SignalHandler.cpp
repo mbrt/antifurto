@@ -9,7 +9,12 @@ namespace antifurto {
 
 SignalHandler::SignalList SignalHandler::getSignalsNeeded()
 {
-    return { SIGTERM, SIGINT, SIGUSR1, SIGUSR2, SIGRTMIN + 3, SIGRTMIN + 4 };
+    return {
+        SIGTERM, SIGINT,                // termination
+        SIGUSR1, SIGUSR2,               // monitoring
+        SIGRTMIN + 3, SIGRTMIN + 4,     // live view
+        SIGHUP                          // reload logs
+    };
 }
 
 SignalHandler::
@@ -39,6 +44,9 @@ void SignalHandler::onSignal(int signal)
         break;
     case SIGUSR2:
         controller_.stopMonitoring();
+        break;
+    case SIGHUP:
+        log::reload();
         break;
     default:
         {
