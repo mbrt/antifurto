@@ -60,3 +60,12 @@ install zeromq dependencies:
 
 logrotate script
 > copy /path/to/project/config/antifurto_logrotate /etc/logrotate.d/antifurto
+
+setup core file limit
+- edit /etc/rc.local
+- add this line before the "antifurto" startup command:
+  ulimit -c unlimited
+> sudo mkdir /var/log/dumps
+- edit /etc/sysctl.conf
+- add this line at the end (if not already present)
+  kernel.core_pattern=/var/log/dumps/core.%e.%p
