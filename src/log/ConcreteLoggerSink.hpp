@@ -26,7 +26,7 @@ public:
         return false;
     }
     void close() override { }
-    
+
 private:
     onullstream stream_;
 };
@@ -56,9 +56,9 @@ public:
     FileSink() { }
     FileSink(const char* file)
         : stream_(file) { }
-    
+
     void setFile(const char* file) {
-        stream_.open(file);
+        stream_.open(file, std::ofstream::out | std::ofstream::app);
     }
     std::ostream& getStream() override {
         return stream_;

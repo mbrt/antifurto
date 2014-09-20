@@ -169,7 +169,9 @@ endif()
 # main exe and libs
 add_library(antifurto_core STATIC ${ANTIFURTO_CPP} ${ANTIFURTO_HPP})
 target_link_libraries(antifurto_core ${ANTIFURTO_LIBS})
-add_dependencies(antifurto_core ${ANTIFURTO_DEPENDENCIES})
+if (ANTIFURTO_DEPENDENCIES)
+    add_dependencies(antifurto_core ${ANTIFURTO_DEPENDENCIES})
+endif()
 
 add_executable(antifurto src/main.cpp)
 target_link_libraries(antifurto antifurto_core)
