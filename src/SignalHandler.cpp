@@ -1,7 +1,7 @@
 #include "SignalHandler.hpp"
-#include "Log.hpp"
 #include "Antifurto.hpp"
 #include "ipc/PosixSignalHandler.hpp"
+#include "log/Log.hpp"
 
 #include <signal.h>
 
@@ -9,7 +9,12 @@ namespace antifurto {
 
 SignalHandler::SignalList SignalHandler::getSignalsNeeded()
 {
-    return { SIGTERM, SIGINT, SIGUSR1, SIGUSR2, SIGRTMIN + 3, SIGRTMIN + 4 };
+    return {
+        SIGTERM, SIGINT,                // termination
+        SIGUSR1, SIGUSR2,               // monitoring
+        SIGRTMIN + 3, SIGRTMIN + 4,     // live view
+        SIGHUP                          // reload logs
+    };
 }
 
 SignalHandler::
@@ -25,12 +30,12 @@ SignalHandler(ipc::PosixSignalHandler& handler, Antifurto& controller)
 
 void SignalHandler::onSignal(int signal)
 {
-    LOG_INFO << "Received signal " << signal;
+    log::info() << "Received signal " << signal;
     switch (signal) {
     case SIGTERM:
     case SIGINT:
         {
-            LOG_INFO << "Shutting down...";
+            log::info() << "Shutting down...";
             handler_.leaveSignalHandlingLoop();
         }
         break;
@@ -40,6 +45,9 @@ void SignalHandler::onSignal(int signal)
     case SIGUSR2:
         controller_.stopMonitoring();
         break;
+    case SIGHUP:
+        log::reload();
+        break;
     default:
         {
             // required if else because SIGRTMIN is not a constant expression
@@ -48,7 +56,7 @@ void SignalHandler::onSignal(int signal)
             else if (signal == SIGRTMIN + 4)
                 controller_.stopLiveView();
             else
-                LOG_ERROR << "Unexpected signal";
+                log::error() << "Unexpected signal";
         }
         break;
     }

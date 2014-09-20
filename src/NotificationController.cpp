@@ -1,9 +1,9 @@
 #include "NotificationController.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
-#include "Log.hpp"
 #include "MotionDetector.hpp"
 #include "concurrency/TaskScheduler.hpp"
+#include "log/Log.hpp"
 #include "meta/Algorithm.hpp"
 
 namespace antifurto {
@@ -80,12 +80,12 @@ void NotificationController::processNotificationResults()
                 f.get();
             }
             catch (std::exception& e) {
-                LOG_ERROR << "Notification failed " << e.what() << std::endl;
+                log::error() << "Notification failed " << e.what();
             }
             return true;
         });
     if (!notifications_.empty()) {
-        LOG_WARNING << "Notifications not completed. New check scheduled";
+        log::warning() << "Notifications not completed. New check scheduled";
         scheduler_.scheduleAfter(minutes(15), [this] {
             processNotificationResults();
         });

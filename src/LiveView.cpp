@@ -1,5 +1,5 @@
 #include "LiveView.hpp"
-#include "Log.hpp"
+#include "log/Log.hpp"
 #include "text/ToString.hpp"
 
 #include <opencv2/highgui/highgui.hpp>
@@ -22,7 +22,7 @@ LiveView::LiveView(const std::string& socketAddress)
         socket_.bind(("tcp://" + socketAddress).c_str());
     }
     catch (std::exception& e) {
-        LOG_ERROR << "Error binding live view socket: " << e.what();
+        log::error() << "Error binding live view socket: " << e.what();
         throw;
     }
 }
@@ -57,7 +57,7 @@ void LiveView::write(const Picture& p)
         while (!socket_.send(reply) && running_.load(std::memory_order_acquire)) { }
     }
     catch (std::exception& e) {
-        LOG_ERROR << "Error saving image for live view: " << e.what();
+        log::error() << "Error saving image for live view: " << e.what();
     }
 }
 

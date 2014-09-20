@@ -1,8 +1,8 @@
 #include "DropboxUploader.hpp"
-#include "Log.hpp"
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 #include "fs/Paths.hpp"
+#include "log/Log.hpp"
 #include "text/ToString.hpp"
 #include "text/TextReplace.hpp"
 
@@ -63,8 +63,8 @@ void DropboxUploader::runUploaderProcess(const std::string& args) const
     if (retval != 0) {
         std::ostringstream err;
         err << "Cannot run drobpox uploader process; return code: " << retval;
-        LOG_ERROR << "Error uploading file. Log:\n"
-                  << uploaderProcess_.getStdOut() << std::endl;
+        log::error() << "Error uploading file. Log:\n"
+                     << uploaderProcess_.getStdOut();
         throw DropboxUploaderException(err.str());
     }
 }

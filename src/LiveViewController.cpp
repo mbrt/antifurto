@@ -2,7 +2,7 @@
 #include "LiveView.hpp"
 #include "Config.hpp"
 #include "Picture.hpp"
-#include "Log.hpp"
+#include "log/Log.hpp"
 
 #include <fstream>
 #include <iterator>
@@ -49,11 +49,11 @@ void LiveViewController::stop()
     if (!running_) return;
     running_ = false;
 
-    LOG_INFO << "Stopping live view";
+    log::info() << "Stopping live view";
     stopWork_ = std::async(std::launch::async, [this] {
         regFunc_(false); // call this inside async to avoid deadlock
         liveView_.reset();
-        LOG_INFO << "Live view stopped";
+        log::info() << "Live view stopped";
     });
 }
 

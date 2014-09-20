@@ -1,0 +1,10 @@
+/var/log/antifurto/antifurto.log {
+        weekly
+        rotate 12
+        compress
+        delaycompress
+        notifempty
+        postrotate
+            killall -HUP antifurto 2>&1;
+        endscript
+}

@@ -84,7 +84,6 @@ set(ANTIFURTO_COMMON_CPP
     src/Environment.cpp
     src/LiveView.cpp
     src/LiveViewController.cpp
-    src/Log.cpp
     src/MonitorController.cpp
     src/MotionDetector.cpp
     src/NotificationController.cpp
@@ -99,6 +98,8 @@ set(ANTIFURTO_COMMON_CPP
     src/ipc/NamedPipe.cpp
     src/ipc/PosixSignalHandler.cpp
     src/ipc/Process.cpp
+    src/log/Log.cpp
+    src/log/Logger.cpp
     src/text/ToString.cpp
     src/text/TextReplace.cpp
 )
@@ -112,7 +113,6 @@ set(ANTIFURTO_COMMON_HPP
     src/Exception.hpp
     src/LiveView.hpp
     src/LiveViewController.hpp
-    src/Log.hpp
     src/MonitorController.hpp
     src/MotionDetector.hpp
     src/NotificationController.hpp
@@ -134,6 +134,11 @@ set(ANTIFURTO_COMMON_HPP
     src/ipc/NamedPipe.hpp
     src/ipc/PosixSignalHandler.hpp
     src/ipc/Process.hpp
+    src/log/ConcreteLoggerSink.hpp
+    src/log/Log.hpp
+    src/log/Logger.hpp
+    src/log/LoggerSink.hpp
+    src/log/NullStream.hpp
     src/meta/Algorithm.hpp
     src/meta/Iterator.hpp
     src/meta/Metronome.hpp
