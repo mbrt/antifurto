@@ -66,12 +66,6 @@ else()
 endif()
 list(APPEND ANTIFURTO_LIBS pthread)
 include_directories(lib/folly/include)
-# glog
-set(GLOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/glog)
-include_directories(${GLOG_DIR}/src)
-link_directories(${GLOG_DIR}/build/${ARCHITECTURE})
-list(APPEND ANTIFURTO_LIBS google-glog)
-list(APPEND ANTIFURTO_DEPENDENCIES glog)
 # zeromq
 list(APPEND ANTIFURTO_LIBS zmq)
 

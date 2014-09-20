@@ -71,3 +71,8 @@ signal handling info:
     http://stackoverflow.com/questions/17942034/simple-linux-signal-handling
     http://cboard.cprogramming.com/linux-programming/150239-when-re-enable-signal-handlers.html
     http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_sigmask.html
+
+Core dump:
+    abrt daemon: http://prefetch.net/blog/index.php/2012/01/19/using-the-automated-bug-reporting-tool-abrt-to-generate-core-dumps-when-a-linux-process-fails/
+    core pattern: http://sigquit.wordpress.com/2009/03/13/the-core-pattern/
+    core dump analysis: http://stackoverflow.com/questions/5115613/core-dump-file-analysis

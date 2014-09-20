@@ -10,6 +10,3 @@
 [submodule "lib/dropbox_uploader"]
 	path = lib/dropbox_uploader
 	url = git@github.com:michele-bertasi/Dropbox-Uploader.git
-[submodule "lib/glog"]
-	path = lib/glog
-	url = git@github.com:michele-bertasi/glog-cmake.git
