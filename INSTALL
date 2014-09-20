@@ -57,3 +57,6 @@ setup init script
 
 install zeromq dependencies:
 > sudo apt-get install libzmq3-dev python-zmq
+
+logrotate script
+> copy /path/to/project/config/antifurto_logrotate /etc/logrotate.d/antifurto
