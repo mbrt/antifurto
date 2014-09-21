@@ -15,7 +15,6 @@ Configuration::Configuration()
     startup.monitor = true;
     startup.monitorTimeout = std::chrono::seconds(5);
     log.level = Log::Level::INFO;
-    log.dir = config::logDir();
     recording.maxDays = config::maxArchiveDays();
     recording.archiveDir = config::archiveDir();
     liveView.socketAddress = config::liveViewSocketAddress();

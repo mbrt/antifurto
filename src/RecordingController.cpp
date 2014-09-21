@@ -85,12 +85,12 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
 {
     using State = MotionDetector::State;
     switch (state) {
+    case State::NO_MOTION:
+        archive_.stopSaving();
+        break;
     case State::NO_ALARM:
-        {
-            archive_.stopSaving();
-            enqueueOlderPictures();
-            break;
-        }
+        enqueueOlderPictures();
+        break;
     case State::ALARM:
         archive_.startSaving();
         break;

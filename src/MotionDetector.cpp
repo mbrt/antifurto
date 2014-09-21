@@ -13,13 +13,17 @@ constexpr int MIN_MOTION_PIXELS = 60;
 
 
 MotionDetector::
-MotionDetector(unsigned int numPreAlarmMotions,
+MotionDetector(unsigned int numPreAlarmMotions, unsigned int numNoMotionToConsider,
                unsigned int numNoMotionToStopAlarm)
     : state_(State::NO_ALARM)
     , numPreAlarmMotions_(numPreAlarmMotions)
+    , numNoMotionToConsider_(numNoMotionToConsider)
     , numNoMotionToStopAlarm_(numNoMotionToStopAlarm)
     , consecutiveMotions_(0)
-{ }
+{
+    if (numNoMotionToConsider_ >= numNoMotionToStopAlarm_)
+        throw UnexpectedException("Invalid options in MotionDetector");
+}
 
 void MotionDetector::examinePicture(const Picture &p)
 {
@@ -91,8 +95,9 @@ void MotionDetector::onMotionDetected()
         break;
     case State::ALARM:
         break;
-    default:
-        throw UnexpectedException("unexpected motion detector state");
+    case State::NO_MOTION:
+        state_ = State::ALARM;
+        break;
     }
 
     if (prev != state_)
@@ -112,6 +117,10 @@ void MotionDetector::onNoMotion()
         state_ = State::NO_ALARM;
         break;
     case State::ALARM:
+        if (consecutiveNoMotion_ >= numNoMotionToConsider_)
+            state_ = State::NO_MOTION;
+        break;
+    case State::NO_MOTION:
         if (consecutiveNoMotion_ >= numNoMotionToStopAlarm_)
             state_ = State::NO_ALARM;
         break;
@@ -146,8 +155,9 @@ ostream& operator <<(ostream& o, antifurto::MotionDetector::State s)
     case State::PRE_ALARM:
         o << "Pre alarm";
         break;
-    default:
-        throw antifurto::UnexpectedException("unexpected motion detector state");
+    case State::NO_MOTION:
+        o << "No motion";
+        break;
     }
     return o;
 }

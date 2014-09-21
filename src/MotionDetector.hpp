@@ -15,12 +15,13 @@ class MotionDetector
 {
 public:
     MotionDetector(unsigned int numPreAlarmMotions = 3,
+                   unsigned int numNoMotionToConsider = 5,
                    unsigned int numNoMotionToStopAlarm = 20);
     void examinePicture(Picture const& p);
 
     // observer subject interface
     enum class State {
-        NO_ALARM, PRE_ALARM, ALARM
+        NO_ALARM, PRE_ALARM, ALARM, NO_MOTION
     };
     using Observer = std::function<void(State)>;
     void addObserver(Observer o);
@@ -43,6 +44,7 @@ private:
     Picture curr_;
     State state_;
     unsigned int numPreAlarmMotions_;
+    unsigned int numNoMotionToConsider_;
     unsigned int numNoMotionToStopAlarm_;
     unsigned int consecutiveMotions_;
     unsigned int consecutiveNoMotion_;
