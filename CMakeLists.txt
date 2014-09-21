@@ -176,5 +176,7 @@ endif()
 add_executable(antifurto src/main.cpp)
 target_link_libraries(antifurto antifurto_core)
 
+# frontend
+add_subdirectory(src/frontend)
 # tests
 add_subdirectory(test)
