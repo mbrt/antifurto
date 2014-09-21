@@ -76,3 +76,5 @@ Core dump:
     abrt daemon: http://prefetch.net/blog/index.php/2012/01/19/using-the-automated-bug-reporting-tool-abrt-to-generate-core-dumps-when-a-linux-process-fails/
     core pattern: http://sigquit.wordpress.com/2009/03/13/the-core-pattern/
     core dump analysis: http://stackoverflow.com/questions/5115613/core-dump-file-analysis
+Libfcgi:
+    examples: https://github.com/toshic/libfcgi/tree/master/examples
