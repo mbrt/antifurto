@@ -10,3 +10,6 @@
 [submodule "lib/dropbox_uploader"]
 	path = lib/dropbox_uploader
 	url = git@github.com:michele-bertasi/Dropbox-Uploader.git
+[submodule "lib/libb64"]
+	path = lib/libb64
+	url = git://git.code.sf.net/p/libb64/git
