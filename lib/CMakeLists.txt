@@ -19,8 +19,22 @@ ExternalProject_Add(raspicam_cv
 )
 add_dependencies(raspicam_cv userland)
 
+ExternalProject_Add(libb64
+    CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../toolchain-pi.cmake -DCMAKE_BUILD_TYPE=Release
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libb64
+    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libb64/build/pi
+    BUILD_COMMAND make
+    INSTALL_COMMAND ""
+)
+
 else(CROSS_COMPILE)
 
-# No external projects for x86 now
+ExternalProject_Add(libb64
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libb64
+    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libb64/build/${CMAKE_HOST_SYSTEM_PROCESSOR}
+    BUILD_COMMAND make
+    INSTALL_COMMAND ""
+)
 
 endif(CROSS_COMPILE)

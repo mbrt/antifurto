@@ -4,6 +4,7 @@
 #include <fcgio.h>
 #include <fcgi_config.h>
 #include <iostream>
+#include <b64/encode.h>
 
 #include "StreamRedirect.hpp"
 #include "StreamReader.hpp"
@@ -31,6 +32,7 @@ int main(int, char*[])
     zmq::message_t replyMsg;
 
     StreamReader streamReader{std::cin, 10 * 1024};
+    base64::encoder b64encoder{4096};
 
     FCGX_Request request;
     FCGX_Init();
@@ -48,6 +50,9 @@ int main(int, char*[])
                 "Status: 200 OK\r\n"
                 "Cache-Control: no-cache\r\n"
                 "\r\n";
+            b64encoder.encode(
+                static_cast<const char*>(replyMsg.data()),
+                replyMsg.size(), std::cout);
         }
         else {
             // no answer, send service unavailable
