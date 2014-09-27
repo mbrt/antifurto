@@ -177,6 +177,6 @@ add_executable(antifurto src/main.cpp)
 target_link_libraries(antifurto antifurto_core)
 
 # frontend
-add_subdirectory(src/frontend)
+add_subdirectory(frontend)
 # tests
 add_subdirectory(test)
