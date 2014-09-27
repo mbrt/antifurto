@@ -13,12 +13,11 @@ constexpr const char* serverAddress() {
     return "tcp://localhost:4679";
 }
 
-zmq::message_t makeRequest()
+void makeRequest(zmq::message_t& request)
 {
     int magic = 158;
-    zmq::message_t result{sizeof(magic)};
-    ::memcpy(result.data(), &magic, sizeof(magic));
-    return result;
+    request.rebuild(sizeof(magic));
+    ::memcpy(request.data(), &magic, sizeof(magic));
 }
 
 using namespace antifurto::fcgi;
@@ -27,8 +26,8 @@ int main(int, char*[])
 {
     zmq::context_t zmqctx(1);
     ZmqLazyPirateClient client{zmqctx, serverAddress(), 2500, 3};
-    zmq::message_t requestMsg = makeRequest();
-    zmq::message_t replyMsg;
+    zmq::message_t requestMsg, replyMsg;
+    makeRequest(requestMsg);
 
     StreamReader streamReader{std::cin, 10 * 1024};
 
