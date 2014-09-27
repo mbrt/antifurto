@@ -31,7 +31,7 @@ public:
     void dumpState(std::ostream& out) const;
 
 private:
-    unsigned int countMotionPixels();
+    bool motionHappened();
     void onMotionDetected();
     void onNoMotion();
     void notifyObservers();

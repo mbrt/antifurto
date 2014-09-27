@@ -40,7 +40,7 @@ void MotionDetector::examinePicture(const Picture &p)
         // main check loop
         cv::absdiff(curr_, p, currDiff_);
         cv::bitwise_and(prevDiff_, currDiff_, motion_);
-        if (countMotionPixels() >= MIN_MOTION_PIXELS)
+        if (motionHappened())
             onMotionDetected();
         else
             onNoMotion();
@@ -72,11 +72,17 @@ void MotionDetector::dumpState(std::ostream& out) const
 }
 
 
-unsigned int MotionDetector::countMotionPixels()
+bool MotionDetector::motionHappened()
 {
-    return std::count_if(
-                motion_.begin<uchar>(), motion_.end<uchar>(),
-                [](uchar a){ return a > MIN_PIXEL_DIFF; });
+    int motion = 0;
+    const int rows = motion_.rows;
+    const int cols = motion_.cols;
+    uchar* p = motion_.data;
+    for (int i = 0; i < rows * cols && motion < MIN_MOTION_PIXELS; ++i) {
+        if (*p++ > MIN_PIXEL_DIFF)
+            ++motion;
+    }
+    return motion >= MIN_MOTION_PIXELS;
 }
 
 void MotionDetector::onMotionDetected()

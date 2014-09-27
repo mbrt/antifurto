@@ -39,6 +39,10 @@ else()
     # zmq test
     add_executable(zmq_server zmq_server.cpp)
     target_link_libraries(zmq_server zmq)
+
+    # monitor stress test
+    add_executable(monitor_stress monitor_stress_test.cpp)
+    target_link_libraries(monitor_stress antifurto_core)
 endif(CROSS_COMPILE)
 
 # cross tests
