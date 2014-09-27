@@ -4,7 +4,6 @@
 #include <fcgio.h>
 #include <fcgi_config.h>
 #include <iostream>
-#include <b64/encode.h>
 
 #include "StreamRedirect.hpp"
 #include "StreamReader.hpp"
@@ -32,7 +31,6 @@ int main(int, char*[])
     zmq::message_t replyMsg;
 
     StreamReader streamReader{std::cin, 10 * 1024};
-    base64::encoder b64encoder{4096};
 
     FCGX_Request request;
     FCGX_Init();
@@ -46,18 +44,17 @@ int main(int, char*[])
         // talk to main exe if found
         if (client.request(requestMsg, replyMsg)) {
             // got answer, send image
-            std::cout << "Content-Type: image/jpeg\r\n"
-                "Status: 200 OK\r\n"
+            std::cout << "Status: 200 OK\r\n"
+                "Content-Type: image/jpeg\r\n"
                 "Cache-Control: no-cache\r\n"
                 "\r\n";
-            b64encoder.encode(
+            std::cout.write(
                 static_cast<const char*>(replyMsg.data()),
-                replyMsg.size(), std::cout);
+                replyMsg.size());
         }
         else {
             // no answer, send service unavailable
-            std::cout << "Content-Type: text/html\r\n"
-                "Status: 503 Service Not Available\r\n";
+            std::cout << "Status: 503 Service Not Available\r\n\r\n";
         }
     }
     return 0;

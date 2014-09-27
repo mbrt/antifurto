@@ -20,7 +20,7 @@ request(zmq::message_t& request, zmq::message_t& reply)
         socket_->send(request);
         //  Poll socket for a reply, with timeout
         zmq::pollitem_t items[] = { { *socket_, 0, ZMQ_POLLIN, 0 } };
-        zmq::poll(&items[0], 1, timeout_ * 1000);
+        zmq::poll(&items[0], 1, timeout_);
         if (items[0].revents & ZMQ_POLLIN) {
             if (socket_->recv(&reply))
                 return true;
