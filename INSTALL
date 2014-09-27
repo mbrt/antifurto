@@ -64,7 +64,10 @@ setup init script
 > sudo update-rc.d antifurto defaults
 
 install zeromq dependencies:
-> sudo apt-get install libzmq3-dev
+> sudo apt-get install libzmq3
+
+install fcgi lib:
+> sudo apt-get install libfcgi
 
 logrotate script
 > copy /path/to/project/config/antifurto_logrotate /etc/logrotate.d/antifurto
@@ -77,3 +80,12 @@ setup core file limit
 - edit /etc/sysctl.conf
 - add this line at the end (if not already present)
   kernel.core_pattern=/var/log/dumps/core.%e.%p
+
+
+Build
+----------------------------------------------------------------
+
+install zeromq dependencies:
+> sudo apt-get install libzmq3-dev
+install fcgi dependencies:
+> sudo apt-get install libfcgi-dev
