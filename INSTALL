@@ -11,7 +11,11 @@ install python dependencies
 > sudo apt-get install python-flup
 
 copy the web interface in /var/www
-> cp -r lib/pics_web_interface/webinterface/* /var/www/
+> cp -r webpages/* /var/www/
+
+copy the fcgi frontend
+> sudo mkdir /var/www/webapps/
+> sudo cp /build/dir/frontend/antifurto_fcgi /var/www/webapps/
 
 link the archive dir
 > ln -s /path/to/archive /var/www/archive/pics
@@ -31,7 +35,7 @@ restart service
 > sudo service lighttpd restart
 
 copy and edit the password file
-> cd /etct/lighttpd
+> cd /etc/lighttpd
 > sudo cp /path/to/project/config/lighttpd.passwd .
 > sudo chown root:root lighttpd.passwd
 > sudo chmod 644 lighttpd.passwd
@@ -46,6 +50,10 @@ add permissions to www-data to send signals to antifurto
     www-data myhost = (root) NOPASSWD: /usr/bin/killall
   where myhost is the hostname (e.g. rasberry)
 
+
+Antifurto install
+----------------------------------------------------------------
+
 setup init script
 - edit /etc/rc.local
 - add this line before "exit 0"
@@ -56,7 +64,7 @@ setup init script
 > sudo update-rc.d antifurto defaults
 
 install zeromq dependencies:
-> sudo apt-get install libzmq3-dev python-zmq
+> sudo apt-get install libzmq3-dev
 
 logrotate script
 > copy /path/to/project/config/antifurto_logrotate /etc/logrotate.d/antifurto

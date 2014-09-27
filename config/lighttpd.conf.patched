@@ -44,7 +44,7 @@ include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 fastcgi.server += ( "/live/live.jpg" =>
 ((
     "socket" => "/var/run/lighttpd/live.socket",
-    "bin-path" => "/var/www/cgi-bin/live.py",
+    "bin-path" => "/var/www/cgi-bin/antifurto_fcgi",
     "max-procs" => 1,
     "bin-environment" => (
         "REAL_SCRIPT_NAME" => ""
