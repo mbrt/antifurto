@@ -13,16 +13,17 @@ LiveViewController::
 LiveViewController(const Configuration& c, PictureRegistrationRequest regF)
     : regFunc_(regF), socketPath_(c.liveView.socketAddress)
     , timeout_(c.liveView.inactivityTimeout)
-
 { }
 
 LiveViewController::~LiveViewController()
 {
     try {
         stop();
+        stopWork_.get(); // wait the stop
     }
-    catch (...) { }
-    stopWork_.get(); // wait the stop
+    catch (std::exception& e) {
+        log::error() << "Error in stopping live view: " << e.what();
+    }
 }
 
 void LiveViewController::addPicture(const Picture& p)
@@ -40,8 +41,8 @@ void LiveViewController::start()
     if (running_) return;
     running_ = true;
 
-    regFunc_(true);
     liveView_.reset(new LiveView{socketPath_});
+    regFunc_(true);
 }
 
 void LiveViewController::stop()
