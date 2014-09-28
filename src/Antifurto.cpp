@@ -40,7 +40,9 @@ public:
             stopMonitoring();
             stopLiveView();
         }
-        catch (...) { }
+        catch (std::exception& e) {
+            log::error() << "Error in stop: " << e.what();
+        }
     }
 
     bool isMonitoringActive()
