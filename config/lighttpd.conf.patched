@@ -31,7 +31,7 @@ auth.require                = ( "/" =>
 
 index-file.names            = ( "index.php", "index.html", "index.lighttpd.html" )
 url.access-deny             = ( "~", ".inc" )
-static-file.exclude-extensions = ( ".php", ".pl", ".fcgi", ".py" )
+static-file.exclude-extensions = ( ".php", ".pl", ".fcgi", ".py", ".fcgi" )
 
 compress.cache-dir          = "/var/cache/lighttpd/compress/"
 compress.filetype           = ( "application/javascript", "text/css", "text/html", "text/plain" )
@@ -44,7 +44,7 @@ include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 fastcgi.server += ( "/live/live.jpg" =>
 ((
     "socket" => "/var/run/lighttpd/live.socket",
-    "bin-path" => "/var/www/cgi-bin/antifurto_fcgi",
+    "bin-path" => "/var/www/webapps/antifurto.fcgi",
     "max-procs" => 1,
     "bin-environment" => (
         "REAL_SCRIPT_NAME" => ""
