@@ -6,10 +6,10 @@
 LEN=${LEN:-2048}
 
 # create a root.
- openssl req -new -x509 -nodes -out ca.crt -keyout ca.key -subj /CN=DaRoot -newkey rsa:$LEN -sha512 || exit 1
+ openssl req -new -x509 -nodes -out ca.crt -keyout ca.key -subj /CN=MBRoot -newkey rsa:$LEN -sha512 || exit 1
 
 # create an intermediate & sign
-openssl req -new -nodes -out ca-int.req -keyout ca-int.key -subj /CN=Zintermediate -newkey rsa:$LEN -sha512 || exit 1
+openssl req -new -nodes -out ca-int.req -keyout ca-int.key -subj /CN=MBintermediate -newkey rsa:$LEN -sha512 || exit 1
 openssl x509 -req -in ca-int.req -CAkey ca.key -CA ca.crt -days 20 -set_serial $RANDOM -sha512 -out ca-int.crt || exit 1
 
 # chain

@@ -41,6 +41,21 @@ include_shell "/usr/share/lighttpd/use-ipv6.pl " + server.port
 include_shell "/usr/share/lighttpd/create-mime.assign.pl"
 include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
 
+# ssl on port 443
+$SERVER["socket"] == ":443" {
+    ssl.engine = "enable"
+    ssl.pemfile = "/etc/lighttpd/certs/lighttpd.pem"
+}
+
+# redirect http to https
+$HTTP["scheme"] == "http" {
+    # capture vhost name with regex conditiona -> %0 in redirect pattern
+    # must be the most inner block to the redirect rule
+    $HTTP["host"] =~ ".*" {
+        url.redirect = (".*" => "https://%0$0")
+    }
+}
+
 fastcgi.server += ( "/live/live.jpg" =>
 ((
     "socket" => "/var/run/lighttpd/live.socket",
