@@ -3,6 +3,7 @@
 #
 # see: http://openssl.6102.n7.nabble.com/create-certificate-chain-td44046.html
 #      http://superuser.com/questions/126121/how-to-create-my-own-certificate-chain
+#      http://www.g-loaded.eu/2005/11/10/be-your-own-ca/
 LEN=${LEN:-2048}
 
 # create a root.
