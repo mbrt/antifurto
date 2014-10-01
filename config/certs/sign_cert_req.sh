@@ -6,7 +6,7 @@ fi
 CERNAME=$1
 pushd .
 cd ca
-openssl ca -config openssl.cnf -policy policy_anything -out certs/$CERNAME.crt -infiles $CERNAME.csr
+openssl ca -config openssl.cnf -policy policy_anything -days 3650 -out certs/$CERNAME.crt -infiles $CERNAME.csr
 cat certs/$CERNAME.crt private/$CERNAME.key > private/$CERNAME-key-cert.pem
 chmod 0400 private/$CERNAME.key private/$CERNAME-key-cert.pem
 popd
