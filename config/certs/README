@@ -1,0 +1,13 @@
+These scripts are taken from:
+* Be your own Certificate Authority (CA)
+  http://www.g-loaded.eu/2005/11/10/be-your-own-ca/
+
+Workflow:
+* once in a life: ./new_ca.sh
+  choose a strong password
+* once per certificate:
+  * make a request ./new_cert_req.sh <certname>
+    empty password
+  * sign the request ./sign_cert_req.sh <certname>
+* to revoke a certificate:
+  ./revoke_cert.sh <certname>
