@@ -5,10 +5,8 @@ See https://wiki.ubuntu.com/Lighttpd+PHP
 > sudo apt-get install lighttpd php5-cgi
 > sudo lighty-enable-mod fastcgi 
 > sudo lighty-enable-mod fastcgi-php
+> sudo lighty-enable-mod auth
 > sudo service lighttpd force-reload
-
-install python dependencies
-> sudo apt-get install python-flup
 
 copy the web interface in /var/www
 > cp -r webpages/* /var/www/
@@ -31,18 +29,18 @@ option 2: merge
     > sudo merge lighttpd.conf /.../lighttpd.conf.original /.../lighttpd.conf.patched
 option 3: overwrite
     > sudo cp /.../lighttpd.conf.patched lighttpd.conf
+
+patch in the same way the file "/etc/lighttpd/conf-enabled/05-auth.conf"
+
+password file
+> sudo apt-get install apache2-utils
+> htdigest -c lighttpd.user.htdigest 'admin area' admin
+  type a password for the user
+> sudo mv lighttpd.user.htdigest /etc/lighttpd/
+> sudo chown root:root /etc/lighttpd/lighttpd.user.htdigest
+
 restart service
 > sudo service lighttpd restart
-
-copy and edit the password file
-> cd /etc/lighttpd
-> sudo cp /path/to/project/config/lighttpd.passwd .
-> sudo chown root:root lighttpd.passwd
-> sudo chmod 644 lighttpd.passwd
-edit the file
-> sudo vi lighttpd.passwd
-writing your password:
-admin:write-your-password-here
 
 add permissions to www-data to send signals to antifurto
 > sudo visudo -f /etc/sudoers.d/antifurto

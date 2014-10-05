@@ -1,11 +1,10 @@
 server.modules = (
-	"mod_access",
-	"mod_accesslog",
-	"mod_alias",
-	"mod_compress",
- 	"mod_redirect",
- 	"mod_auth",
-#       "mod_rewrite",
+    "mod_access",
+    "mod_accesslog",
+    "mod_alias",
+    "mod_compress",
+    "mod_redirect",
+#   "mod_rewrite",
 )
 
 server.document-root        = "/var/www"
@@ -17,17 +16,6 @@ server.groupname            = "www-data"
 server.port                 = 80
 
 accesslog.filename          = "/var/log/lighttpd/access.log"
-auth.debug                  = 2
-auth.backend                = "plain"
-auth.backend.plain.userfile = "/etc/lighttpd/lighttpd.passwd"
-auth.require                = ( "/" =>
-(
-    "method"  => "basic",
-    "realm"   => "Password protected area",
-    "require" => "user=admin"
-)
-)
-
 
 index-file.names            = ( "index.php", "index.html", "index.lighttpd.html" )
 url.access-deny             = ( "~", ".inc" )
@@ -40,6 +28,21 @@ compress.filetype           = ( "application/javascript", "text/css", "text/html
 include_shell "/usr/share/lighttpd/use-ipv6.pl " + server.port
 include_shell "/usr/share/lighttpd/create-mime.assign.pl"
 include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
+
+# ssl on port 443
+$SERVER["socket"] == ":443" {
+    ssl.engine = "enable"
+    ssl.pemfile = "/etc/lighttpd/certs/lighttpd.pem"
+}
+
+# redirect http to https
+$HTTP["scheme"] == "http" {
+    # capture vhost name with regex conditiona -> %0 in redirect pattern
+    # must be the most inner block to the redirect rule
+    $HTTP["host"] =~ ".*" {
+        url.redirect = (".*" => "https://%0$0")
+    }
+}
 
 fastcgi.server += ( "/live/live.jpg" =>
 ((

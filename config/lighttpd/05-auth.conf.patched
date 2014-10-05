@@ -1,0 +1,14 @@
+# /usr/share/doc/lighttpd/authentication.txt.gz
+
+server.modules                += ( "mod_auth" )
+
+auth.debug                     = 0
+auth.backend                   = "htdigest"
+auth.backend.htdigest.userfile = "/etc/lighttpd/lighttpd.user.htdigest"
+auth.require                   = ( "/" =>
+    (
+        "method"  => "digest",
+        "realm"   => "admin area",
+        "require" => "user=admin"
+    )
+)
