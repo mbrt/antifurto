@@ -10,14 +10,14 @@ ExternalProject_Add(userland
     INSTALL_COMMAND ""
 )
 
-ExternalProject_Add(raspicam_cv
+ExternalProject_Add(libpicam
     CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../toolchain-pi.cmake -DCMAKE_BUILD_TYPE=Release
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/raspicam_cv
-    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/raspicam_cv/build
-    BUILD_COMMAND cmake . && make
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/picam
+    BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/picam/build
+    BUILD_COMMAND cmake . && make picam
     INSTALL_COMMAND ""
 )
-add_dependencies(raspicam_cv userland)
+add_dependencies(libpicam userland)
 
 else(CROSS_COMPILE)
 

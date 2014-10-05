@@ -46,7 +46,7 @@ void test()
 	}
 
 	printf("Stopping camera...\n");
-	StopCamera();
+	StopCamera(cam);
 	printf("Stopped\n");
 }
 

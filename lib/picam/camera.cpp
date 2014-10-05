@@ -36,14 +36,24 @@ CCamera* StartCamera(int width, int height, int framerate, int num_levels, bool 
 	return GCamera;
 }
 
-void StopCamera()
+void StopCamera(CCamera* camera)
 {
-	if(GCamera)
+	if (camera)
 	{
-		GCamera->Release();
-		delete GCamera;
+		camera->Release();
+		delete camera;
 		GCamera = NULL;
 	}
+}
+
+bool BeginReadFrame(CCamera* camera, int level, const void* &out_buffer, int& out_buffer_size)
+{
+    return camera->BeginReadFrame(level, out_buffer, out_buffer_size);
+}
+
+void EndReadFrame(CCamera* camera, int level)
+{
+    camera->EndReadFrame(level);
 }
 
 CCamera::CCamera()

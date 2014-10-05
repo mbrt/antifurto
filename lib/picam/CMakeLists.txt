@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(picam)
+project(libpicam)
 
 set(USERLAND_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/../userland CACHE PATH "The userland directory")

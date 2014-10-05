@@ -34,7 +34,6 @@ public:
 class CCamera
 {
 public:
-
 	int ReadFrame(int level, void* buffer, int buffer_size);
 	bool BeginReadFrame(int level, const void* &out_buffer, int& out_buffer_size);
 	void EndReadFrame(int level);
@@ -61,7 +60,7 @@ private:
 	CCameraOutput*				Outputs[4];
 
 	friend CCamera* StartCamera(int width, int height, int framerate, int num_levels, bool do_argb_conversion);
-	friend void StopCamera();
+	friend void StopCamera(CCamera* camera);
 };
 
 CCamera* StartCamera(int width, int height, int framerate, int num_levels, bool do_argb_conversion=true);
