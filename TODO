@@ -21,6 +21,9 @@ TODO LIST
         mmal: camera video callback2 error
         mmal: raspiCamCvCreateCameraCapture: Failed to create camera component
     the problem is that the shutdown of the camera is not right
+  - see for example userland/host_applications/linux/apps/raspicam/RaspiStill.c
+  - use another api: http://robotblogging.blogspot.it/2013/10/an-efficient-and-simple-c-api-for.html
+  - another reference: http://thinkrpi.wordpress.com/2013/05/22/opencv-and-camera-board-csi/
 
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
@@ -38,3 +41,11 @@ TODO LIST
   - one only for the pictures cycle
   - one for all the long running tasks
 - Display logs in webserver
+- Refactor of spsc queue:
+  - Use a lock to make the thread sleep? consumer call lock and blocks itself
+    because unlock is made by producer
+  - implement a lock that is a spinlock until a timeout and after go to sleep
+    (hybrid mutex)
+  - alternative: block in a std::future.get()
+- Observer with deregistration:
+  - example: http://eviltwingames.com/blog/the-observer-pattern-revisited/
