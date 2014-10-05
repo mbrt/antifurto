@@ -1,11 +1,10 @@
 server.modules = (
-	"mod_access",
-	"mod_accesslog",
-	"mod_alias",
-	"mod_compress",
- 	"mod_redirect",
- 	"mod_auth",
-#       "mod_rewrite",
+    "mod_access",
+    "mod_accesslog",
+    "mod_alias",
+    "mod_compress",
+    "mod_redirect",
+#   "mod_rewrite",
 )
 
 server.document-root        = "/var/www"
@@ -17,17 +16,6 @@ server.groupname            = "www-data"
 server.port                 = 80
 
 accesslog.filename          = "/var/log/lighttpd/access.log"
-auth.debug                  = 2
-auth.backend                = "plain"
-auth.backend.plain.userfile = "/etc/lighttpd/lighttpd.passwd"
-auth.require                = ( "/" =>
-(
-    "method"  => "basic",
-    "realm"   => "Password protected area",
-    "require" => "user=admin"
-)
-)
-
 
 index-file.names            = ( "index.php", "index.html", "index.lighttpd.html" )
 url.access-deny             = ( "~", ".inc" )
