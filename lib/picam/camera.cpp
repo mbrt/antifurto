@@ -476,6 +476,7 @@ error:
 
 void CCameraOutput::Release()
 {
+    mmal_port_disable(BufferPort);
 	if(OutputQueue)
 		mmal_queue_destroy(OutputQueue);
 	if(BufferPool)
