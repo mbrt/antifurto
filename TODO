@@ -1,20 +1,18 @@
 TODO LIST
 ---------
 
+* Lower timeout on upload pictures enqueued
 * Reboot on crash
   - use linux whatchdog daemon
   - save persistently the last status and restore it (monitoring on/off)
 * Kill subprocess
   - used to kill notification processes
-* Optimizations
-  - current bottleneks are cv::MatConstIterator::operator++() and
-    countMotionPixels()
 * Web server
-  - refactor live view to use sockets instead of fifo
   - add query to monitor status (posix message queue? socket? pipe?)
 * Bug fix
   - in RecordingController::initUploader(), if no connection is available, the
     function blocks;
+  - manage connection not available in all the possible cases
   - fix start stop monitoring
         mmal: mmal_vc_port_enable: failed to enable port vc.ril.camera:out:1(I420):
         ENOSPC
@@ -27,9 +25,6 @@ TODO LIST
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
 - Packaging system
-- Archive refactor
-  - Pack old directories in videos
-  - Sync dropbox with archive directories
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile
