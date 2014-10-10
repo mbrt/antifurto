@@ -14,14 +14,18 @@ set(USERLAND_INCLUDE_DIRS
 set(USERLAND_LIBRARY_DIRS ${USERLAND_DIR}/build/lib)
 set(USERLAND_LIBRARIES mmal_core mmal mmal_util vcos bcm_host)
 
+set(USERLAND_RASPICAM_SRC
+    ${USERLAND_DIR}/host_applications/linux/apps/raspicam/RaspiCamControl.c)
+
 # opencv
 set(OpenCV_LIBS opencv_core opencv_imgproc)
 
 link_directories(${USERLAND_LIBRARY_DIRS})
 include_directories(. ${USERLAND_INCLUDE_DIRS})
 
-add_library(picam STATIC camera.cpp ${USERLAND_RASPICAM_SRC})
+add_library(picam STATIC camera.cpp cameracontrol.cpp
+            ${USERLAND_RASPICAM_SRC})
 target_link_libraries(picam ${USERLAND_LIBRARIES} ${OpenCV_LIBS})
 
-add_executable(picamtest picamtest.cpp cameracontrol.cpp)
+add_executable(picamtest picamtest.cpp)
 target_link_libraries(picamtest picam)

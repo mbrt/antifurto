@@ -3,7 +3,6 @@
 #include "Picture.hpp"
 #include "Camera.hpp"
 #include "Exception.hpp"
-#include "meta/SmartPtr.hpp"
 
 #include <memory>
 
@@ -16,12 +15,15 @@ namespace antifurto {
 class PiCamera : public Camera
 {
 public:
-    PiCamera();
+    PiCamera(int width = 640, int height = 480);
     void takePicture(Picture& p) override;
 
 private:
-    cv::Mat frame_;
-    meta::ErasedUniquePtr<CCamera> capture_;
+    void resizePicture(Picture& p) const;
+
+    int width_;
+    int height_;
+    std::unique_ptr<CCamera, void(*)(CCamera*)> capture_;
 };
 
 } // namespace antifurto
