@@ -14,11 +14,10 @@ PiCamera::PiCamera(int width, int height)
 void PiCamera::takePicture(Picture& p)
 {
     resizePicture(p);
-    cv::Mat& mat = static_cast<cv::Mat&>(p);
     const void* frameData;
     int bufferSize;
     ::BeginReadFrame(capture_.get(), 0, frameData, bufferSize);
-    ::memcpy(mat.data, frameData, width_ * height_);
+    ::memcpy(static_cast<cv::Mat&>(p).data, frameData, width_ * height_);
     ::EndReadFrame(capture_.get(), 0);
 }
 
@@ -26,7 +25,7 @@ void PiCamera::resizePicture(Picture& p) const
 {
     cv::Mat& mat = static_cast<cv::Mat&>(p);
     if (mat.rows != height_ || mat.cols != width_)
-        mat.create(width_, height_, CV_8UC1);
+        mat.create(height_, width_, CV_8UC1);
 }
 
 } // namespace antifurto
