@@ -31,7 +31,8 @@ private:
     void onPictureSaved(const std::string& fileName);
     void uploadFile(const std::string& sourceFile);
     void deleteOlderPictures();
-    void enqueueOlderPictures();
+    void enqueueOlderPicturesIfIdle();
+    void scheduleUploadOlderPictures();
 
     using UploadWorker =
         concurrency::SpScQueue<std::string,
@@ -49,6 +50,7 @@ private:
     RecordingWorker recordingWorker_;
     UploadQueue toUploadAfterQueue_;
     std::mutex toUploadAfterQueueMutex_;
+    MotionDetector::State currentState_;
 };
 
 } // namespace antifurto

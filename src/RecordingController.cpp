@@ -20,6 +20,7 @@ namespace {
 RecordingController::RecordingController(const Configuration& cfg)
     : config_(cfg.recording)
     , scheduler_(staticScheduler)
+    , currentState_(MotionDetector::State::NO_ALARM)
 { }
 
 RecordingController::
@@ -84,12 +85,13 @@ void RecordingController::initUploader(const Configuration& cfg)
 void RecordingController::onAlarmStateChanged(MotionDetector::State state)
 {
     using State = MotionDetector::State;
+    currentState_ = state;
     switch (state) {
     case State::NO_MOTION:
         archive_.stopSaving();
         break;
     case State::NO_ALARM:
-        enqueueOlderPictures();
+        enqueueOlderPicturesIfIdle();
         break;
     case State::ALARM:
         archive_.startSaving();
@@ -139,28 +141,38 @@ void RecordingController::deleteOlderPictures()
                   [](bfs::path const& p) { bfs::remove_all(p); });
 }
 
-void RecordingController::enqueueOlderPictures()
+void RecordingController::enqueueOlderPicturesIfIdle()
 {
     std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
     if (toUploadAfterQueue_.empty())
         return;
-    log::info() << "Start uploading older pictures";
+    if (currentState_ != MotionDetector::State::NO_ALARM) {
+        log::info() << "Cannot upload now, not idle. Schedule a new upload";
+        scheduleUploadOlderPictures();
+    }
 
+    log::info() << "Start uploading older pictures";
     while (!toUploadAfterQueue_.empty()) {
         if (uploadWorker_.enqueue(toUploadAfterQueue_.front()))
             toUploadAfterQueue_.pop();
         else
             break;
     }
+
     // if the queue is not empty, we need to schedule an upload after
     if (!toUploadAfterQueue_.empty()) {
         log::info() << "Cannot empty the upload queue. Schedule a new upload";
-        scheduler_.scheduleAfter(std::chrono::minutes(10), [this] {
-            enqueueOlderPictures();
-        });
+        scheduleUploadOlderPictures();
     }
     else
         log::info() << "Upload of older pictures completed";
+}
+
+void RecordingController::scheduleUploadOlderPictures()
+{
+    scheduler_.scheduleAfter(std::chrono::minutes(2), [this] {
+        enqueueOlderPicturesIfIdle();
+    });
 }
 
 } // namespace antifurto
