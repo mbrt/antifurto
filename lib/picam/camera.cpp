@@ -270,7 +270,7 @@ bool CCamera::Init(int width, int height, int framerate, int num_levels, bool do
 
 	// Set up the camera_parameters to default
 	raspicamcontrol_set_defaults(&CameraParameters);
-    CameraParameters.rotation = 180;
+    CameraParameters.hflip = 1;
 
 	MMAL_COMPONENT_T *camera = 0;
 	MMAL_COMPONENT_T *splitter = 0;
