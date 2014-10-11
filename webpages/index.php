@@ -117,7 +117,7 @@
         <h1>Antifurto home</h1>
           <p>From here you can enable and disable the monitoring.</p>
           <p>
-            <div>Monitoring status: <b>active?</b></div>
+            <div>Monitoring status: <b class="monitor-status"></b></div>
             <div>Last alarm: <b><?php echo $last_alarm ?></b></div>
           </p>
       </div>
@@ -199,7 +199,25 @@
 
     <!-- monitoring status poll -->
     <script type="text/javascript">
+        function getMonitorStatus(target) {
+            $.ajax({
+                    url: '../controller/controller',
+                    data: { 'query': 'monitor-status' },
+                    dataType: 'json',
+                    cache: false
+                })
+                .done(function(data) {
+                    // data is { active: boolean }
+                    if (data.active)
+                        target.html('active');
+                    else
+                        target.html('inactive');
+                });
+        }
 
+        var target = $('.monitor-status');
+        getMonitorStatus(target);
+        setInterval(function(){ getMonitorStatus(target); }, 30000);
     </script>
 
   </body>
