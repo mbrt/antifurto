@@ -20,42 +20,45 @@
     return new DateTime(substr($file, 0, 10) .' '. substr($file, 11, 8));
   }
 
+  function get_last_alarm() {
+    global $pics_path, $today_dir, $today_dt;
 
-  // main code
-  // find last day in pics
-  $last_day = find_max_in_dir($pics_path);
-  if ($last_day === null)
-    // no pics found
-    $last_alarm = 'none';
-  else {
+    // find last day in pics
+    $last_day = find_max_in_dir($pics_path);
+    if ($last_day === null)
+      // no pics found
+      return 'none';
+
     if ($last_day != $today_dir) {
       // was not today: print how many days ago
       $last_day_dt = new DateTime($last_day);
       $interval = $last_day_dt->diff($today_dt);
-      $last_alarm = $interval->days .' days ago';
+      return $interval->days .' days ago';
     }
-    else {
-      // was today: print hours, minutes or just now
-      $last_pic = find_max_in_dir("$pics_path/$last_day");
-      if ($last_pic === null)
-        // no pictures, show today only
-        $last_alarm = 'today';
-      else {
-        // compute diff from now
-        $last_pic_dt = from_pic_file_to_datetime($last_pic);
-        $interval = $last_pic_dt->diff($today_dt);
-        if ($interval->h > 0)
-          // hours ago
-          $last_alarm = $interval->h .' hours ago';
-        else if ($interval->i > 4)
-          // minutes ago
-          $last_alarm = $interval->i .' minutes ago';
-        else
-          // less than 5 minutes ago
-          $last_alarm = 'just now';
-      }
-    }
+
+    // was today: print hours, minutes or just now
+    $last_pic = find_max_in_dir("$pics_path/$last_day");
+    if ($last_pic === null)
+      // no pictures, show today only
+      return 'today';
+
+    // compute diff from now
+    $last_pic_dt = from_pic_file_to_datetime($last_pic);
+    $interval = $last_pic_dt->diff($today_dt);
+    if ($interval->h > 0)
+      // hours ago
+      return $interval->h .' hours ago';
+    else if ($interval->i > 4)
+      // minutes ago
+      return $interval->i .' minutes ago';
+    else
+      // less than 5 minutes ago
+      return 'just now';
   }
+
+
+  // main code
+  $last_alarm = get_last_alarm();
 ?>
 
 <!DOCTYPE html>
