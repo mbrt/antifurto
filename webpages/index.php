@@ -153,7 +153,7 @@
     <!-- displayMessage utility -->
     <script src="assets/js/message.js"></script>
 
-    <!-- Page custom JavaScript -->
+    <!-- start stop buttons -->
     <script type="text/javascript">
         function startStopPressed(target, other, msg, params) {
             target.button('loading');
@@ -172,13 +172,13 @@
                             'alert-success');
                     else
                         displayMessage('#message',
-                            '<h4>Error</h4><p>' + data.log + '.</p>',
+                            '<h4>Ooops...</h4><p>' + data.log + '.</p>',
                             'alert-danger');
                 })
                 .fail(function(jqxhr, textStatus, errorThrown) {
                     displayMessage('#message',
-                        '<h4>Error</h4>' +
-                        '<p>' + errorThrown + '.</p>',
+                        '<h4>No network connection available</h4>' +
+                        (errorThrown != '' ? ('<p>' + errorThrown + '.</p>') : ''),
                         'alert-danger');
                 })
                 .always(function() {
@@ -195,6 +195,11 @@
             startStopPressed($('.on-off .stop'), $('.on-off .start'),
                 'Monitoring stopped.', { stop: 1 });
         });
+    </script>
+
+    <!-- monitoring status poll -->
+    <script type="text/javascript">
+
     </script>
 
   </body>
