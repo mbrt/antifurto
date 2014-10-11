@@ -1,3 +1,63 @@
+<?php
+  include 'includes/date_utils.php.inc';
+
+  // settings
+  $pics_path = 'archive/pics';   
+
+  function find_max_in_dir($dir) {
+    if (!file_exists($dir)) return null;
+    $handle = opendir($dir);
+    $max_val = null;
+    while (false !== ($entry = readdir($handle)))
+      if ($entry != '.' && $entry != '..')
+        $max_val = max($entry, $max_val);
+    return $max_val;
+  }
+
+  // input: YYYY-MM-DD_hh:mm:ss.xxxx.jpg
+  // output: a DateTime representing input
+  function from_pic_file_to_datetime($file) {
+    return new DateTime(substr($file, 0, 10) .' '. substr($file, 11, 8));
+  }
+
+
+  // main code
+  // find last day in pics
+  $last_day = find_max_in_dir($pics_path);
+  if ($last_day === null)
+    // no pics found
+    $last_alarm = 'none';
+  else {
+    if ($last_day != $today_dir) {
+      // was not today: print how many days ago
+      $last_day_dt = new DateTime($last_day);
+      $interval = $last_day_dt->diff($today_dt);
+      $last_alarm = $interval->days .' days ago';
+    }
+    else {
+      // was today: print hours, minutes or just now
+      $last_pic = find_max_in_dir("$pics_path/$last_day");
+      if ($last_pic === null)
+        // no pictures, show today only
+        $last_alarm = 'today';
+      else {
+        // compute diff from now
+        $last_pic_dt = from_pic_file_to_datetime($last_pic);
+        $interval = $last_pic_dt->diff($today_dt);
+        if ($interval->h > 0)
+          // hours ago
+          $last_alarm = $interval->h .' hours ago';
+        else if ($interval->i > 4)
+          // minutes ago
+          $last_alarm = $interval->i .' minutes ago';
+        else
+          // less than 5 minutes ago
+          $last_alarm = 'just now';
+      }
+    }
+  }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -52,7 +112,11 @@
       <!-- Main jumbotron for a primary marketing message or call to action -->
       <div class="jumbotron">
         <h1>Antifurto home</h1>
-        <p>View the status and issue commands.</p>
+          <p>From here you can enable and disable the monitoring.</p>
+          <p>
+            <div>Monitoring status: <b>active?</b></div>
+            <div>Last alarm: <b><?php echo $last_alarm ?></b></div>
+          </p>
       </div>
 
       <!-- contents -->
