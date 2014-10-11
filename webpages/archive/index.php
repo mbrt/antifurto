@@ -231,9 +231,9 @@
 
       <?php
         if ($num_pics_in_page > 0)
-          include 'pics.php';
+          include 'pics.php.inc';
         else
-          include 'nopics.php';
+          include 'nopics.php.inc';
       ?>
 
       </div><!-- /row -->
