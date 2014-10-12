@@ -1,7 +1,6 @@
 TODO LIST
 ---------
 
-* Lower timeout on upload pictures enqueued
 * Reboot on crash
   - use linux whatchdog daemon
   - save persistently the last status and restore it (monitoring on/off)
@@ -13,6 +12,10 @@ TODO LIST
   - in RecordingController::initUploader(), if no connection is available, the
     function blocks;
   - manage connection not available in all the possible cases
+* In Antifurto, make controllers in constructor, not lazily on demand
+  - what if RecordingController blocks?
+  - remove minimal constructor of RecordingController, use the full built
+    one for the maintenance at the beginning
 * In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   1 use opencv only for usb camera and for imwrite
   2 use libjpeg instead of opencv for image encoding
