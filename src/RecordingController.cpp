@@ -20,7 +20,6 @@ namespace {
 RecordingController::RecordingController(const Configuration& cfg)
     : config_(cfg.recording)
     , scheduler_(staticScheduler)
-    , currentState_(MotionDetector::State::NO_ALARM)
 { }
 
 RecordingController::
@@ -91,7 +90,7 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
         archive_.stopSaving();
         break;
     case State::NO_ALARM:
-        enqueueOlderPicturesIfIdle();
+        enqueueOlderPicturesIfIdle(false);
         break;
     case State::ALARM:
         archive_.startSaving();
@@ -105,10 +104,13 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
 void RecordingController::onPictureSaved(const std::string& fileName)
 {
     if (!uploadWorker_.enqueue(fileName)) {
-        log::info() << "Failed to upload picture to Dropbox: queue is full";
+        log::debug() << "Failed to upload picture to Dropbox: queue is full";
+        enableFailedUploadMsg_ = false;
         std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
         toUploadAfterQueue_.emplace(fileName);
     }
+    else
+        enableFailedUploadMsg_ = true;
 }
 
 void RecordingController::uploadFile(const std::string& sourceFile)
@@ -141,14 +143,21 @@ void RecordingController::deleteOlderPictures()
                   [](bfs::path const& p) { bfs::remove_all(p); });
 }
 
-void RecordingController::enqueueOlderPicturesIfIdle()
+void RecordingController::enqueueOlderPicturesIfIdle(bool scheduled)
 {
     std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
-    if (toUploadAfterQueue_.empty())
-        return;
+    // if this work does not come from scheduler, but another has been already
+    // scheduled, do nothing.
+    if (!scheduled && enqueueOlderScheduled_) return;
+    // we are sure that no work is scheduled here
+    enqueueOlderScheduled_ = false;
+    // if nothing to do exit
+    if (toUploadAfterQueue_.empty()) return;
+
     if (currentState_ != MotionDetector::State::NO_ALARM) {
         log::info() << "Cannot upload now, not idle. Schedule a new upload";
         scheduleUploadOlderPictures();
+        return;
     }
 
     log::info() << "Start uploading older pictures";
@@ -170,8 +179,9 @@ void RecordingController::enqueueOlderPicturesIfIdle()
 
 void RecordingController::scheduleUploadOlderPictures()
 {
+    enqueueOlderScheduled_ = true;
     scheduler_.scheduleAfter(std::chrono::minutes(2), [this] {
-        enqueueOlderPicturesIfIdle();
+        enqueueOlderPicturesIfIdle(true);
     });
 }
 
