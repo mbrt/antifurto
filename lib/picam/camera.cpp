@@ -6,6 +6,8 @@ http://raufast.org/download/camcv_vid0.c to get the camera feeding into opencv. 
 */
 
 #include "camera.h"
+#include "picam.h"
+
 #include <stdio.h>
 
 // Standard port setting for the camera component
@@ -14,29 +16,29 @@ http://raufast.org/download/camcv_vid0.c to get the camera feeding into opencv. 
 #define MMAL_CAMERA_CAPTURE_PORT 2
 
 static CCamera* GCamera = NULL;
+static picam_error_code_t g_last_error = PICAM_NO_ERROR;
 
-CCamera* StartCamera(int width, int height, int framerate, int num_levels, bool do_argb_conversion)
+CCamera* picam_start_camera(int width, int height, int framerate, int num_levels, bool do_argb_conversion)
 {
     //can't create more than one camera
-    if(GCamera != NULL)
+    if (GCamera != NULL)
     {
-        printf("Can't create more than one camera\n");
+        g_last_error = PICAM_ALREADY_CREATED;
         return NULL;
     }
 
     //create and attempt to initialize the camera
     GCamera = new CCamera();
-    if(!GCamera->Init(width,height,framerate,num_levels,do_argb_conversion))
+    if (!GCamera->Init(width,height,framerate,num_levels,do_argb_conversion))
     {
         //failed so clean up
-        printf("Camera init failed\n");
         delete GCamera;
         GCamera = NULL;
     }
     return GCamera;
 }
 
-void StopCamera(CCamera* camera)
+void picam_stop_camera(CCamera* camera)
 {
     if (camera)
     {
@@ -46,14 +48,19 @@ void StopCamera(CCamera* camera)
     }
 }
 
-bool BeginReadFrame(CCamera* camera, int level, const void* &out_buffer, int& out_buffer_size)
+int picam_begin_read_frame(CCamera* camera, int level, const void* &out_buffer, int& out_buffer_size)
 {
     return camera->BeginReadFrame(level, out_buffer, out_buffer_size);
 }
 
-void EndReadFrame(CCamera* camera, int level)
+int picam_end_read_frame(CCamera* camera, int level)
 {
-    camera->EndReadFrame(level);
+    return camera->EndReadFrame(level);
+}
+
+picam_error_code_t picam_get_last_error()
+{
+    return g_last_error;
 }
 
 CCamera::CCamera()
@@ -85,14 +92,14 @@ MMAL_COMPONENT_T* CCamera::CreateCameraComponentAndSetupPorts()
     status = mmal_component_create(MMAL_COMPONENT_DEFAULT_CAMERA, &camera);
     if (status != MMAL_SUCCESS)
     {
-        printf("Failed to create camera component\n");
+        g_last_error = PICAM_CAM_COMP_FAILED;
         return NULL;
     }
 
     //check we have output ports
     if (!camera->output_num)
     {
-        printf("Camera doesn't have output ports");
+        g_last_error = PICAM_NO_OUTPUT_PORTS;
         mmal_component_destroy(camera);
         return NULL;
     }
@@ -106,7 +113,7 @@ MMAL_COMPONENT_T* CCamera::CreateCameraComponentAndSetupPorts()
     status = mmal_port_enable(camera->control, CameraControlCallback);
     if (status != MMAL_SUCCESS)
     {
-        printf("Unable to enable control port : error %d", status);
+        g_last_error = PICAM_CANNOT_ENABLE_PORT;
         mmal_component_destroy(camera);
         return NULL;
     }
@@ -144,7 +151,7 @@ MMAL_COMPONENT_T* CCamera::CreateCameraComponentAndSetupPorts()
     status = mmal_port_format_commit(preview_port);
     if (status != MMAL_SUCCESS)
     {
-        printf("Couldn't set preview port format : error %d", status);
+        g_last_error = PICAM_CANNOT_SET_PREVIEW_PORT;
         mmal_component_destroy(camera);
         return NULL;
     }
@@ -164,7 +171,7 @@ MMAL_COMPONENT_T* CCamera::CreateCameraComponentAndSetupPorts()
     status = mmal_port_format_commit(video_port);
     if (status != MMAL_SUCCESS)
     {
-        printf("Couldn't set video port format : error %d", status);
+        g_last_error = PICAM_CANNOT_SET_PREVIEW_PORT;
         mmal_component_destroy(camera);
         return NULL;
     }
@@ -184,7 +191,7 @@ MMAL_COMPONENT_T* CCamera::CreateCameraComponentAndSetupPorts()
     status = mmal_port_format_commit(still_port);
     if (status != MMAL_SUCCESS)
     {
-        printf("Couldn't set still port format : error %d", status);
+        g_last_error = PICAM_CANNOT_SET_STILL_PORT;
         mmal_component_destroy(camera);
         return NULL;
     }
@@ -196,11 +203,12 @@ MMAL_COMPONENT_T* CCamera::CreateCameraComponentAndSetupPorts()
     status = mmal_component_enable(camera);
     if (status != MMAL_SUCCESS)
     {
-        printf("Couldn't enable camera\n");
+        g_last_error = PICAM_CANNOT_ENABLE_CAMERA;
         mmal_component_destroy(camera);
         return NULL;
     }
 
+    g_last_error = PICAM_NO_ERROR;
     return camera;
 }
 
@@ -215,14 +223,14 @@ MMAL_COMPONENT_T* CCamera::CreateSplitterComponentAndSetupPorts(MMAL_PORT_T* vid
     status = mmal_component_create(MMAL_COMPONENT_DEFAULT_VIDEO_SPLITTER, &splitter);
     if (status != MMAL_SUCCESS)
     {
-        printf("Failed to create splitter component\n");
+        g_last_error = PICAM_FAILED_SPLITTER_CREATE;
         goto error;
     }
 
     //check we have output ports
     if (splitter->output_num != 4 || splitter->input_num != 1)
     {
-        printf("Splitter doesn't have correct ports: %d, %d\n",splitter->input_num,splitter->output_num);
+        g_last_error = PICAM_WRONG_SPLITTER_PORTS;
         goto error;
     }
 
@@ -233,7 +241,7 @@ MMAL_COMPONENT_T* CCamera::CreateSplitterComponentAndSetupPorts(MMAL_PORT_T* vid
     status = mmal_port_format_commit(input_port);
     if (status != MMAL_SUCCESS)
     {
-        printf("Couldn't set resizer input port format : error %d", status);
+        g_last_error = PICAM_CANNOT_SET_RESIZER_PORT_FORMAT;
         goto error;
     }
 
@@ -245,11 +253,12 @@ MMAL_COMPONENT_T* CCamera::CreateSplitterComponentAndSetupPorts(MMAL_PORT_T* vid
         status = mmal_port_format_commit(output_port);
         if (status != MMAL_SUCCESS)
         {
-            printf("Couldn't set resizer output port format : error %d", status);
+            g_last_error = PICAM_CANNOT_SET_RESIZER_PORT_FORMAT;
             goto error;
         }
     }
 
+    g_last_error = PICAM_NO_ERROR;
     return splitter;
 
 error:
@@ -298,13 +307,13 @@ bool CCamera::Init(int width, int height, int framerate, int num_levels, bool do
     status = mmal_connection_create(&vid_to_split_connection, video_port, splitter->input[0], MMAL_CONNECTION_FLAG_TUNNELLING | MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT);
     if (status != MMAL_SUCCESS)
     {
-        printf("Failed to create connection\n");
+        g_last_error = PICAM_FAILED_CREATE_CONNECTION;
         goto error;
     }
     status = mmal_connection_enable(vid_to_split_connection);
     if (status != MMAL_SUCCESS)
     {
-        printf("Failed to enable connection\n");
+        g_last_error = PICAM_FAILED_ENABLE_CONNECTION;
         goto error;
     }
 
@@ -314,7 +323,7 @@ bool CCamera::Init(int width, int height, int framerate, int num_levels, bool do
         outputs[i] = new CCameraOutput();
         if(!outputs[i]->Init(Width >> i,Height >> i,splitter,i,do_argb_conversion))
         {
-            printf("Failed to initialize output %d\n",i);
+            g_last_error = PICAM_FAILED_INITIALIZE_OUTPUT;
             goto error;
         }
     }
@@ -322,7 +331,7 @@ bool CCamera::Init(int width, int height, int framerate, int num_levels, bool do
     //begin capture
     if (mmal_port_parameter_set_boolean(video_port, MMAL_PARAMETER_CAPTURE, 1) != MMAL_SUCCESS)
     {
-        printf("Failed to start capture\n");
+        g_last_error = PICAM_FAILED_START_CAPTURE;
         goto error;
     }
 
@@ -333,7 +342,7 @@ bool CCamera::Init(int width, int height, int framerate, int num_levels, bool do
     memcpy(Outputs,outputs,sizeof(outputs));
 
     //return success
-    printf("Camera successfully created\n");
+    g_last_error = PICAM_NO_ERROR;
     return true;
 
 error:
@@ -378,7 +387,7 @@ void CCamera::Release()
 
 void CCamera::OnCameraControlCallback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer)
 {
-    printf("Camera control callback\n");
+    //printf("Camera control callback\n");
 }
 
 bool CCamera::BeginReadFrame(int level, const void* &out_buffer, int& out_buffer_size)
@@ -386,9 +395,11 @@ bool CCamera::BeginReadFrame(int level, const void* &out_buffer, int& out_buffer
     return Outputs[level] ? Outputs[level]->BeginReadFrame(out_buffer,out_buffer_size) : false;
 }
 
-void CCamera::EndReadFrame(int level)
+bool CCamera::EndReadFrame(int level)
 {
-    if(Outputs[level]) Outputs[level]->EndReadFrame();
+    if(Outputs[level])
+        return Outputs[level]->EndReadFrame();
+    return false;
 }
 
 int CCamera::ReadFrame(int level, void* dest, int dest_size)
@@ -408,7 +419,7 @@ CCameraOutput::~CCameraOutput()
 
 bool CCameraOutput::Init(int width, int height, MMAL_COMPONENT_T* input_component, int input_port_idx, bool do_argb_conversion)
 {
-    printf("Init camera output with %d/%d\n",width,height);
+    //printf("Init camera output with %d/%d\n",width,height);
     Width = width;
     Height = height;
 
@@ -433,13 +444,13 @@ bool CCameraOutput::Init(int width, int height, MMAL_COMPONENT_T* input_componen
         status = mmal_connection_create(&connection, input_port, resizer->input[0], MMAL_CONNECTION_FLAG_TUNNELLING | MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT);
         if (status != MMAL_SUCCESS)
         {
-            printf("Failed to create connection\n");
+            g_last_error = PICAM_FAILED_CREATE_CONNECTION;
             goto error;
         }
         status = mmal_connection_enable(connection);
         if (status != MMAL_SUCCESS)
         {
-            printf("Failed to enable connection\n");
+            g_last_error = PICAM_FAILED_ENABLE_CONNECTION;
             goto error;
         }
 
@@ -461,7 +472,7 @@ bool CCameraOutput::Init(int width, int height, MMAL_COMPONENT_T* input_componen
     output_queue = mmal_queue_create();
     if(!output_queue)
     {
-        printf("Failed to create output queue\n");
+        g_last_error = PICAM_FAILED_CREATE_OUTPUT_QUEUE;
         goto error;
     }
 
@@ -470,6 +481,7 @@ bool CCameraOutput::Init(int width, int height, MMAL_COMPONENT_T* input_componen
     OutputQueue = output_queue;
     Connection = connection;
 
+    g_last_error = PICAM_NO_ERROR;
     return true;
 
 error:
@@ -515,8 +527,8 @@ void CCameraOutput::OnVideoBufferCallback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_
                 new_buffer = mmal_queue_get(BufferPool->queue);
                 if (new_buffer)
                     status = mmal_port_send_buffer(port, new_buffer);
-                if (!new_buffer || status != MMAL_SUCCESS)
-                    printf("Unable to return a buffer to the video port\n");
+                //if (!new_buffer || status != MMAL_SUCCESS)
+                //    printf("Unable to return a buffer to the video port\n");
             }
         }
     }
@@ -576,13 +588,14 @@ bool CCameraOutput::BeginReadFrame(const void* &out_buffer, int& out_buffer_size
         //fill out the output variables and return success
         out_buffer = buffer->data;
         out_buffer_size = buffer->length;
+        g_last_error = PICAM_NO_ERROR;
         return true;
     }
     //no buffer - return false
     return false;
 }
 
-void CCameraOutput::EndReadFrame()
+bool CCameraOutput::EndReadFrame()
 {
     if(LockedBuffer)
     {
@@ -600,9 +613,15 @@ void CCameraOutput::EndReadFrame()
             if (new_buffer)
                 status = mmal_port_send_buffer(BufferPort, new_buffer);
             if (!new_buffer || status != MMAL_SUCCESS)
-                printf("Unable to return a buffer to the video port\n");
+            {
+                g_last_error = PICAM_FAILED_RETURN_BUFFER_TO_PORT;
+                return false;
+            }
         }
+        g_last_error = PICAM_NO_ERROR;
+        return true;
     }
+    return false;
 }
 
 
@@ -617,14 +636,14 @@ MMAL_COMPONENT_T* CCameraOutput::CreateResizeComponentAndSetupPorts(MMAL_PORT_T*
     status = mmal_component_create("vc.ril.resize", &resizer);
     if (status != MMAL_SUCCESS)
     {
-        printf("Failed to create reszie component\n");
+        g_last_error = PICAM_FAILED_CREATE_RESIZE_COMP;
         goto error;
     }
 
     //check we have output ports
     if (resizer->output_num != 1 || resizer->input_num != 1)
     {
-        printf("Resizer doesn't have correct ports");
+        g_last_error = PICAM_WRONG_RESIZER_PORTS;
         goto error;
     }
 
@@ -637,7 +656,7 @@ MMAL_COMPONENT_T* CCameraOutput::CreateResizeComponentAndSetupPorts(MMAL_PORT_T*
     status = mmal_port_format_commit(input_port);
     if (status != MMAL_SUCCESS)
     {
-        printf("Couldn't set resizer input port format : error %d", status);
+        g_last_error = PICAM_CANNOT_SET_RESIZER_PORT_FORMAT;
         goto error;
     }
 
@@ -656,10 +675,11 @@ MMAL_COMPONENT_T* CCameraOutput::CreateResizeComponentAndSetupPorts(MMAL_PORT_T*
     status = mmal_port_format_commit(output_port);
     if (status != MMAL_SUCCESS)
     {
-        printf("Couldn't set resizer output port format : error %d", status);
+        g_last_error = PICAM_CANNOT_SET_RESIZER_PORT_FORMAT;
         goto error;
     }
 
+    g_last_error = PICAM_NO_ERROR;
     return resizer;
 
 error:
@@ -676,11 +696,11 @@ MMAL_POOL_T* CCameraOutput::EnablePortCallbackAndCreateBufferPool(MMAL_PORT_T* p
     //setup video port buffer and a pool to hold them
     port->buffer_num = buffer_count;
     port->buffer_size = port->buffer_size_recommended;
-    printf("Creating pool with %d buffers of size %d\n", port->buffer_num, port->buffer_size);
+    //printf("Creating pool with %d buffers of size %d\n", port->buffer_num, port->buffer_size);
     buffer_pool = mmal_port_pool_create(port, port->buffer_num, port->buffer_size);
     if (!buffer_pool)
     {
-        printf("Couldn't create video buffer pool\n");
+        g_last_error = PICAM_CANNOT_CREATE_VIDEO_BUFFER_POOL;
         goto error;
     }
 
@@ -689,7 +709,7 @@ MMAL_POOL_T* CCameraOutput::EnablePortCallbackAndCreateBufferPool(MMAL_PORT_T* p
     status = mmal_port_enable(port, cb);
     if (status != MMAL_SUCCESS)
     {
-        printf("Failed to set video buffer callback\n");
+        g_last_error = PICAM_FAILED_SET_VIDEO_BUFFER_CB;
         goto error;
     }
 
@@ -702,17 +722,18 @@ MMAL_POOL_T* CCameraOutput::EnablePortCallbackAndCreateBufferPool(MMAL_PORT_T* p
             MMAL_BUFFER_HEADER_T *buffer = mmal_queue_get(buffer_pool->queue);
             if (!buffer)
             {
-                printf("Unable to get a required buffer %d from pool queue\n", q);
+                g_last_error = PICAM_CANNOT_GET_REQUIRED_BUFFER;
                 goto error;
             }
             else if (mmal_port_send_buffer(port, buffer)!= MMAL_SUCCESS)
             {
-                printf("Unable to send a buffer to port (%d)\n", q);
+                g_last_error = PICAM_UNABLE_SEND_BUFFER_TO_PORT;
                 goto error;
             }
         }
     }
 
+    g_last_error = PICAM_NO_ERROR;
     return buffer_pool;
 
 error:

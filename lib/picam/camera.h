@@ -25,7 +25,7 @@ public:
 	static void VideoBufferCallback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer);
 	int ReadFrame(void* buffer, int buffer_size);
 	bool BeginReadFrame(const void* &out_buffer, int& out_buffer_size);
-	void EndReadFrame();
+	bool EndReadFrame();
 	MMAL_POOL_T* EnablePortCallbackAndCreateBufferPool(MMAL_PORT_T* port, MMAL_PORT_BH_CB_T cb, int buffer_count);
 	MMAL_COMPONENT_T* CreateResizeComponentAndSetupPorts(MMAL_PORT_T* video_output_port, bool do_argb_conversion);
 
@@ -36,7 +36,7 @@ class CCamera
 public:
 	int ReadFrame(int level, void* buffer, int buffer_size);
 	bool BeginReadFrame(int level, const void* &out_buffer, int& out_buffer_size);
-	void EndReadFrame(int level);
+	bool EndReadFrame(int level);
 
 private:
 	CCamera();
@@ -59,8 +59,8 @@ private:
 	MMAL_CONNECTION_T*			VidToSplitConn;
 	CCameraOutput*				Outputs[4];
 
-	friend CCamera* StartCamera(int width, int height, int framerate, int num_levels, bool do_argb_conversion);
-	friend void StopCamera(CCamera* camera);
+	friend CCamera* picam_start_camera(int width, int height, int framerate, int num_levels, bool do_argb_conversion);
+	friend void picam_stop_camera(CCamera* camera);
 };
 
 CCamera* StartCamera(int width, int height, int framerate, int num_levels, bool do_argb_conversion=true);
