@@ -47,22 +47,22 @@ if(NOT CROSS_COMPILE)
 else()
     # find_package OpenCV does not work well when cross compiling
     set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc)
-    set(raspicamcv_LIBS
-        raspicamcv
+    set(picam_LIBS
+        picam
         rt pthread
         mmal_core mmal mmal_util vcos bcm_host)
-    set(raspicamcv_LIBRARY_DIRS
-        ${CMAKE_CURRENT_SOURCE_DIR}/lib/raspicam_cv/build
+    set(picam_LIBRARY_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib/picam/build
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/userland/build/lib)
-    set(raspicamcv_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lib/raspicam_cv)
+    set(picam_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lib/picam)
     find_package(Boost COMPONENTS
                  filesystem system program_options)
 
-    link_directories(${raspicamcv_LIBRARY_DIRS})
-    include_directories(. ${raspicamcv_INCLUDE_DIRS})
+    link_directories(${picam_LIBRARY_DIRS})
+    include_directories(. ${picam_INCLUDE_DIRS})
 
-    list(APPEND ANTIFURTO_LIBS ${OpenCV_LIBS} ${raspicamcv_LIBS} ${Boost_LIBRARIES})
-    list(APPEND ANTIFURTO_DEPENDENCIES raspicam_cv)
+    list(APPEND ANTIFURTO_LIBS ${OpenCV_LIBS} ${picam_LIBS} ${Boost_LIBRARIES})
+    list(APPEND ANTIFURTO_DEPENDENCIES libpicam)
 endif()
 list(APPEND ANTIFURTO_LIBS pthread)
 include_directories(lib/folly/include)
