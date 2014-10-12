@@ -90,7 +90,10 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
         archive_.stopSaving();
         break;
     case State::NO_ALARM:
-        enqueueOlderPicturesIfIdle(false);
+        {
+            enableFailedUploadMsg_ = true;
+            enqueueOlderPicturesIfIdle(false);
+        }
         break;
     case State::ALARM:
         archive_.startSaving();
@@ -104,13 +107,13 @@ void RecordingController::onAlarmStateChanged(MotionDetector::State state)
 void RecordingController::onPictureSaved(const std::string& fileName)
 {
     if (!uploadWorker_.enqueue(fileName)) {
-        log::debug() << "Failed to upload picture to Dropbox: queue is full";
-        enableFailedUploadMsg_ = false;
+        if (enableFailedUploadMsg_) {
+            log::info() << "Failed to upload picture to Dropbox: queue is full";
+            enableFailedUploadMsg_ = false;
+        }
         std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
         toUploadAfterQueue_.emplace(fileName);
     }
-    else
-        enableFailedUploadMsg_ = true;
 }
 
 void RecordingController::uploadFile(const std::string& sourceFile)
