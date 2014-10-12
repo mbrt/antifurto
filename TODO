@@ -1,20 +1,18 @@
 TODO LIST
 ---------
 
+* Lower timeout on upload pictures enqueued
 * Reboot on crash
   - use linux whatchdog daemon
   - save persistently the last status and restore it (monitoring on/off)
 * Kill subprocess
   - used to kill notification processes
-* Optimizations
-  - current bottleneks are cv::MatConstIterator::operator++() and
-    countMotionPixels()
 * Web server
-  - refactor live view to use sockets instead of fifo
   - add query to monitor status (posix message queue? socket? pipe?)
 * Bug fix
   - in RecordingController::initUploader(), if no connection is available, the
     function blocks;
+  - manage connection not available in all the possible cases
   - fix start stop monitoring
         mmal: mmal_vc_port_enable: failed to enable port vc.ril.camera:out:1(I420):
         ENOSPC
@@ -23,13 +21,13 @@ TODO LIST
         mmal: camera video callback2 error
         mmal: raspiCamCvCreateCameraCapture: Failed to create camera component
     the problem is that the shutdown of the camera is not right
+  - see for example userland/host_applications/linux/apps/raspicam/RaspiStill.c
+  - use another api: http://robotblogging.blogspot.it/2013/10/an-efficient-and-simple-c-api-for.html
+  - another reference: http://thinkrpi.wordpress.com/2013/05/22/opencv-and-camera-board-csi/
 
 - In Picture.hpp use an std::vector<unsigned char> instead of cv::Mat;
   provide conversion operators to InputArray and OutputArray
 - Packaging system
-- Archive refactor
-  - Pack old directories in videos
-  - Sync dropbox with archive directories
 - Service registration with start and stop
 - Radio controller
 - Bootstrap script for cross compile
@@ -43,3 +41,11 @@ TODO LIST
   - one only for the pictures cycle
   - one for all the long running tasks
 - Display logs in webserver
+- Refactor of spsc queue:
+  - Use a lock to make the thread sleep? consumer call lock and blocks itself
+    because unlock is made by producer
+  - implement a lock that is a spinlock until a timeout and after go to sleep
+    (hybrid mutex)
+  - alternative: block in a std::future.get()
+- Observer with deregistration:
+  - example: http://eviltwingames.com/blog/the-observer-pattern-revisited/

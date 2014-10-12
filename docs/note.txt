@@ -1,6 +1,7 @@
 Progetto telecamera con Raspberry PI http://www.codeproject.com/Articles/665518/Raspberry-Pi-as-low-cost-HD-surveillance-camera
 Raspberry PI camera: http://thepihut.com/pages/how-to-install-the-raspberry-pi-camera
 Streaming of motion jpeg with nodejs: https://github.com/rodowi/Paparazzo.js
+Motion jpeg in js: vedere http://foscam.us/forum/a-how-to-embed-any-foscam-ip-camera-in-webpage-using-1-line-t9113.html#p43654
 Elenco telecamere IP: http://aranzulla.tecnologia.virgilio.it/telecamere-ip-50282.html
 Standard controllo ip camera: VAPIX
 OpenCV con beaglebone: http://derekmolloy.ie/beaglebone/beaglebone-video-capture-and-image-processing-on-embedded-linux-using-opencv/
@@ -27,7 +28,13 @@ python + web server: http://davstott.me.uk/index.php/2013/03/17/raspberry-pi-con
 
 Software:
 Cross compile Raspberry: http://stackoverflow.com/questions/19162072/installing-raspberry-pi-cross-compiler
-Dropbox upload via script: https://github.com/andreafabrizi/Dropbox-Uploader
+
+Dropbox
+  - upload via script: https://github.com/andreafabrizi/Dropbox-Uploader
+Dropbox datastore api:
+  - https://www.dropbox.com/developers/blog/99/using-the-new-local-datastores-feature
+  - https://www.dropbox.com/developers/blog
+
 Minidump
 linux: http://stackoverflow.com/questions/7470310/generating-mini-text-dump-linux
 crash report google: https://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad
@@ -38,10 +45,17 @@ invio sms
     code sample: http://www.codeproject.com/Articles/387567/How-to-send-an-SMS-message-from-an-application
     servizio: http://www.cardboardfish.com/products/personal/index.html
 Libreria open per whatsapp: https://github.com/tgalal/yowsup
+Raknet: cross platform, open source, C++ networking engine for game programmers.
 
 Message passing (zeromq): http://zeromq.org/
-serialization (google protocol buffers): https://developers.google.com/protocol-buffers/docs/overview
 folly lockfree: https://github.com/facebook/folly/blob/master/folly/ProducerConsumerQueue.h
+
+Serialization:
+  - google protocol buffers: https://developers.google.com/protocol-buffers/docs/overview
+    - github: https://github.com/google/protobuf/
+    - use the lite version: https://developers.google.com/protocol-buffers/docs/proto
+  - Flat Buffers http://google.github.io/flatbuffers/
+  - Cap'n proto: https://kentonv.github.io/capnproto/news/2014-06-17-capnproto-flatbuffers-sbe.htmlz
 
 Monitor USB mount in Python: http://pyudev.readthedocs.org/en/latest/
 
@@ -49,9 +63,11 @@ Sito web:
 Sito statico: http://jekyllrb.com/
 Flask, web server python: http://flask.pocoo.org/
 Bootstrap, front-end framework cross device: http://getbootstrap.com/
-Real time video streaming: http://phoboslab.org/log/2013/09/html5-live-video-streaming-via-websockets
-with videojs: http://stackoverflow.com/questions/21849961/videojs-with-live-stream
-HTML5 video player: http://www.videojs.com/
+Streaming video:
+    Real time video streaming: http://phoboslab.org/log/2013/09/html5-live-video-streaming-via-websockets
+    with videojs: http://stackoverflow.com/questions/21849961/videojs-with-live-stream
+    HTML5 video player: http://www.videojs.com/
+    Streaming video question: http://stackoverflow.com/questions/21921790/best-approach-to-real-time-http-streaming-to-html5-video-client
 picture gallery: http://blog.cedric.ws/raspberry-pi-opencv-create-a-security-system-web-interface
     installare apache + php: http://www.instructables.com/id/Raspberry-Pi-Web-Server/step7/Install-Apache-with-PHP/
     installare lighttpd + php: https://wiki.ubuntu.com/Lighttpd+PHP
@@ -64,9 +80,40 @@ refresh image with new at same url:
     http://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url
 set cache control lighttpd:
     http://www.cyberciti.biz/faq/lighttpd-send-cache-control-maxage-headers-of-staticfiles/
+Libfcgi:
+    examples: https://github.com/toshic/libfcgi/tree/master/examples
+diff between dates: http://stackoverflow.com/questions/676824/how-to-calculate-the-difference-between-two-dates-using-php
+Web design
+  - responsive web design: http://alistapart.com/article/responsive-web-design
+  - fluid images: http://alistapart.com/article/fluid-images
+  - fluid grids: http://alistapart.com/article/fluidgrids
+  - media query: http://www.w3.org/TR/css3-mediaqueries/
+  - css frameworks: http://mashable.com/2013/04/26/css-boilerplates-frameworks/
+  - snap svg (svg animations): http://snapsvg.io/
+  - favicon colors: https://dribbble.com/shots/1712537-Autumn-Leaves
+Lighttpd + https:
+  - simple: http://redmine.lighttpd.net/projects/1/wiki/HowToSimpleSSL
+  - complete docs: http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs_SSL
+  - certificate chain: http://superuser.com/questions/126121/how-to-create-my-own-certificate-chain
+    - vedi anche: http://openssl.6102.n7.nabble.com/create-certificate-chain-td44046.html
+    - e: http://www.g-loaded.eu/2005/11/10/be-your-own-ca/
+  - install root cert in win phone: http://stackoverflow.com/questions/4473653/how-to-install-root-certificate-on-windows-phone-7
+  - necessario dns statico: http://www.thefreecountry.com/webmaster/freedns.shtml
+Authentication in lighttpd:
+  - vedere http://redmine.lighttpd.net/projects/1/wiki/Docs_ModAuth
+Sudo in php excec:
+  - vedere http://stackoverflow.com/questions/3173201/sudo-in-php-exec
+  - sudoers no passwd: http://askubuntu.com/questions/159007/how-do-i-run-specific-sudo-commands-without-a-password
+Push notification server:
+  - vedi: http://www.gianlucaguarini.com/blog/nodejs-and-a-simple-push-notification-server/
+  - usando Socket.IO: http://socket.io/
+
 Whatchdog daemon: http://www.sat.dundee.ac.uk/psc/watchdog/watchdog-background.html
     on raspberry: http://www.bayerschmidt.com/raspberry-pi/89-auto-reboot-a-hung-raspberry-pi-using-the-on-board-watchdog-timer.html
+    configure daemon: http://www.sat.dundee.ac.uk/psc/watchdog/watchdog-configure.html
+
 signal handling info:
+    http://www.alexonlinux.com/signal-handling-in-linux
     http://www.cs.utah.edu/dept/old/texinfo/glibc-manual-0.02/library_21.html#SEC358
     http://stackoverflow.com/questions/17942034/simple-linux-signal-handling
     http://cboard.cprogramming.com/linux-programming/150239-when-re-enable-signal-handlers.html
@@ -76,5 +123,32 @@ Core dump:
     abrt daemon: http://prefetch.net/blog/index.php/2012/01/19/using-the-automated-bug-reporting-tool-abrt-to-generate-core-dumps-when-a-linux-process-fails/
     core pattern: http://sigquit.wordpress.com/2009/03/13/the-core-pattern/
     core dump analysis: http://stackoverflow.com/questions/5115613/core-dump-file-analysis
-Libfcgi:
-    examples: https://github.com/toshic/libfcgi/tree/master/examples
+Crash dump
+  - http://stackoverflow.com/questions/3151779/how-its-better-to-invoke-gdb-from-program-to-print-its-stacktrace/4611112#4611112
+  - http://www.linuxjournal.com/article/6391
+  - http://stackoverflow.com/questions/4636456/stack-trace-for-c-using-gcc
+
+Linux daemon:
+  - implementation: http://www.netzmafia.de/skripten/unix/linux-daemon-howto.html
+  - http://stackoverflow.com/questions/17954432/creating-a-daemon-in-linux
+  - startup in linux: http://unix.stackexchange.com/questions/1924/create-services-in-linux-start-up-in-linux
+  - http://stackoverflow.com/questions/22336075/linux-process-into-a-service
+
+Debian package:
+  - http://askubuntu.com/questions/1345/what-is-the-simplest-debian-packaging-guide
+  - http://debian-handbook.info/browse/stable/debian-packaging.html
+  - https://wiki.debian.org/HowToPackageForDebian
+  - http://www.cmake.org/Wiki/CMake:CPackPackageGenerators#DEB_.28UNIX_only.29
+  - Modificare path:
+    - log in /var/log/antifurto/...
+    - conf in /etc/antifurto/antifurto.conf + esempi in /etc/antifurto/conf-available/...
+    - bin principale in /usr/sbin/antifurto
+    - file di supporto in /usr/share/antifurto/...
+
+Temp file bash: http://www.cyberciti.biz/tips/shell-scripting-bash-how-to-create-temporary-random-file-name.html
+
+Wireshark working on linux: http://ubuntuforums.org/archive/index.php/t-1877958.html
+Base64 encode decode: http://sourceforge.net/p/libb64/git/ci/master/tree/
+
+Competitors:
+  - Dropcam: https://www.dropcam.com/
