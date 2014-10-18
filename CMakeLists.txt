@@ -69,6 +69,9 @@ include_directories(lib/folly/include)
 # zeromq
 list(APPEND ANTIFURTO_LIBS zmq)
 
+# serialization
+add_subdirectory(serialization)
+
 # common files
 set(ANTIFURTO_COMMON_CPP
     src/Antifurto.cpp

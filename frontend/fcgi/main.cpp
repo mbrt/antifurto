@@ -8,6 +8,10 @@
 #include "StreamRedirect.hpp"
 #include "StreamReader.hpp"
 #include "ZmqLazyPirateClient.hpp"
+#include "serialization/Serializer.hpp"
+
+using namespace antifurto::fcgi;
+using namespace antifurto::serialization;
 
 constexpr const char* serverAddress() {
     return "tcp://localhost:4679";
@@ -15,12 +19,8 @@ constexpr const char* serverAddress() {
 
 void makeRequest(zmq::message_t& request)
 {
-    int magic = 158;
-    request.rebuild(sizeof(magic));
-    ::memcpy(request.data(), &magic, sizeof(magic));
 }
 
-using namespace antifurto::fcgi;
 
 int main(int, char*[])
 {

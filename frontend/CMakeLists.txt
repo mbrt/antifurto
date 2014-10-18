@@ -1,3 +1,4 @@
+include_directories(..)
 add_executable(antifurto.fcgi
                fcgi/main.cpp
                fcgi/StreamReader.cpp
@@ -7,4 +8,4 @@ add_executable(antifurto.fcgi
                fcgi/ZmqLazyPirateClient.cpp
                fcgi/ZmqLazyPirateClient.hpp
 )
-target_link_libraries(antifurto.fcgi fcgi fcgi++ zmq)
+target_link_libraries(antifurto.fcgi fcgi fcgi++ zmq antifurto_serialization)
