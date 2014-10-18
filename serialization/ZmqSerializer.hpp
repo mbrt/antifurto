@@ -10,6 +10,7 @@ namespace serialization {
 template <typename M>
 class messageTypeTraits
 {
+public:
     enum { max = 0 };
 };
 
@@ -23,28 +24,40 @@ public:
     ZmqSerializer()
         : serializer_(messageTypeTraits<M>::max) { }
 
+    /// Serialize a message with no payload into a zmq message.
+    void serializeMessage(zmq::message_t& result, M type)
+    {
+        auto contents = serializer_.serializeMessage(static_cast<int>(type));
+        result.rebuild(contents.header.second - contents.header.first);
+        ::memcpy(result.data(), contents.header.first,
+                 contents.header.second - contents.header.first);
+    }
+
     /// Serialize a payload into a zmq message.
     template <typename T>
     void serializeMessage(zmq::message_t& result, M type, const T& msg)
     {
         auto contents = serializer_.serializeMessage(type, msg);
         result.rebuild(contents.payload.second - contents.header.first);
-        ::memcpy(result.data(), content.header.first, contents.payload.second);
+        ::memcpy(result.data(), contents.header.first,
+                 contents.payload.second - contents.header.first);
     }
 
     /// Deserialize the header, returning the message type.
     M deserializeHeader(const zmq::message_t& msg)
     {
         return static_cast<M>(serializer_.deserializeHeader(
-                                  msg.data(), msg.data() + msg.size()));
+                static_cast<const char*>(msg.data()),
+                static_cast<const char*>(msg.data() + msg.size())));
     }
 
     /// Deserialize the payload of the message.
     template <typename T>
     T deserializePayload(const zmq::message_t& msg)
     {
-        return serializer_.deserializePayload(
-                    msg.data(), msg.data() + msg.size());
+        return serializer_.deserializePayload<T>(
+                static_cast<const char*>(msg.data()),
+                static_cast<const char*>(msg.data() + msg.size()));
     }
 
 private:

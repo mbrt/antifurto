@@ -4,4 +4,5 @@ add_library(antifurto_serialization STATIC
             Exception.hpp
             Protocol.hpp
             ZmqSerializer.hpp
+            DefaultZmqSerializer.hpp
 )

@@ -5,11 +5,11 @@ namespace serialization {
 
 enum class MessageType
 {
-    LiveViewRequest = 1,
-    LiveViewReply = 2,
-    MonitorStatusRequest = 3,
-    MonitorStatusReply = 4,
-    Max // Keep this as last value
+    LIVE_VIEW_REQUEST = 1,
+    LIVE_VIEW_REPLY = 2,
+    MONITOR_STATUS_REQUEST = 3,
+    MONITOR_STATUS_REPLY = 4,
+    MAX // Keep this as last value
 };
 
 enum class ServiceStatus

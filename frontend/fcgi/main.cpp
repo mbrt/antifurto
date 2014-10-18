@@ -8,7 +8,8 @@
 #include "StreamRedirect.hpp"
 #include "StreamReader.hpp"
 #include "ZmqLazyPirateClient.hpp"
-#include "serialization/Serializer.hpp"
+#include "serialization/DefaultZmqSerializer.hpp"
+#include "serialization/Protocol.hpp"
 
 using namespace antifurto::fcgi;
 using namespace antifurto::serialization;
@@ -17,17 +18,27 @@ constexpr const char* serverAddress() {
     return "tcp://localhost:4679";
 }
 
-void makeRequest(zmq::message_t& request)
+void beginResponse(const char* status)
 {
+    std::cout << "Status: " << status << "\r\n\r\n";
 }
 
+void beginResponse(const char* status, const char* contentType, bool cache = false)
+{
+    std::cout << "Status: " << status << "\r\n"
+                 "Content-Type: " << contentType << "\r\n";
+    if (!cache)
+        std::cout << "Cache-Control: no-cache\r\n";
+    std::cout << "\r\n";
+}
 
 int main(int, char*[])
 {
     zmq::context_t zmqctx(1);
     ZmqLazyPirateClient client{zmqctx, serverAddress(), 2500, 3};
-    zmq::message_t requestMsg, replyMsg;
-    makeRequest(requestMsg);
+    DefaultZmqSerializer serializer;
+    zmq::message_t liveRequestMsg, replyMsg;
+    serializer.serializeMessage(liveRequestMsg, MessageType::LIVE_VIEW_REQUEST);
 
     StreamReader streamReader{std::cin, 10 * 1024};
 
@@ -41,19 +52,16 @@ int main(int, char*[])
         // ignore inputs
         streamReader.emptyStream();
         // talk to main exe if found
-        if (client.request(requestMsg, replyMsg)) {
+        if (client.request(liveRequestMsg, replyMsg)) {
             // got answer, send image
-            std::cout << "Status: 200 OK\r\n"
-                "Content-Type: image/jpeg\r\n"
-                "Cache-Control: no-cache\r\n"
-                "\r\n";
+            beginResponse("200 OK", "image/jpeg", false);
             std::cout.write(
                 static_cast<const char*>(replyMsg.data()),
                 replyMsg.size());
         }
         else {
             // no answer, send service unavailable
-            std::cout << "Status: 503 Service Not Available\r\n\r\n";
+            beginResponse("503 Service Not Available");
         }
     }
     return 0;
