@@ -5,44 +5,25 @@
 #include "Exception.hpp"
 
 #include <memory>
-#include <RaspiCamCV.h>
 
+// fwd reference
+class CCamera;
 
 namespace antifurto {
-
-/// RAII For PiCapture resource
-class PiCaptureRAII
-{
-public:
-    PiCaptureRAII(RaspiCamCvCapture* capture)
-        : capture_(capture, &releaseCapture)
-    { }
-
-    operator RaspiCamCvCapture*() { return capture_.get(); }
-    operator RaspiCamCvCapture&() { return *capture_; }
-    operator RaspiCamCvCapture const&() const { return *capture_; }
-
-private:
-    static void releaseCapture(RaspiCamCvCapture*& capture)
-    { ::raspiCamCvReleaseCapture(&capture); }
-
-    using Ptr = std::unique_ptr<
-        RaspiCamCvCapture,
-        decltype(&releaseCapture)>;
-    Ptr capture_;
-};
-
 
 /// Camera implementation that use PiCapture resource
 class PiCamera : public Camera
 {
 public:
-    PiCamera();
+    PiCamera(int width = 640, int height = 480);
     void takePicture(Picture& p) override;
 
 private:
-    PiCaptureRAII capture_;
-    cv::Mat frame_;
+    void resizePicture(Picture& p) const;
+
+    int width_;
+    int height_;
+    std::unique_ptr<CCamera, void(*)(CCamera*)> capture_;
 };
 
 } // namespace antifurto

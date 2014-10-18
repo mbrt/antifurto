@@ -7,6 +7,19 @@
 
 using namespace antifurto;
 
+void cameraTest()
+{
+    Picture p;
+    {
+        PiCamera camera;
+        camera.takePicture(p);
+    }
+    {
+        PiCamera camera;
+        camera.takePicture(p);
+    }
+}
+
 void pictureArchiveTest()
 {
     PictureArchive archive("/tmp", 3);
@@ -26,6 +39,7 @@ void pictureArchiveTest()
 
 int main()
 {
+    cameraTest();
     pictureArchiveTest();
     return 0;
 }
