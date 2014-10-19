@@ -95,6 +95,7 @@ set(ANTIFURTO_COMMON_CPP
     src/ipc/NamedPipe.cpp
     src/ipc/PosixSignalHandler.cpp
     src/ipc/Process.cpp
+    src/ipc/ZmqRepServer.cpp
     src/log/Log.cpp
     src/log/Logger.cpp
     src/text/ToString.cpp
@@ -131,6 +132,7 @@ set(ANTIFURTO_COMMON_HPP
     src/ipc/NamedPipe.hpp
     src/ipc/PosixSignalHandler.hpp
     src/ipc/Process.hpp
+    src/ipc/ZmqRepServer.hpp
     src/log/ConcreteLoggerSink.hpp
     src/log/Log.hpp
     src/log/Logger.hpp
