@@ -4,6 +4,7 @@
 #include <fcgio.h>
 #include <fcgi_config.h>
 #include <iostream>
+#include <string>
 
 #include "StreamRedirect.hpp"
 #include "StreamReader.hpp"
@@ -32,14 +33,56 @@ void beginResponse(const char* status, const char* contentType, bool cache = fal
     std::cout << "\r\n";
 }
 
+/// This class handle communication with main exe and send responses back
+/// to the fcgi daemon
+class RequestHandler
+{
+public:
+    RequestHandler()
+        : zmqctx_(1)
+        , client_(zmqctx_, serverAddress(), 2500, 3)
+    {
+        serializer_.serializeMessage(liveRequestMsg_,
+                                     MessageType::LIVE_VIEW_REQUEST);
+    }
+
+    void handleRequest(const char* path)
+    {
+        if (path == nullptr)
+            beginResponse("417 Expectation Failed");
+        else if (::strcmp(path, "/live/live.jpg") == 0)
+            handleLiveViewRequest();
+        else
+            beginResponse("501 Not Implemented");
+    }
+
+private:
+    void handleLiveViewRequest()
+    {
+        // talk to main exe if found
+        if (client_.request(liveRequestMsg_, replyMsg_)) {
+            // got answer, send image
+            beginResponse("200 OK", "image/jpeg", false);
+            std::cout.write(
+                static_cast<const char*>(replyMsg_.data()),
+                replyMsg_.size());
+        }
+        else
+            // no answer, send service unavailable
+            beginResponse("503 Service Not Available");
+    }
+
+    zmq::context_t zmqctx_;
+    ZmqLazyPirateClient client_;
+    DefaultZmqSerializer serializer_;
+    zmq::message_t liveRequestMsg_;
+    zmq::message_t replyMsg_;
+};
+
+
 int main(int, char*[])
 {
-    zmq::context_t zmqctx(1);
-    ZmqLazyPirateClient client{zmqctx, serverAddress(), 2500, 3};
-    DefaultZmqSerializer serializer;
-    zmq::message_t liveRequestMsg, replyMsg;
-    serializer.serializeMessage(liveRequestMsg, MessageType::LIVE_VIEW_REQUEST);
-
+    RequestHandler handler;
     StreamReader streamReader{std::cin, 10 * 1024};
 
     FCGX_Request request;
@@ -51,18 +94,8 @@ int main(int, char*[])
         StreamRedirector redirect{request};
         // ignore inputs
         streamReader.emptyStream();
-        // talk to main exe if found
-        if (client.request(liveRequestMsg, replyMsg)) {
-            // got answer, send image
-            beginResponse("200 OK", "image/jpeg", false);
-            std::cout.write(
-                static_cast<const char*>(replyMsg.data()),
-                replyMsg.size());
-        }
-        else {
-            // no answer, send service unavailable
-            beginResponse("503 Service Not Available");
-        }
+        // handle the request
+        handler.handleRequest(FCGX_GetParam("SCRIPT_NAME", request.envp));
     }
     return 0;
 }
