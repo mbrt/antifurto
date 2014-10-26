@@ -27,13 +27,11 @@ NotificationController(const Configuration& c,
 NotificationController::~NotificationController()
 {
     // FIXME: It is better to kill the notifications here
-    for (auto& f : notifications_)
-    {
-        try {
-            f.get();
-        }
-        catch (...) { }
+    try {
+        if (notificationWork_.valid())
+            notificationWork_.get();
     }
+    catch (...) { }
 }
 
 void NotificationController::onAlarmStateChanged(MotionDetector::State state)
@@ -56,39 +54,53 @@ void NotificationController::notifyContacts()
     if (std::chrono::system_clock::now() - lastNotificationTime_
             < config::minNotificationDelay())
         return;
+    // do not notify if previous notification not completed
+    if (notificationWork_.valid()) {
+        log::warning() << "Cannot notify now: last notification not completed";
+        return;
+    }
 
-    for (const auto& contact : contacts_)
-        notifications_.emplace_back(
-            std::async(std::launch::async, [=] {
-                // copy also whatsapp notifier, to avoid race conditions
-                whatsapp_.send(contact, "Intrusion alarm!");
-            }));
+    // notify everything in another thread
+    notificationWork_ =
+        std::async(std::launch::async, [this] {
+            for (const auto& contact : contacts_)
+                notifyContact(contact);
+        });
 
     lastNotificationTime_ = std::chrono::system_clock::now();
+}
+
+void NotificationController::notifyContact(const std::string& contact)
+{
+    log::info() << "Notify contact " << contact;
+    try {
+        whatsapp_.send(contact, "Alarm! Motion detected");
+    }
+    catch (std::exception& e) {
+        log::error() << "Failed notification to " << contact
+                     << ": " << e.what();
+    }
 }
 
 void NotificationController::processNotificationResults()
 {
     using namespace std::chrono;
 
-    meta::removeIf(notifications_,
-        [](std::future<void>& f) {
-            try {
-                // remove if the answer is ready (result or exception)
-                if (f.wait_for(milliseconds(10)) != std::future_status::ready)
-                    return false;
-                f.get();
-            }
-            catch (std::exception& e) {
-                log::error() << "Notification failed " << e.what();
-            }
-            return true;
-        });
-    if (!notifications_.empty()) {
-        log::warning() << "Notifications not completed. New check scheduled";
-        scheduler_.scheduleAfter(minutes(15), [this] {
-            processNotificationResults();
-        });
+    // check if notifications have to be checked
+    if (!notificationWork_.valid()) return;
+
+    try {
+        if (notificationWork_.wait_for(milliseconds(0)) == std::future_status::ready)
+            notificationWork_.get();
+        else {
+            log::warning() << "Notifications not completed. New check scheduled";
+            scheduler_.scheduleAfter(minutes(5), [this] {
+                processNotificationResults();
+            });
+        }
+    }
+    catch (std::exception& e) {
+        log::error() << "Error in notification work: " << e.what();
     }
 }
 

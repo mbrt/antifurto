@@ -29,16 +29,16 @@ public:
 
 private:
     using ContactList = std::vector<std::string>;
-    using Notifications = std::deque<std::future<void>>;
 
     void notifyContacts();
+    void notifyContact(const std::string& contact);
     void processNotificationResults();
 
     WhatsappNotifier whatsapp_;
     ContactList contacts_;
-    Notifications notifications_;
     concurrency::TaskScheduler& scheduler_;
     std::chrono::system_clock::time_point lastNotificationTime_;
+    std::future<void> notificationWork_;
 };
 
 } // namespace antifurto
