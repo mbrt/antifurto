@@ -144,6 +144,7 @@ set(ANTIFURTO_COMMON_HPP
     src/meta/Observer.hpp
     src/meta/SmartPtr.hpp
     src/meta/TypeTraits.hpp
+    src/meta/Singleton.hpp
     src/text/ToString.hpp
     src/text/TextReplace.hpp
 )
