@@ -1,8 +1,10 @@
 #pragma once
 
 #include <zmq.hpp>
-#include <atomic>
+#include <mutex>
 #include <memory>
+#include <functional>
+#include <thread>
 
 namespace antifurto {
 namespace ipc {
@@ -11,20 +13,28 @@ namespace ipc {
 class ZmqRepServer
 {
 public:
-    ZmqRepServer(zmq::context_t& ctx, std::string address);
+    /// The handler gets the request message and have to return
+    /// the reply
+    using Handler = std::function<zmq::message_t&(const zmq::message_t&)>;
+
+    ZmqRepServer(zmq::context_t& ctx, std::string address, Handler h);
+    ~ZmqRepServer();
 
     void start();
     void stop();
     bool started();
 
-    bool receive(zmq::message_t& msg);
-    bool send(const zmq::message_t& msg);
-
 private:
+    void receiveLoop();
+
     zmq::context_t& context_;
     std::string address_;
-    std::atomic<bool> started_;
+    Handler handler_;
+    bool running_;
+    std::mutex startMutex_;
     std::unique_ptr<zmq::socket_t> socket_;
+    std::thread thread_;
+    zmq::message_t request_;
 };
 
 }} // namespace antifurto::ipc
