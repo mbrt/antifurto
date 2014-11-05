@@ -15,7 +15,7 @@ ZmqRepServer::~ZmqRepServer()
 
 void ZmqRepServer::start()
 {
-    std::unique_lock<std::mutex> lock{startMutex_};
+    std::lock_guard<std::mutex> lock{startMutex_};
     if (!running_) {
         socket_.reset(new zmq::socket_t{context_, ZMQ_REP});
         socket_->connect(address_.c_str());
@@ -30,7 +30,7 @@ void ZmqRepServer::start()
 void ZmqRepServer::stop()
 {
     {
-        std::unique_lock<std::mutex> lock{startMutex_};
+        std::lock_guard<std::mutex> lock{startMutex_};
         if (!running_) return;
 
         running_ = false;
