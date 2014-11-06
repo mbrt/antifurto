@@ -344,7 +344,7 @@ BOOST_AUTO_TEST_CASE(singleton)
 {
     std::unique_ptr<SingletonChecker> check;
     bool called = false;
-    meta::Singleton<SingletonChecker> singleton{[&]{
+    meta::detail::Singleton<SingletonChecker> singleton{[&]{
         called = true;
         check.reset(new SingletonChecker(true));
         return check.get();

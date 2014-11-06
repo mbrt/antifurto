@@ -4,8 +4,11 @@
 #include <mutex>
 #include <zmq.hpp>
 
+#include "../meta/Singleton.hpp"
+
 namespace antifurto {
 namespace ipc {
+namespace detail {
 
 /// This class caches a ZeroMQ context.
 /// The context is shared among clients; whenever all clients drops it,
@@ -24,5 +27,11 @@ private:
     WeakPtr context_;
     std::mutex m_;
 };
+
+} // namespace detail
+
+
+/// This is the singleton holding the ZeroMQ context.
+using ZmqLazyContext = meta::Singleton<detail::ZmqLazyContext>;
 
 }} // namespace antifurto::ipc

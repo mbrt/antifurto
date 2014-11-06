@@ -2,6 +2,7 @@
 
 namespace antifurto {
 namespace ipc {
+namespace detail {
 
 ZmqLazyContext::Ptr ZmqLazyContext::getContext()
 {
@@ -11,8 +12,8 @@ ZmqLazyContext::Ptr ZmqLazyContext::getContext()
     std::lock_guard<std::mutex> lock{m_};
     // double checked locking pattern
     if (ctx = context_.lock()) return ctx;
-    context = ctx = std::make_shared<zmq::context_t>();
+    context_ = ctx = std::make_shared<zmq::context_t>();
     return ctx;
 }
 
-}} // namespace antifurto::ipc
+}}} // namespace antifurto::ipc::detail
