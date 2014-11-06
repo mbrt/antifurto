@@ -95,7 +95,6 @@ set(ANTIFURTO_COMMON_CPP
     src/ipc/NamedPipe.cpp
     src/ipc/PosixSignalHandler.cpp
     src/ipc/Process.cpp
-    src/ipc/ZmqLazyContext.cpp
     src/ipc/ZmqRepServer.cpp
     src/log/Log.cpp
     src/log/Logger.cpp
@@ -146,6 +145,7 @@ set(ANTIFURTO_COMMON_HPP
     src/meta/Observer.hpp
     src/meta/SmartPtr.hpp
     src/meta/TypeTraits.hpp
+    src/meta/SingleObjectCache.hpp
     src/meta/Singleton.hpp
     src/text/ToString.hpp
     src/text/TextReplace.hpp

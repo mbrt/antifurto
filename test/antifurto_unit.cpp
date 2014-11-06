@@ -18,6 +18,7 @@
 #include "ipc/NamedPipe.hpp"
 #include "meta/Observer.hpp"
 #include "meta/Singleton.hpp"
+#include "meta/SingleObjectCache.hpp"
 
 
 #define BOOST_TEST_MODULE unit
@@ -355,4 +356,44 @@ BOOST_AUTO_TEST_CASE(singleton)
     BOOST_CHECK(called);
     BOOST_CHECK(instance.initialized);
     BOOST_CHECK(check->initialized);
+}
+
+struct SingleObjChecker
+{
+    static int construct;
+    static int delet;
+
+    SingleObjChecker() {
+        ++construct;
+    }
+
+    ~SingleObjChecker() {
+        ++delet;
+    }
+};
+
+int SingleObjChecker::construct = 0;
+int SingleObjChecker::delet = 0;
+
+BOOST_AUTO_TEST_CASE(singleObjectCache)
+{
+    using Cache = meta::SingleObjectCache<SingleObjChecker>;
+    Cache cache;
+    {
+        Cache::Ptr p = cache.get();
+        BOOST_CHECK_EQUAL(SingleObjChecker::construct, 1);
+        BOOST_CHECK_EQUAL(SingleObjChecker::delet, 0);
+    }
+    BOOST_CHECK_EQUAL(SingleObjChecker::construct, 1);
+    BOOST_CHECK_EQUAL(SingleObjChecker::delet, 1);
+    {
+        Cache::Ptr p = cache.get();
+        BOOST_CHECK_EQUAL(SingleObjChecker::construct, 2);
+        BOOST_CHECK_EQUAL(SingleObjChecker::delet, 1);
+        Cache::Ptr p2 = cache.get();
+        BOOST_CHECK_EQUAL(SingleObjChecker::construct, 2);
+        BOOST_CHECK_EQUAL(SingleObjChecker::delet, 1);
+    }
+    BOOST_CHECK_EQUAL(SingleObjChecker::construct, 2);
+    BOOST_CHECK_EQUAL(SingleObjChecker::delet, 2);
 }
