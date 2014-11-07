@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 
+#include "ipc/ZmqLazyContext.hpp"
+
 namespace antifurto {
 
 // fwd reference
@@ -34,6 +36,7 @@ private:
     std::string socketPath_;
     std::chrono::seconds timeout_;
     std::unique_ptr<LiveView> liveView_;
+    ipc::ZmqContextPtr zmqCtx_;
     std::chrono::system_clock::time_point lastPictureWrittenTime_;
     bool running_ = false;
     std::future<void> stopWork_;

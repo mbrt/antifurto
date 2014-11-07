@@ -20,6 +20,15 @@ using ZmqLazyContext = meta::SingleObjectCache<zmq::context_t>;
 /// The context is shared among clients; whenever all clients drops it,
 /// it is automatically cleaned up. The context is re-created when a new
 /// client comes.
+///
+/// @example
+/// @code
+/// ZmqContextPtr ctxPtr = ZmqLazyContext::instance().get();
+/// zmq::context_t& ctx = *ctxPtr;
+/// @endcode
 using ZmqLazyContext = meta::Singleton<detail::ZmqLazyContext>;
+
+/// This is a shared pointer containing a ZeroMQ context.
+using ZmqContextPtr = detail::ZmqLazyContext::Ptr;
 
 }} // namespace antifurto::ipc

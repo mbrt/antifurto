@@ -15,7 +15,7 @@ namespace antifurto {
 class LiveView
 {
 public:
-    LiveView(const std::string& socketAddress);
+    LiveView(zmq::context_t& ctx, const std::string& socketAddress);
     ~LiveView();
 
     bool addPicture(const Picture& p);
@@ -27,7 +27,7 @@ private:
         concurrency::SpScQueue<Picture,
             std::function<void(const Picture&)>>;
 
-    zmq::context_t context_;
+    zmq::context_t& context_;
     zmq::socket_t socket_;
     std::vector<unsigned char> imageBuffer_;
     std::atomic<bool> running_;

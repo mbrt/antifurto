@@ -41,7 +41,8 @@ void LiveViewController::start()
     if (running_) return;
     running_ = true;
 
-    liveView_.reset(new LiveView{socketPath_});
+    zmqCtx_ = ipc::ZmqLazyContext::instance().get();
+    liveView_.reset(new LiveView{*zmqCtx_, socketPath_});
     regFunc_(true);
 }
 
@@ -54,6 +55,7 @@ void LiveViewController::stop()
     stopWork_ = std::async(std::launch::async, [this] {
         regFunc_(false); // call this inside async to avoid deadlock
         liveView_.reset();
+        zmqCtx_.reset();
         log::info() << "Live view stopped";
     });
 }
