@@ -76,9 +76,9 @@ public:
     /// Register an observer and returns the number of observers
     Registration registerObserver(Observer o, std::size_t& numObservers) {
         std::lock_guard<std::mutex> lock(listM_);
-        observers_.emplace_back(nextFreeId_, std::move(o));
+        observers_.emplace_back(++currentId_, std::move(o));
         numObservers = observers_.size();
-        return { *this, nextFreeId_++ };
+        return { *this, currentId_ };
     }
 
     /// Unregister an observer
@@ -134,7 +134,7 @@ private:
 
     using ObserverList = std::vector<ObserverItem>;
     ObserverList observers_;
-    Id nextFreeId_ = 0;
+    Id currentId_ = 0;
     UnregistrationHandler unregHandler_;
     mutable std::mutex listM_;
 };
