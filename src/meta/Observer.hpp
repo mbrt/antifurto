@@ -30,10 +30,16 @@ public:
         return *this;
     }
 
-    void clear() {
+    /// Clear the registration.
+    ///
+    /// @return true if the unregistration is completed synchronously,
+    ///     false if it is scheduled asynchronously
+    bool clear() {
+        bool result = false;
         if (subject_)
-            subject_->unregisterObserver(id_);
+            result = subject_->unregisterObserver(id_);
         subject_ = nullptr;
+        return result;
     }
 
     typename Subject::Id getId() const {
@@ -132,7 +138,7 @@ public:
 
     /// Tests whether observers are present
     bool hasObservers() const {
-        std::lock_guard<std::mutex> lock(regM_);
+        // NOTE: this is unsafe but we cannot do it better than this
         return !observers_.empty();
     }
 
@@ -161,7 +167,7 @@ private:
 
     // this function assumes that regM_ is owned by the current thread
     void handleRegistrationQueue() {
-        std::lock_guard<std::mutex> lock{regM_};
+        std::lock_guard<std::mutex> lock{regQueueM_};
         if (registrationQueue_.empty()) return;
         for (const auto& item : registrationQueue_) {
             if (item.type == Operation::REGISTRATION)
