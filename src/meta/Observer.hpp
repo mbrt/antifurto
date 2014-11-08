@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <mutex>
+#include <atomic>
 
 
 namespace antifurto {
@@ -67,52 +68,71 @@ public:
     using Registration = detail::SubjectRegistration<Subject<Params...>>;
     using UnregistrationHandler = std::function<void(Id)>;
 
+    // constructor needed to initialize nextFreeId_
+    Subject() : nextFreeId_(1) { }
+
     /// Register an observer
     Registration registerObserver(Observer o) {
-        std::size_t ignored;
-        return registerObserver(std::move(o), ignored);
-    }
+        std::unique_lock<std::mutex> lock{regM_, std::try_to_lock_t{}};
+        if (lock.owns_lock()) {
+            // we have the lock to the observer list, so register the observer
+            // normally
 
-    /// Register an observer and returns the number of observers
-    Registration registerObserver(Observer o, std::size_t& numObservers) {
-        std::lock_guard<std::mutex> lock(listM_);
-        observers_.emplace_back(nextFreeId_, std::move(o));
-        numObservers = observers_.size();
-        return { *this, nextFreeId_++ };
+            // we need to save the current state of nextFreeId to avoid race
+            // conditions, because we have to use it twice
+            Id currentId = nextFreeId_++;
+            observers_.emplace_back(currentId, std::move(o));
+            return { *this, currentId };
+        }
+        else {
+            // we do not have the lock
+            // this could mean we are now notifying observers, so save this
+            // registration in the registration queue
+            // the observer queue will be updated at the end of the notification
+            std::lock_guard<std::mutex> qlock{regQueueM_};
+            Id currentId = nextFreeId_++;
+            registrationQueue_.emplace_back(Operation::REGISTRATION,
+                                            currentId, std::move(o));
+            return { *this, currentId };
+        }
     }
 
     /// Unregister an observer
-    /// @return true if the observer has been succesfully unregistered
+    /// @return true if the observer has been succesfully unregistered, false
+    ///     if not found or the unregistration has been scheduled for being
+    ///     completed asynchronously
     bool unregisterObserver(Id id) {
-        {
-            std::lock_guard<std::mutex> lock(listM_);
-            auto it = observers_.begin();
-            for (auto end = observers_.end(); it != end; ++it) {
-                if (it->id == id)
-                    break;
-            }
-            if (it == observers_.end()) return false;
-            std::swap(*it, observers_.back());
-            observers_.pop_back();
+        std::unique_lock<std::mutex> lock{regM_, std::try_to_lock_t{}};
+        if (lock.owns_lock()) {
+            // we have the lock to the observer list, so unregister the
+            // observer normally
+            return unregisterObserverUnsafe(id);
         }
-        if (unregHandler_)
-            unregHandler_(id);
-        return true;
+        else {
+            // we do not have the lock
+            // this could mean we are now notifying observers, so save this
+            // unregistration in the registration queue
+            // the observer queue will be updated at the end of the notification
+            std::lock_guard<std::mutex> qlock{regQueueM_};
+            registrationQueue_.emplace_back(Operation::UNREGISTRATION, id);
+            return false;
+        }
     }
 
     /// Notify to all observers
     /// @return true if some observer has been notified, false otherwise
     bool notify(Params... params) {
-        // WARNING: this could lead to deadlocks if observers tries to
-        // register or unregister inside their callback
-        std::lock_guard<std::mutex> lock(listM_);
+        std::lock_guard<std::mutex> lock(regM_);
         for (auto& item : observers_)
             item.observer(params...);
-        return !observers_.empty();
+        bool result = !observers_.empty();
+        handleRegistrationQueue();
+        return result;
     }
 
+    /// Tests whether observers are present
     bool hasObservers() const {
-        std::lock_guard<std::mutex> lock(listM_);
+        std::lock_guard<std::mutex> lock(regM_);
         return !observers_.empty();
     }
 
@@ -123,6 +143,35 @@ public:
     }
 
 private:
+    // this function unregisters an observer but it is NOT threadsafe
+    bool unregisterObserverUnsafe(Id id) {
+        auto it = observers_.begin();
+        for (auto end = observers_.end(); it != end; ++it) {
+            if (it->id == id)
+                break;
+        }
+        if (it == observers_.end()) return false;
+        std::swap(*it, observers_.back());
+        observers_.pop_back();
+        // call the handler if present
+        if (unregHandler_)
+            unregHandler_(id);
+        return true;
+    }
+
+    // this function assumes that regM_ is owned by the current thread
+    void handleRegistrationQueue() {
+        std::lock_guard<std::mutex> lock{regM_};
+        if (registrationQueue_.empty()) return;
+        for (const auto& item : registrationQueue_) {
+            if (item.type == Operation::REGISTRATION)
+                observers_.emplace_back(item.id, std::move(item.observer));
+            else
+                unregisterObserverUnsafe(item.id);
+        }
+        registrationQueue_.clear();
+    }
+
     struct ObserverItem {
         Id id;
         Observer observer;
@@ -132,11 +181,34 @@ private:
         { }
     };
 
+    enum class Operation {
+        REGISTRATION,
+        UNREGISTRATION
+    };
+
+    struct RegistrationItem {
+        Operation type;
+        Id id;
+        Observer observer;
+
+        RegistrationItem(Operation type, Id id, Observer o)
+            : type(type), id(id), observer(std::move(o))
+        { }
+
+        RegistrationItem(Operation type, Id id)
+            : type(type), id(id), observer()
+        { }
+    };
+
     using ObserverList = std::vector<ObserverItem>;
+    using RegistrationList = std::vector<RegistrationItem>;
+
     ObserverList observers_;
-    Id nextFreeId_ = 1;
+    RegistrationList registrationQueue_;
+    std::atomic<Id> nextFreeId_;
     UnregistrationHandler unregHandler_;
-    mutable std::mutex listM_;
+    mutable std::mutex regM_;
+    std::mutex regQueueM_;
 };
 
 } // namespace meta
