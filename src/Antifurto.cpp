@@ -131,7 +131,6 @@ public:
         liveViewActive_ = true;
         handleCameraControllerNeed();
 
-        log::info() << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
         if (!liveView_) {
             liveView_.reset(new LiveViewController(config_, [&](bool reg) {
@@ -145,6 +144,7 @@ public:
             }));
         }
         liveView_->start();
+        log::info() << "Live view started";
     }
 
     void stopLiveView()

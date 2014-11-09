@@ -30,12 +30,18 @@ public:
     void stop();
 
 private:
+    enum class Status {
+        STARTED,
+        STOPPING,
+        STOPPED
+    };
+
     PictureRegistrationRequest regFunc_;
     std::string socketPath_;
     std::chrono::seconds timeout_;
     std::unique_ptr<LiveView> liveView_;
     std::chrono::system_clock::time_point lastPictureWrittenTime_;
-    bool running_ = false;
+    Status status_ = Status::STOPPED;
     std::future<void> stopWork_;
 };
 
