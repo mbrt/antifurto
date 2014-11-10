@@ -38,22 +38,34 @@ void LiveViewController::addPicture(const Picture& p)
 
 void LiveViewController::start()
 {
-    if (running_) return;
-    running_ = true;
+    switch (status_) {
+    case Status::STARTED:
+        return;
+    case Status::STOPPING:
+        // wait for stop
+        stopWork_.get();
+        break;
+    default:
+        break;
+    }
 
+    // start the live view
     liveView_.reset(new LiveView{socketPath_});
     regFunc_(true);
+    status_ = Status::STARTED;
 }
 
 void LiveViewController::stop()
 {
-    if (!running_) return;
-    running_ = false;
+    if (status_ != Status::STARTED) return;
 
     log::info() << "Stopping live view";
+    status_ = Status::STOPPING;
+
     stopWork_ = std::async(std::launch::async, [this] {
-        regFunc_(false); // call this inside async to avoid deadlock
+        regFunc_(false);
         liveView_.reset();
+        status_ = Status::STOPPED;
         log::info() << "Live view stopped";
     });
 }

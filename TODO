@@ -9,6 +9,10 @@ TODO LIST
 * Web server
   - add query to monitor status (posix message queue? socket? pipe?)
 * Bug fix
+  - if start is called between "stopping live view" and "live view stopped", a
+    crash occur. So:
+    - avoid stopping asynchrously by fixing observer utility
+    - add a lock and a double checked locking pattern
   - in RecordingController::initUploader(), if no connection is available, the
     function blocks;
   - manage connection not available in all the possible cases

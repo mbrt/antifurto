@@ -288,6 +288,27 @@ BOOST_AUTO_TEST_CASE(observer)
     subject.notify(1, 2);
     BOOST_CHECK_EQUAL(a, 5);
     BOOST_CHECK_EQUAL(b, 7);
+
+    {
+        decltype(subject)::Registration reg;
+        int notifications = 0;
+
+        reg = subject.registerObserver([&](int, int){
+            ++notifications;
+            BOOST_CHECK(subject.hasObservers());
+            bool clearedNow = reg.clear();
+            BOOST_CHECK(!clearedNow);
+            // the registration is delayed
+            BOOST_CHECK(subject.hasObservers());
+        });
+
+        subject.notify(1, 1);
+        BOOST_CHECK_EQUAL(notifications, 1);
+        // registration cleared here
+        BOOST_CHECK(!subject.hasObservers());
+        subject.notify(1, 1);
+        BOOST_CHECK_EQUAL(notifications, 1);
+    }
 }
 
 struct CameraObserver

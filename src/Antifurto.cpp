@@ -131,7 +131,6 @@ public:
         liveViewActive_ = true;
         handleCameraControllerNeed();
 
-        log::info() << "Start live view";
         setMonitorPeriod(config::liveViewCycleDuration());
         if (!liveView_) {
             liveView_.reset(new LiveViewController(config_, [&](bool reg) {
@@ -145,6 +144,7 @@ public:
             }));
         }
         liveView_->start();
+        log::info() << "Live view started";
     }
 
     void stopLiveView()
@@ -165,12 +165,8 @@ private:
     {
         if ((liveViewActive_ || monitorActive_) && !camera_)
             camera_.reset(new CameraController());
-// FIXME: when the PiCamera can be safely destroyed
-//        you can enable the following lines
-//#if !defined(ANTIFURTO_RASPBERRY)
         else if (!liveViewActive_ && !monitorActive_)
             camera_.reset();
-//#endif
     }
 
     void registerLiveView()
