@@ -85,6 +85,7 @@ set(ANTIFURTO_COMMON_CPP
     src/MotionDetector.cpp
     src/NotificationController.cpp
     src/PictureArchive.cpp
+    src/QueryStatus.cpp
     src/RecordingController.cpp
     src/SignalHandler.cpp
     src/StaticConfig.cpp
@@ -116,6 +117,7 @@ set(ANTIFURTO_COMMON_HPP
     src/NotificationController.hpp
     src/Picture.hpp
     src/PictureArchive.hpp
+    src/QueryStatus.hpp
     src/RecordingController.hpp
     src/SignalHandler.hpp
     src/StaticConfig.hpp
