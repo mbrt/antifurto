@@ -207,9 +207,13 @@
                     cache: false
                 })
                 .done(function(data) {
-                    // data is { active: boolean }
-                    if (data.active)
-                        target.html('active');
+                    // data is { active: boolean, in_progress: boolean }
+                    if (data.active) {
+                        if (data.in_progress)
+                            target.html('activating');
+                        else
+                            target.html('active');
+                    }
                     else
                         target.html('inactive');
                 });

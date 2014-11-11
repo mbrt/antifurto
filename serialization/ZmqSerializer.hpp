@@ -57,7 +57,7 @@ public:
     {
         return serializer_.deserializePayload<T>(
                 static_cast<const char*>(msg.data()),
-                static_cast<const char*>(msg.data() + msg.size()));
+                static_cast<const char*>(msg.data()) + msg.size());
     }
 
 private:
