@@ -37,7 +37,7 @@ public:
     template <typename T>
     void serializeMessage(zmq::message_t& result, M type, const T& msg)
     {
-        auto contents = serializer_.serializeMessage(type, msg);
+        auto contents = serializer_.serializeMessage(static_cast<int>(type), msg);
         result.rebuild(contents.payload.second - contents.header.first);
         ::memcpy(result.data(), contents.header.first,
                  contents.payload.second - contents.header.first);
@@ -48,7 +48,7 @@ public:
     {
         return static_cast<M>(serializer_.deserializeHeader(
                 static_cast<const char*>(msg.data()),
-                static_cast<const char*>(msg.data() + msg.size())));
+                static_cast<const char*>(msg.data()) + msg.size()));
     }
 
     /// Deserialize the payload of the message.

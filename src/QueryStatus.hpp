@@ -2,6 +2,7 @@
 
 #include "ipc/ZmqRepServer.hpp"
 #include "ipc/ZmqLazyContext.hpp"
+#include "../serialization/DefaultZmqSerializer.hpp"
 
 namespace antifurto {
 
@@ -14,17 +15,20 @@ class Configuration;
 class AntifurtoQuery
 {
 public:
-    AntifurtoQuery(Antifurto& controller, Configuration& config);
+    AntifurtoQuery(Antifurto& controller, const Configuration& config);
     void start();
     void stop();
 
 private:
     zmq::message_t& handler(const zmq::message_t& req);
+    void handleMonitorStatusRequest();
+    void handleUnknownRequest(serialization::MessageType type);
 
     Antifurto& controller_;
     zmq::message_t reply_;
     ipc::ZmqContextPtr zmqCtx_;
     ipc::ZmqRepServer server_;
+    serialization::DefaultZmqSerializer serializer_;
 };
 
 } // namespace antifurto

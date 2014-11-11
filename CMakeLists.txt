@@ -71,6 +71,7 @@ list(APPEND ANTIFURTO_LIBS zmq)
 
 # serialization
 add_subdirectory(serialization)
+list(APPEND ANTIFURTO_LIBS antifurto_serialization)
 
 # common files
 set(ANTIFURTO_COMMON_CPP

@@ -29,7 +29,7 @@ public:
         static_assert(std::has_trivial_copy_constructor<T>::value,
                       "Type is not trivially copyable");
         return serializeMessage(msgNumber,
-                                reinterpret_cast<void*>(&msg),
+                                reinterpret_cast<const void*>(&msg),
                                 sizeof(msg));
     }
 
