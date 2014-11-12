@@ -201,7 +201,7 @@
     <script type="text/javascript">
         function getMonitorStatus(target) {
             $.ajax({
-                    url: '../controller/controller',
+                    url: '../controller/live/controller',
                     data: { 'query': 'monitor-status' },
                     dataType: 'json',
                     cache: false
