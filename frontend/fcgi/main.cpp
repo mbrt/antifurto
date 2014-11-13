@@ -49,15 +49,17 @@ public:
     {
         serializer_.serializeMessage(liveRequestMsg_,
                                      MessageType::LIVE_VIEW_REQUEST);
+        serializer_.serializeMessage(queryRequestMsg_,
+                                     MessageType::MONITOR_STATUS_REQUEST);
     }
 
     void handleRequest(const char* path)
     {
         if (path == nullptr)
             beginResponse("417 Expectation Failed");
-        else if (::strcmp(path, "/live/live.jpg") == 0)
+        else if (::strstr(path, "/controller/live/live.jpg") == path)
             handleLiveViewRequest();
-        else if (::strcmp(path, "/controller/controller?query=monitor-status") == 0)
+        else if (::strstr(path, "/controller/live/controller") == path)
             handleQueryRequest();
         else
             beginResponse("501 Not Implemented");

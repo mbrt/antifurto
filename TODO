@@ -1,6 +1,8 @@
 TODO LIST
 ---------
 
+* Remove default reply on ZmqRepServer
+  - ideally, no reply is needed
 * Lower timeout on upload pictures enqueued
 * Reboot on crash
   - use linux whatchdog daemon

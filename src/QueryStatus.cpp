@@ -9,7 +9,7 @@ AntifurtoQuery::
 AntifurtoQuery(Antifurto& controller, const Configuration& config)
     : controller_(controller)
     , zmqCtx_(ipc::ZmqLazyContext::instance().get())
-    , server_(*zmqCtx_, config.query.socketAddress,
+    , server_(*zmqCtx_, "tcp://" + config.query.socketAddress,
               [this](const zmq::message_t& m) -> zmq::message_t& {
                   return handler(m);
               })

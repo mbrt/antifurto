@@ -46,18 +46,18 @@ public:
     /// Deserialize the header, returning the message type.
     M deserializeHeader(const zmq::message_t& msg)
     {
+        const char* data = static_cast<const char*>(msg.data());
         return static_cast<M>(serializer_.deserializeHeader(
-                static_cast<const char*>(msg.data()),
-                static_cast<const char*>(msg.data()) + msg.size()));
+                data, data + msg.size()));
     }
 
     /// Deserialize the payload of the message.
     template <typename T>
     T deserializePayload(const zmq::message_t& msg)
     {
+        const char* data = static_cast<const char*>(msg.data());
         return serializer_.deserializePayload<T>(
-                static_cast<const char*>(msg.data()),
-                static_cast<const char*>(msg.data()) + msg.size());
+                data, data + msg.size());
     }
 
 private:

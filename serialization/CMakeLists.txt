@@ -6,3 +6,6 @@ add_library(antifurto_serialization STATIC
             ZmqSerializer.hpp
             DefaultZmqSerializer.hpp
 )
+target_link_libraries(antifurto_serialization zmq)
+
+add_subdirectory(test)

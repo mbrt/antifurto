@@ -7,7 +7,7 @@ ZmqLazyPirateClient::
 ZmqLazyPirateClient(zmq::context_t& ctx, std::string serverAddress,
                     unsigned int timeout, unsigned int retries)
     : context_(ctx), address_(std::move(serverAddress))
-    , timeout_(timeout * 1000), retries_(retries)
+    , timeout_(timeout), retries_(retries)
 {
     openSocket();
 }

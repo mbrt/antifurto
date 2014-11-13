@@ -35,6 +35,7 @@ private:
     std::unique_ptr<zmq::socket_t> socket_;
     std::thread thread_;
     zmq::message_t request_;
+    zmq::message_t defaultReply_;
 };
 
 }} // namespace antifurto::ipc
