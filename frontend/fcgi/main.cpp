@@ -46,12 +46,7 @@ public:
         : zmqctx_(1)
         , liveClient_(zmqctx_, liveServerAddress(), 2500, 3)
         , queryClient_(zmqctx_, queryServerAddress(), 2500, 3)
-    {
-        serializer_.serializeMessage(liveRequestMsg_,
-                                     MessageType::LIVE_VIEW_REQUEST);
-        serializer_.serializeMessage(queryRequestMsg_,
-                                     MessageType::MONITOR_STATUS_REQUEST);
-    }
+    { }
 
     void handleRequest(const char* path)
     {
@@ -69,7 +64,9 @@ private:
     void handleLiveViewRequest()
     {
         // talk to main exe if found
-        if (liveClient_.request(liveRequestMsg_, replyMsg_)) {
+        serializer_.serializeMessage(requestMsg_,
+                                     MessageType::LIVE_VIEW_REQUEST);
+        if (liveClient_.request(requestMsg_, replyMsg_)) {
             // got answer, send image
             beginResponse("200 OK", "image/jpeg", false);
             std::cout.write(
@@ -84,7 +81,9 @@ private:
     void handleQueryRequest()
     {
         // talk to main exe if found
-        if (queryClient_.request(queryRequestMsg_, replyMsg_)) {
+        serializer_.serializeMessage(requestMsg_,
+                                     MessageType::MONITOR_STATUS_REQUEST);
+        if (queryClient_.request(requestMsg_, replyMsg_)) {
             MessageType header = serializer_.deserializeHeader(replyMsg_);
             if (header == MessageType::MONITOR_STATUS_REPLY) {
                 MonitorStatusReply contents =
@@ -124,9 +123,9 @@ private:
                 }
 
                 beginResponse("200 OK", "application/json", false);
-                std::cout << "{ active: " << (active ? "true" : "false")
-                          << ", in_progress: " << (in_progress ? "true" : "false")
-                          << " }";
+                std::cout << "{\"active\":" << active
+                          << ",\"in_progress\":" << in_progress
+                          << '}';
             }
             else
                 beginResponse("500 Internal Server Error");
@@ -140,8 +139,7 @@ private:
     ZmqLazyPirateClient liveClient_;
     ZmqLazyPirateClient queryClient_;
     DefaultZmqSerializer serializer_;
-    zmq::message_t liveRequestMsg_;
-    zmq::message_t queryRequestMsg_;
+    zmq::message_t requestMsg_;
     zmq::message_t replyMsg_;
 };
 

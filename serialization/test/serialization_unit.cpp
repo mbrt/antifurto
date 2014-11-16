@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <future>
+#include <thread>
 
 #define BOOST_TEST_MODULE unit
 #include <boost/test/unit_test.hpp>
@@ -31,15 +32,24 @@ BOOST_AUTO_TEST_CASE(send)
     DefaultZmqSerializer serializer;
     zmq::message_t msg1, msg2;
     serializer.serializeMessage(msg1, MessageType::LIVE_VIEW_REQUEST);
+
+    std::vector<char> contents;
+    const char* m1begin = static_cast<const char*>(msg1.data());
+    const char* m1end = m1begin + msg1.size();
+    contents.assign(m1begin, m1end);
+
+    BOOST_CHECK_GT(msg1.size(), 0);
     auto swork = std::async(std::launch::async, [&]{
         cli.send(msg1);
     });
-    srv.recv(&msg2);
+    while (!srv.recv(&msg2));
     swork.get();
 
-    BOOST_CHECK_EQUAL(msg1.size(), msg2.size());
-    const char* m1begin = static_cast<const char*>(msg1.data());
-    const char* m1end = m1begin + msg1.size();
+    BOOST_CHECK_GT(msg2.size(), 0);
+    BOOST_CHECK_EQUAL(msg1.size(), 0);
+
+    m1begin = &contents[0];
+    m1end = m1begin + contents.size();
     const char* m2begin = static_cast<const char*>(msg2.data());
     const char* m2end = m2begin + msg2.size();
     BOOST_CHECK_EQUAL_COLLECTIONS(m1begin, m1end, m2begin, m2end);
