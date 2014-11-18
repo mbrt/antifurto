@@ -4,7 +4,8 @@
 namespace antifurto {
 namespace ipc {
 
-ZmqRepServer::ZmqRepServer(zmq::context_t& ctx, std::string address, Handler h)
+ZmqRepServer::
+ZmqRepServer(zmq::context_t& ctx, std::string address, Handler h)
     : context_(ctx), address_(std::move(address)), handler_(std::move(h))
     , running_(false), defaultReply_(0)
 { }
@@ -33,11 +34,10 @@ void ZmqRepServer::stop()
     {
         std::lock_guard<std::mutex> lock{startMutex_};
         if (!running_) return;
-
         running_ = false;
-        socket_->close();
     }
     thread_.join();
+    socket_->close();
 }
 
 bool ZmqRepServer::started()
