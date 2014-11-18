@@ -31,6 +31,7 @@ private:
     unsigned int timeout_;
     unsigned int retries_;
     std::unique_ptr<zmq::socket_t> socket_;
+    zmq::message_t requestBackup_;
 };
 
 }} // namespace antifurto::fcgi
