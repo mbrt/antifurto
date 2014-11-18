@@ -13,7 +13,11 @@ AntifurtoQuery(Antifurto& controller, const Configuration& config)
               [this](const zmq::message_t& m) -> zmq::message_t& {
                   return handler(m);
               })
-{ }
+{
+    using namespace serialization;
+    serializer_.serializeMessage(reply_, MessageType::ERROR_UNKNOWN_MESSAGE);
+    server_.setDefaultReply(reply_);
+}
 
 void AntifurtoQuery::start()
 {

@@ -23,6 +23,7 @@ public:
     void start();
     void stop();
     bool started();
+    void setDefaultReply(zmq::message_t& reply);
 
 private:
     void receiveLoop();

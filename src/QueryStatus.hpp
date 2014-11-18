@@ -27,8 +27,8 @@ private:
     Antifurto& controller_;
     zmq::message_t reply_;
     ipc::ZmqContextPtr zmqCtx_;
-    ipc::ZmqRepServer server_;
     serialization::DefaultZmqSerializer serializer_;
+    ipc::ZmqRepServer server_;
 };
 
 } // namespace antifurto

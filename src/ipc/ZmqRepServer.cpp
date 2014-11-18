@@ -45,6 +45,11 @@ bool ZmqRepServer::started()
     return running_;
 }
 
+void ZmqRepServer::setDefaultReply(zmq::message_t& reply)
+{
+    defaultReply_.copy(&reply);
+}
+
 
 void ZmqRepServer::receiveLoop()
 {
@@ -59,8 +64,11 @@ void ZmqRepServer::receiveLoop()
         }
         catch (std::exception& e) {
             log::error() << "Handler failed with error: " << e.what();
+            // backup the default reply
+            zmq::message_t rep;
+            rep.copy(&defaultReply_);
             // send default reply
-            while (!socket_->send(defaultReply_) && running_) { }
+            while (!socket_->send(rep) && running_) { }
         }
     }
 }
