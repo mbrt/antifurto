@@ -1,6 +1,8 @@
 TODO LIST
 ---------
 
+* Porting of ZMQ 4 to Raspberry Pi and use it
+* Add some log in fcgi frontend in case of errors
 * Remove default reply on ZmqRepServer
   - ideally, no reply is needed
 * Reboot on crash
