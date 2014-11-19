@@ -41,7 +41,7 @@ void LiveViewController::start()
     if (running_) return;
     running_ = true;
 
-    zmqCtx_ = ipc::ZmqLazyContext::instance().get();
+    zmqCtx_ = ipc::ZmqLazyContext::instance().get(1);
     liveView_.reset(new LiveView{*zmqCtx_, socketPath_});
     regFunc_(true);
 }

@@ -16,7 +16,8 @@ class SingleObjectCache
 public:
     using Ptr = std::shared_ptr<T>;
 
-    Ptr get()
+    template <typename... Args>
+    Ptr get(Args&&... args)
     {
         Ptr ctx = context_.lock();
         if (ctx) return ctx;
@@ -24,7 +25,7 @@ public:
         std::lock_guard<std::mutex> lock{m_};
         // double checked locking pattern
         if (ctx = context_.lock()) return ctx;
-        context_ = ctx = std::make_shared<T>();
+        context_ = ctx = std::make_shared<T>(std::forward<Args>(args)...);
         return ctx;
     }
 

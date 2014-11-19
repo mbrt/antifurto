@@ -8,9 +8,9 @@ namespace antifurto {
 AntifurtoQuery::
 AntifurtoQuery(Antifurto& controller, const Configuration& config)
     : controller_(controller)
-    , zmqCtx_(ipc::ZmqLazyContext::instance().get())
+    , zmqCtx_(ipc::ZmqLazyContext::instance().get(1))
     , server_(*zmqCtx_, "tcp://" + config.query.socketAddress,
-              [this](const zmq::message_t& m) -> zmq::message_t& {
+              [this](zmq::message_t& m) -> zmq::message_t& {
                   return handler(m);
               })
 {
@@ -29,7 +29,7 @@ void AntifurtoQuery::stop()
     server_.stop();
 }
 
-zmq::message_t&AntifurtoQuery::handler(const zmq::message_t& req)
+zmq::message_t&AntifurtoQuery::handler(zmq::message_t& req)
 {
     using namespace serialization;
 

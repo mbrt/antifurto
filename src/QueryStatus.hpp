@@ -20,7 +20,7 @@ public:
     void stop();
 
 private:
-    zmq::message_t& handler(const zmq::message_t& req);
+    zmq::message_t& handler(zmq::message_t& req);
     void handleMonitorStatusRequest();
     void handleUnknownRequest(serialization::MessageType type);
 

@@ -44,7 +44,7 @@ public:
     }
 
     /// Deserialize the header, returning the message type.
-    M deserializeHeader(const zmq::message_t& msg)
+    M deserializeHeader(zmq::message_t& msg)
     {
         const char* data = static_cast<const char*>(msg.data());
         return static_cast<M>(serializer_.deserializeHeader(
@@ -53,7 +53,7 @@ public:
 
     /// Deserialize the payload of the message.
     template <typename T>
-    T deserializePayload(const zmq::message_t& msg)
+    T deserializePayload(zmq::message_t& msg)
     {
         const char* data = static_cast<const char*>(msg.data());
         return serializer_.deserializePayload<T>(

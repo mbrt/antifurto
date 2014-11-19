@@ -15,7 +15,9 @@ class ZmqRepServer
 public:
     /// The handler gets the request message and have to return
     /// the reply
-    using Handler = std::function<zmq::message_t&(const zmq::message_t&)>;
+    // FIXME: Add const& to argument!! Now does not compile because
+    // of the old version must be used on raspberry
+    using Handler = std::function<zmq::message_t&(zmq::message_t&)>;
 
     ZmqRepServer(zmq::context_t& ctx, std::string address, Handler h);
     ~ZmqRepServer();
