@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "StaticConfig.hpp"
 #include "SignalHandler.hpp"
+#include "QueryStatus.hpp"
 #include "ipc/PosixSignalHandler.hpp"
 #include "log/Log.hpp"
 
@@ -33,7 +34,9 @@ int main(int argc, char* argv[])
         log::info() << "Init of antifurto";
         Antifurto app{parser.getConfiguration()};
         SignalHandler appSignalHandler{signalHandler, app};
+        AntifurtoQuery query{app, parser.getConfiguration()};
 
+        query.start();
         signalHandler.enterSignalHandlingLoop();
         //std::this_thread::sleep_for(std::chrono::hours(1));
     }

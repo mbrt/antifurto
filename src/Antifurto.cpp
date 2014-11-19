@@ -124,6 +124,18 @@ public:
         return liveViewActive_;
     }
 
+    Antifurto::ServiceStatus getMonitoringStatus() const
+    {
+        if (monitorActive_) {
+            if (monitor_.get())
+                return Antifurto::ServiceStatus::RUNNING;
+            else
+                return Antifurto::ServiceStatus::STARTING;
+        }
+        else
+            return Antifurto::ServiceStatus::STOPPED;
+    }
+
     void startLiveView()
     {
         std::lock_guard<std::mutex> lock{m_};
@@ -153,6 +165,14 @@ public:
         if (!liveViewActive_) return;
         liveViewActive_ = false;
         liveView_->stop();
+    }
+
+    Antifurto::ServiceStatus getLiveViewStatus() const
+    {
+        if (liveViewActive_)
+            return Antifurto::ServiceStatus::RUNNING;
+        else
+            return Antifurto::ServiceStatus::STOPPED;
     }
 
 private:
@@ -212,6 +232,11 @@ void Antifurto::stopMonitoring()
     pimpl_->stopMonitoring();
 }
 
+Antifurto::ServiceStatus Antifurto::getMonitoringStatus() const
+{
+    return pimpl_->getMonitoringStatus();
+}
+
 void Antifurto::startLiveView()
 {
     pimpl_->startLiveView();
@@ -220,6 +245,11 @@ void Antifurto::startLiveView()
 void Antifurto::stopLiveView()
 {
     pimpl_->stopLiveView();
+}
+
+Antifurto::ServiceStatus Antifurto::getLiveViewStatus() const
+{
+    return pimpl_->getLiveViewStatus();
 }
 
 } // namespace antifurto

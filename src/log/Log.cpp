@@ -71,7 +71,7 @@ void init(const Configuration& config)
 void reload()
 {
     try {
-        std::unique_lock<FileSink> lock(fileSink);
+        std::lock_guard<FileSink> lock(fileSink);
         fileSink.close();
         fileSink.setFile(logFilePath.c_str());
     }

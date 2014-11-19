@@ -9,8 +9,8 @@ namespace bfs = boost::filesystem;
 
 namespace antifurto {
 
-LiveView::LiveView(const std::string& socketAddress)
-    : context_(1)
+LiveView::LiveView(zmq::context_t& ctx, const std::string& socketAddress)
+    : context_(ctx)
     , socket_(context_, ZMQ_REP)
     , running_(true)
     , worker_([&](const Picture& p){ write(p); }, 3)

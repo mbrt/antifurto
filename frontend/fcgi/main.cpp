@@ -4,31 +4,149 @@
 #include <fcgio.h>
 #include <fcgi_config.h>
 #include <iostream>
+#include <string>
 
 #include "StreamRedirect.hpp"
 #include "StreamReader.hpp"
 #include "ZmqLazyPirateClient.hpp"
+#include "serialization/DefaultZmqSerializer.hpp"
+#include "serialization/Protocol.hpp"
 
-constexpr const char* serverAddress() {
+using namespace antifurto::fcgi;
+using namespace antifurto::serialization;
+
+constexpr const char* liveServerAddress() {
     return "tcp://localhost:4679";
 }
 
-void makeRequest(zmq::message_t& request)
-{
-    int magic = 158;
-    request.rebuild(sizeof(magic));
-    ::memcpy(request.data(), &magic, sizeof(magic));
+constexpr const char* queryServerAddress() {
+    return "tcp://localhost:4678";
 }
 
-using namespace antifurto::fcgi;
+void beginResponse(const char* status)
+{
+    std::cout << "Status: " << status << "\r\n\r\n";
+}
+
+void beginResponse(const char* status, const char* contentType, bool cache = false)
+{
+    std::cout << "Status: " << status << "\r\n"
+                 "Content-Type: " << contentType << "\r\n";
+    if (!cache)
+        std::cout << "Cache-Control: no-cache\r\n";
+    std::cout << "\r\n";
+}
+
+/// This class handle communication with main exe and send responses back
+/// to the fcgi daemon
+class RequestHandler
+{
+public:
+    RequestHandler()
+        : zmqctx_(1)
+        , liveClient_(zmqctx_, liveServerAddress(), 2500, 3)
+        , queryClient_(zmqctx_, queryServerAddress(), 2500, 3)
+    { }
+
+    void handleRequest(const char* path)
+    {
+        if (path == nullptr)
+            beginResponse("417 Expectation Failed");
+        else if (::strstr(path, "/controller/live/live.jpg") == path)
+            handleLiveViewRequest();
+        else if (::strstr(path, "/controller/live/controller") == path)
+            handleQueryRequest();
+        else
+            beginResponse("501 Not Implemented");
+    }
+
+private:
+    void handleLiveViewRequest()
+    {
+        // talk to main exe if found
+        serializer_.serializeMessage(requestMsg_,
+                                     MessageType::LIVE_VIEW_REQUEST);
+        if (liveClient_.request(requestMsg_, replyMsg_)) {
+            // got answer, send image
+            beginResponse("200 OK", "image/jpeg", false);
+            std::cout.write(
+                static_cast<const char*>(replyMsg_.data()),
+                replyMsg_.size());
+        }
+        else
+            // no answer, send service unavailable
+            beginResponse("503 Service Not Available");
+    }
+
+    void handleQueryRequest()
+    {
+        // talk to main exe if found
+        serializer_.serializeMessage(requestMsg_,
+                                     MessageType::MONITOR_STATUS_REQUEST);
+        if (queryClient_.request(requestMsg_, replyMsg_)) {
+            MessageType header = serializer_.deserializeHeader(replyMsg_);
+            if (header == MessageType::MONITOR_STATUS_REPLY) {
+                MonitorStatusReply contents =
+                    serializer_.deserializePayload<MonitorStatusReply>(replyMsg_);
+
+                bool active, in_progress;
+                switch (contents.status) {
+                case ServiceStatus::RUNNING:
+                    {
+                        active = true;
+                        in_progress = false;
+                    }
+                    break;
+                case ServiceStatus::STARTING:
+                    {
+                        active = true;
+                        in_progress = true;
+                    }
+                    break;
+                case ServiceStatus::STOPPED:
+                    {
+                        active = false;
+                        in_progress = false;
+                    }
+                    break;
+                case ServiceStatus::STOPPING:
+                    {
+                        active = false;
+                        in_progress = true;
+                    }
+                    break;
+                default:
+                    {
+                        beginResponse("503 Service Not Available");
+                        return;
+                    }
+                }
+
+                beginResponse("200 OK", "application/json", false);
+                std::cout << "{\"active\":" << active
+                          << ",\"in_progress\":" << in_progress
+                          << '}';
+            }
+            else
+                beginResponse("500 Internal Server Error");
+        }
+        else
+            // no answer, send service unavailable
+            beginResponse("503 Service Not Available");
+    }
+
+    zmq::context_t zmqctx_;
+    ZmqLazyPirateClient liveClient_;
+    ZmqLazyPirateClient queryClient_;
+    DefaultZmqSerializer serializer_;
+    zmq::message_t requestMsg_;
+    zmq::message_t replyMsg_;
+};
+
 
 int main(int, char*[])
 {
-    zmq::context_t zmqctx(1);
-    ZmqLazyPirateClient client{zmqctx, serverAddress(), 2500, 3};
-    zmq::message_t requestMsg, replyMsg;
-    makeRequest(requestMsg);
-
+    RequestHandler handler;
     StreamReader streamReader{std::cin, 10 * 1024};
 
     FCGX_Request request;
@@ -40,21 +158,8 @@ int main(int, char*[])
         StreamRedirector redirect{request};
         // ignore inputs
         streamReader.emptyStream();
-        // talk to main exe if found
-        if (client.request(requestMsg, replyMsg)) {
-            // got answer, send image
-            std::cout << "Status: 200 OK\r\n"
-                "Content-Type: image/jpeg\r\n"
-                "Cache-Control: no-cache\r\n"
-                "\r\n";
-            std::cout.write(
-                static_cast<const char*>(replyMsg.data()),
-                replyMsg.size());
-        }
-        else {
-            // no answer, send service unavailable
-            std::cout << "Status: 503 Service Not Available\r\n\r\n";
-        }
+        // handle the request
+        handler.handleRequest(FCGX_GetParam("SCRIPT_NAME", request.envp));
     }
     return 0;
 }

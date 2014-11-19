@@ -47,6 +47,9 @@ public:
         std::string socketAddress;
         std::chrono::seconds inactivityTimeout;
     };
+    struct Query {
+        std::string socketAddress;
+    };
 
     Startup startup;
     Whatsapp whatsapp;
@@ -54,6 +57,7 @@ public:
     Log log;
     Recording recording;
     LiveView liveView;
+    Query query;
 };
 
 

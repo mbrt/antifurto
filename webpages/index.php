@@ -1,3 +1,66 @@
+<?php
+  include 'includes/date_utils.php.inc';
+
+  // settings
+  $pics_path = 'archive/pics';   
+
+  function find_max_in_dir($dir) {
+    if (!file_exists($dir)) return null;
+    $handle = opendir($dir);
+    $max_val = null;
+    while (false !== ($entry = readdir($handle)))
+      if ($entry != '.' && $entry != '..')
+        $max_val = max($entry, $max_val);
+    return $max_val;
+  }
+
+  // input: YYYY-MM-DD_hh:mm:ss.xxxx.jpg
+  // output: a DateTime representing input
+  function from_pic_file_to_datetime($file) {
+    return new DateTime(substr($file, 0, 10) .' '. substr($file, 11, 8));
+  }
+
+  function get_last_alarm() {
+    global $pics_path, $today_dir, $today_dt;
+
+    // find last day in pics
+    $last_day = find_max_in_dir($pics_path);
+    if ($last_day === null)
+      // no pics found
+      return 'none';
+
+    if ($last_day != $today_dir) {
+      // was not today: print how many days ago
+      $last_day_dt = new DateTime($last_day);
+      $interval = $last_day_dt->diff($today_dt);
+      return $interval->days .' days ago';
+    }
+
+    // was today: print hours, minutes or just now
+    $last_pic = find_max_in_dir("$pics_path/$last_day");
+    if ($last_pic === null)
+      // no pictures, show today only
+      return 'today';
+
+    // compute diff from now
+    $last_pic_dt = from_pic_file_to_datetime($last_pic);
+    $interval = $last_pic_dt->diff($today_dt);
+    if ($interval->h > 0)
+      // hours ago
+      return $interval->h .' hours ago';
+    else if ($interval->i > 4)
+      // minutes ago
+      return $interval->i .' minutes ago';
+    else
+      // less than 5 minutes ago
+      return 'just now';
+  }
+
+
+  // main code
+  $last_alarm = get_last_alarm();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -52,7 +115,11 @@
       <!-- Main jumbotron for a primary marketing message or call to action -->
       <div class="jumbotron">
         <h1>Antifurto home</h1>
-        <p>View the status and issue commands.</p>
+          <p>From here you can enable and disable the monitoring.</p>
+          <p>
+            <div>Monitoring status: <b class="monitor-status"></b></div>
+            <div>Last alarm: <b><?php echo $last_alarm ?></b></div>
+          </p>
       </div>
 
       <!-- contents -->
@@ -86,7 +153,7 @@
     <!-- displayMessage utility -->
     <script src="assets/js/message.js"></script>
 
-    <!-- Page custom JavaScript -->
+    <!-- start stop buttons -->
     <script type="text/javascript">
         function startStopPressed(target, other, msg, params) {
             target.button('loading');
@@ -105,13 +172,13 @@
                             'alert-success');
                     else
                         displayMessage('#message',
-                            '<h4>Error</h4><p>' + data.log + '.</p>',
+                            '<h4>Ooops...</h4><p>' + data.log + '.</p>',
                             'alert-danger');
                 })
                 .fail(function(jqxhr, textStatus, errorThrown) {
                     displayMessage('#message',
-                        '<h4>Error</h4>' +
-                        '<p>' + errorThrown + '.</p>',
+                        '<h4>No network connection available</h4>' +
+                        (errorThrown != '' ? ('<p>' + errorThrown + '.</p>') : ''),
                         'alert-danger');
                 })
                 .always(function() {
@@ -128,6 +195,33 @@
             startStopPressed($('.on-off .stop'), $('.on-off .start'),
                 'Monitoring stopped.', { stop: 1 });
         });
+    </script>
+
+    <!-- monitoring status poll -->
+    <script type="text/javascript">
+        function getMonitorStatus(target) {
+            $.ajax({
+                    url: '../controller/live/controller',
+                    data: { 'query': 'monitor-status' },
+                    dataType: 'json',
+                    cache: false
+                })
+                .done(function(data) {
+                    // data is { active: boolean, in_progress: boolean }
+                    if (data.active) {
+                        if (data.in_progress)
+                            target.html('activating');
+                        else
+                            target.html('active');
+                    }
+                    else
+                        target.html('inactive');
+                });
+        }
+
+        var target = $('.monitor-status');
+        getMonitorStatus(target);
+        setInterval(function(){ getMonitorStatus(target); }, 30000);
     </script>
 
   </body>

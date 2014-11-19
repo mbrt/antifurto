@@ -1,0 +1,15 @@
+package antifurto;
+
+enum ServiceStatus {
+    STARTED = 0,
+    STOPPED = 1,
+    STARTING = 2,
+    STOPPING = 3,
+    UNAVAILABLE = 4
+}
+
+// monitor status
+message MonitorStatusReply {
+    required ServiceStatus status = 1;
+    optional int32 lastChangeTime = 2;
+}

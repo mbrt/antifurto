@@ -69,6 +69,10 @@ include_directories(lib/folly/include)
 # zeromq
 list(APPEND ANTIFURTO_LIBS zmq)
 
+# serialization
+add_subdirectory(serialization)
+list(APPEND ANTIFURTO_LIBS antifurto_serialization)
+
 # common files
 set(ANTIFURTO_COMMON_CPP
     src/Antifurto.cpp
@@ -82,6 +86,7 @@ set(ANTIFURTO_COMMON_CPP
     src/MotionDetector.cpp
     src/NotificationController.cpp
     src/PictureArchive.cpp
+    src/QueryStatus.cpp
     src/RecordingController.cpp
     src/SignalHandler.cpp
     src/StaticConfig.cpp
@@ -92,6 +97,7 @@ set(ANTIFURTO_COMMON_CPP
     src/ipc/NamedPipe.cpp
     src/ipc/PosixSignalHandler.cpp
     src/ipc/Process.cpp
+    src/ipc/ZmqRepServer.cpp
     src/log/Log.cpp
     src/log/Logger.cpp
     src/text/ToString.cpp
@@ -112,6 +118,7 @@ set(ANTIFURTO_COMMON_HPP
     src/NotificationController.hpp
     src/Picture.hpp
     src/PictureArchive.hpp
+    src/QueryStatus.hpp
     src/RecordingController.hpp
     src/SignalHandler.hpp
     src/StaticConfig.hpp
@@ -128,6 +135,8 @@ set(ANTIFURTO_COMMON_HPP
     src/ipc/NamedPipe.hpp
     src/ipc/PosixSignalHandler.hpp
     src/ipc/Process.hpp
+    src/ipc/ZmqLazyContext.hpp
+    src/ipc/ZmqRepServer.hpp
     src/log/ConcreteLoggerSink.hpp
     src/log/Log.hpp
     src/log/Logger.hpp
@@ -139,6 +148,8 @@ set(ANTIFURTO_COMMON_HPP
     src/meta/Observer.hpp
     src/meta/SmartPtr.hpp
     src/meta/TypeTraits.hpp
+    src/meta/SingleObjectCache.hpp
+    src/meta/Singleton.hpp
     src/text/ToString.hpp
     src/text/TextReplace.hpp
 )

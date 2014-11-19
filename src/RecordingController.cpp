@@ -111,7 +111,7 @@ void RecordingController::onPictureSaved(const std::string& fileName)
             log::info() << "Failed to upload picture to Dropbox: queue is full";
             enableFailedUploadMsg_ = false;
         }
-        std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
+        std::lock_guard<std::mutex> lock(toUploadAfterQueueMutex_);
         toUploadAfterQueue_.emplace(fileName);
     }
 }
@@ -148,7 +148,7 @@ void RecordingController::deleteOlderPictures()
 
 void RecordingController::enqueueOlderPicturesIfIdle(bool scheduled)
 {
-    std::unique_lock<std::mutex> lock(toUploadAfterQueueMutex_);
+    std::lock_guard<std::mutex> lock(toUploadAfterQueueMutex_);
     // if this work does not come from scheduler, but another has been already
     // scheduled, do nothing.
     if (!scheduled && enqueueOlderScheduled_) return;

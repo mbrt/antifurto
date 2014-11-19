@@ -1,4 +1,6 @@
 <?php
+  include '../includes/date_utils.php.inc';
+
   // settings
   $pics_path = 'pics';
   $pics_per_page = 16;
@@ -61,13 +63,6 @@
     }
     return $count;
   }
-
-  // globals
-	$today_dd = date("d", time());
-	$today_mm = date("m", time());
-	$today_yyyy = date("Y", time());
-	$today = "$today_yyyy$today_mm$today_dd";
-	$today_dir = "$today_yyyy-$today_mm-$today_dd";
 
   // parameters
   $page = get_or_default($_GET['page'], 1);
@@ -231,9 +226,9 @@
 
       <?php
         if ($num_pics_in_page > 0)
-          include 'pics.php';
+          include '../includes/archive/pics.php.inc';
         else
-          include 'nopics.php';
+          include '../includes/archive/nopics.php.inc';
       ?>
 
       </div><!-- /row -->

@@ -31,6 +31,7 @@ std::string configFile();
 constexpr const char* archiveDir() { return "/tmp/antifurto/archive"; }
 constexpr const char* tmpDir() { return "/tmp"; }
 constexpr const char* liveViewSocketAddress() { return "127.0.0.1:4679"; }
+constexpr const char* querySocketAddress() { return "127.0.0.1:4678"; }
 
 constexpr unsigned int maxArchiveDays() { return 7; }
 

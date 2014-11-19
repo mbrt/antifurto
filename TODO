@@ -1,6 +1,8 @@
 TODO LIST
 ---------
 
+* Remove default reply on ZmqRepServer
+  - ideally, no reply is needed
 * Reboot on crash
   - use linux whatchdog daemon
   - save persistently the last status and restore it (monitoring on/off)
