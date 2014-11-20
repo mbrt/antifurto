@@ -31,7 +31,7 @@ void WhatsappNotifier::send(const std::string& dest, const std::string& msg)
     }
 
     std::string stdout = yowsupProcess_.getStdOut();
-    if (!stdout.find("Sent message"))
+    if (stdout.find("Sent message") == std::string::npos)
         throw WhatsappNotifierException(
                 text::toString("Cannot send message\nlog: ",
                                stdout));
