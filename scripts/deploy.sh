@@ -1,4 +1,5 @@
 #!/bin/bash
+mv ${DEPLOY_DIR}/antifurto ${DEPLOY_DIR}/antifurto.old
 cp ${CMAKE_CURRENT_BINARY_DIR}/antifurto ${DEPLOY_DIR}
 cp ${CMAKE_CURRENT_BINARY_DIR}/frontend/antifurto.fcgi ${DEPLOY_DIR}
 #cp ${CMAKE_CURRENT_SOURCE_DIR}/lib/yowsup/src/yowsup-cli ${DEPLOY_DIR}
