@@ -3,7 +3,7 @@ Webserver install
 See https://wiki.ubuntu.com/Lighttpd+PHP
 
 > sudo apt-get install lighttpd php5-cgi
-> sudo lighty-enable-mod fastcgi 
+> sudo lighty-enable-mod fastcgi
 > sudo lighty-enable-mod fastcgi-php
 > sudo lighty-enable-mod auth
 > sudo service lighttpd force-reload

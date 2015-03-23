@@ -78,13 +78,15 @@ set(ANTIFURTO_COMMON_CPP
     src/Environment.cpp
     src/LiveView.cpp
     src/LiveViewController.cpp
+    src/MailNotifier.cpp
+    src/MailNotificationController.cpp
     src/MonitorController.cpp
     src/MotionDetector.cpp
-    src/NotificationController.cpp
     src/PictureArchive.cpp
     src/RecordingController.cpp
     src/SignalHandler.cpp
     src/StaticConfig.cpp
+    src/WhatsappNotificationController.cpp
     src/WhatsappNotifier.cpp
     src/concurrency/TaskScheduler.cpp
     src/concurrency/TimeUtility.cpp
@@ -107,14 +109,16 @@ set(ANTIFURTO_COMMON_HPP
     src/Exception.hpp
     src/LiveView.hpp
     src/LiveViewController.hpp
+    src/MailNotifier.hpp
+    src/MailNotificationController.hpp
     src/MonitorController.hpp
     src/MotionDetector.hpp
-    src/NotificationController.hpp
     src/Picture.hpp
     src/PictureArchive.hpp
     src/RecordingController.hpp
     src/SignalHandler.hpp
     src/StaticConfig.hpp
+    src/WhatsappNotificationController.hpp
     src/WhatsappNotifier.hpp
     src/concurrency/Exception.hpp
     src/concurrency/SpScQueue.hpp

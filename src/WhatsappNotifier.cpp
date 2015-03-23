@@ -24,11 +24,10 @@ void WhatsappNotifier::send(const std::string& dest, const std::string& msg)
          << " \"" << msg << '\"';
 
     int retval =  yowsupProcess_.run(args.str(), baseDir_);
-    if (retval != 0) {
-        std::ostringstream err;
-        err << "Cannot run yowsup process; return code: " << retval;
-        throw WhatsappNotifierException(err.str());
-    }
+    if (retval != 0)
+        throw WhatsappNotifierException(
+                text::toString("Cannot run yowsup process; return code: ",
+                               retval));
 
     std::string stdout = yowsupProcess_.getStdOut();
     if (stdout.find("Sent message") == std::string::npos)

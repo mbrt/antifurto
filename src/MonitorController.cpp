@@ -10,7 +10,8 @@ MonitorController(Configuration const& c,
                   SetPicturesInterval set,
                   PictureRegistrationRequest r)
     : recording_(c, motionDetector_, scheduler_)
-    , notification_(c, motionDetector_, scheduler_)
+    , whatsapp_(c, motionDetector_, scheduler_)
+    , mail_(c, motionDetector_, scheduler_)
     , setPicturesInterval_(std::move(set))
     , pictureRegistrationRequest_(r)
 {

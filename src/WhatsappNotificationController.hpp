@@ -17,13 +17,13 @@ namespace concurrency {
 class TaskScheduler;
 }
 
-class NotificationController
+class WhatsappNotificationController
 {
 public:
-    NotificationController(const Configuration& c,
-                           MotionDetector& detector,
-                           concurrency::TaskScheduler& scheduler);
-    ~NotificationController();
+    WhatsappNotificationController(const Configuration& c,
+                                   MotionDetector& detector,
+                                   concurrency::TaskScheduler& scheduler);
+    ~WhatsappNotificationController();
 
     void onAlarmStateChanged(MotionDetector::State state);
 

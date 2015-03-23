@@ -3,7 +3,8 @@
 #include "concurrency/TaskScheduler.hpp"
 #include "MotionDetector.hpp"
 #include "RecordingController.hpp"
-#include "NotificationController.hpp"
+#include "MailNotificationController.hpp"
+#include "WhatsappNotificationController.hpp"
 #include "Picture.hpp"
 
 #include <functional>
@@ -35,7 +36,8 @@ private:
     concurrency::TaskScheduler scheduler_;
     MotionDetector motionDetector_;
     RecordingController recording_;
-    NotificationController notification_;
+    WhatsappNotificationController whatsapp_;
+    MailNotificationController mail_;
     SetPicturesInterval setPicturesInterval_;
     PictureRegistrationRequest pictureRegistrationRequest_;
 };

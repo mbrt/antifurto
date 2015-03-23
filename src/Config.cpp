@@ -59,6 +59,8 @@ public:
         Configuration::Whatsapp& whatsapp = config_.whatsapp;
         Configuration::Dropbox& dropbox = config_.dropbox;
         Configuration::LiveView& liveView = config_.liveView;
+        Configuration::Query& query = config_.query;
+        Configuration::Mail& mail = config_.mail;
 
         storeOptionOrDefault("startup.live-view", strt.liveView);
         storeOptionOrDefault("startup.monitor", strt.monitor);
@@ -77,6 +79,8 @@ public:
         storeOptionOrDefault("dropbox.oauth-secret", dropbox.oauthTokenSecret);
         storeOptionOrDefault("live-view.socket-address", liveView.socketAddress);
         storeOptionOrDefault("live-view.inactivity-timeout", liveView.inactivityTimeout);
+        storeOptionOrDefault("query.socket-address", query.socketAddress);
+        storeOptionOrDefault("mail.dest", mail.destinations);
 
         // handle mutually exclusive options
         if (vm_.count("live-view")) {
@@ -165,6 +169,10 @@ private:
              "socket used to send pictures")
             ("live-view.inactivity-timeout", po::value<unsigned int>(),
              "number of seconds of inactivity before stopping live view")
+            ("query.socket-address", po::value<std::string>(), "address of the "
+             "socket used to query the status")
+            ("mail.dest", po::value<Configuration::StringList>()->composing(),
+             "email destinations")
             ;
 
         cmdLineOpts_.add(generic).add(config);
