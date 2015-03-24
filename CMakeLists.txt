@@ -34,6 +34,9 @@ if(CROSS_COMPILE)
     configure_file(scripts/init-script.sh init-script.sh)
 endif()
 
+# common scripts
+file(COPY scripts/send_mail.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 # third party to build
 add_subdirectory(lib)
 

@@ -5,8 +5,8 @@
 
 namespace antifurto {
 
-MailNotifier::MailNotifier()
-    : mailProcess_("/bin/sh")
+MailNotifier::MailNotifier(std::string const& baseDir)
+    : mailProcess_(baseDir + "/send_mail.sh")
 { }
 
 void MailNotifier::
@@ -15,8 +15,8 @@ send(const MailNotifier::ContactList& dest,
      const std::string& body)
 {
     std::ostringstream params;
-    params << "echo \"" << body << '\"'
-           << " | mail -s \"" << subject << '\"';
+    params << '\"' << subject << "\" \""
+           << body << "\" ";
     for (auto const& d : dest)
         params << ' ' << d;
     int retval = mailProcess_.run(params.str());

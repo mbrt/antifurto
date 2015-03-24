@@ -49,6 +49,41 @@ add permissions to www-data to send signals to antifurto
   where myhost is the hostname (e.g. rasberry)
 
 
+Mail send install
+----------------------------------------------------------------
+
+See: https://rtcamp.com/tutorials/linux/ubuntu-postfix-gmail-smtp/
+
+install packages
+> sudo apt-get install postfix mailutils libsasl2-2 ca-certificates libsasl2-modules
+
+in configuration, select "Internet Site" and an hostname.
+Then configure postfix to use your mail address to send mails.
+You can use for example gmail.
+
+Add these lines to /etc/postfix/main.cf:
+
+relayhost = [smtp.gmail.com]:587
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_tls_CAfile = /etc/postfix/cacert.pem
+smtp_use_tls = yes
+
+then set your usename and password in this way:
+> echo "[smtp.gmail.com]:587    USERNAME@gmail.com:PASSWORD" > /etc/postfix/sasl_passwd
+
+fix permissions:
+> sudo chmod 400 /etc/postfix/sasl_passwd
+
+validate certificates:
+> cat /etc/ssl/certs/Thawte_Premium_Server_CA.pem | sudo tee -a /etc/postfix/cacert.pem
+
+reload postfix:
+> sudo postmap /etc/postfix/sasl_passwd
+> sudo /etc/init.d/postfix reload
+
+
 Antifurto install
 ----------------------------------------------------------------
 

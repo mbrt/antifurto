@@ -14,7 +14,8 @@ MailNotificationController::
 MailNotificationController(const Configuration& c,
                            MotionDetector& detector,
                            concurrency::TaskScheduler& scheduler)
-    : contacts_(c.mail.destinations.begin(), c.mail.destinations.end())
+    : notifier_(config::exeDir())
+    , contacts_(c.mail.destinations.begin(), c.mail.destinations.end())
     , scheduler_(scheduler)
     , lastNotificationTime_(std::chrono::system_clock::now() - config::minNotificationDelay())
 {

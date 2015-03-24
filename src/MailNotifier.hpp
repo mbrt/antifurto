@@ -17,7 +17,7 @@ class MailNotifier
 public:
     using ContactList = std::vector<std::string>;
 
-    MailNotifier();
+    MailNotifier(std::string const& baseDir);
 
     /// Send a mail to a list of recipients with the given subject and
     /// message body.
