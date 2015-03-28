@@ -1,0 +1,2 @@
+# empty postfix deferred mail queue every week (Sat 8:05 AM)
+5 8 * * 6	root	postsuper -d ALL deferred

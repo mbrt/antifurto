@@ -1,8 +1,13 @@
 TODO LIST
 ---------
 
+* Mail send
+  - remove the alert@hostname destination
+  - optional sender mail address?
 * Reboot on crash
   - use linux whatchdog daemon
+  - use systemd instead??
+    - pid file needed
   - save persistently the last status and restore it (monitoring on/off)
 * Kill subprocess
   - used to kill notification processes

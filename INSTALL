@@ -103,7 +103,7 @@ install fcgi lib:
 > sudo apt-get install libfcgi
 
 logrotate script
-> copy /path/to/project/config/antifurto_logrotate /etc/logrotate.d/antifurto
+> cp /path/to/project/config/antifurto_logrotate /etc/logrotate.d/antifurto
 
 setup core file limit
 - edit /etc/rc.local
@@ -114,6 +114,9 @@ setup core file limit
 - add this line at the end (if not already present)
   kernel.core_pattern=/var/log/dumps/core.%e.%p
 
+cron script
+- copy crontab script
+> sudo cp /path/to/project/config/antifurto_cron /etc/cron.d/antifurto
 
 Build
 ----------------------------------------------------------------
