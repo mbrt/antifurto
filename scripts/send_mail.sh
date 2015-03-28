@@ -1,13 +1,15 @@
 #!/bin/bash
 
-if [ "$#" -lt 3 ]; then
-	echo "usage $0 <subject> <msg> [<dest]*"
+if [ "$#" -lt 5 ]; then
+	echo "usage $0 <sender_name> <sender_address> <subject> <msg> [<dest]*"
 	exit 1
 fi
 
-SUBJECT=$1
-MESSAGE=$2
-DEST=${@:3:$#}
+SENDER_NAME=$1
+SENDER_ADDRESS=$2
+SUBJECT=$3
+MESSAGE=$4
+DEST=${@:5:$#}
 
-echo $MESSAGE | mail -s $SUBJECT $DEST
+echo $MESSAGE | mail -a "From: $SENDER_NAME <$SENDER_ADDRESS>" -s $SUBJECT $DEST
 exit $?

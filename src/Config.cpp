@@ -81,6 +81,7 @@ public:
         storeOptionOrDefault("live-view.inactivity-timeout", liveView.inactivityTimeout);
         storeOptionOrDefault("query.socket-address", query.socketAddress);
         storeOptionOrDefault("mail.dest", mail.destinations);
+        storeOptionOrDefault("mail.sender", mail.sender);
 
         // handle mutually exclusive options
         if (vm_.count("live-view")) {
@@ -173,6 +174,8 @@ private:
              "socket used to query the status")
             ("mail.dest", po::value<Configuration::StringList>()->composing(),
              "email destinations")
+            ("mail.sender", po::value<std::string>(), "email sender address "
+             "for the notifications")
             ;
 
         cmdLineOpts_.add(generic).add(config);

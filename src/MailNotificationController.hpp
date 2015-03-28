@@ -35,6 +35,7 @@ private:
 
     MailNotifier notifier_;
     MailNotifier::ContactList contacts_;
+    std::string senderMail_;
     concurrency::TaskScheduler& scheduler_;
     std::chrono::system_clock::time_point lastNotificationTime_;
     std::future<void> notificationWork_;

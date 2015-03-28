@@ -52,6 +52,7 @@ public:
     };
     struct Mail {
         StringList destinations;
+        std::string sender;
     };
 
     Startup startup;

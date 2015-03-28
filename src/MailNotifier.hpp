@@ -22,6 +22,7 @@ public:
     /// Send a mail to a list of recipients with the given subject and
     /// message body.
     void send(ContactList const& dest,
+              std::string const& sender,
               std::string const& subject,
               std::string const& body);
 

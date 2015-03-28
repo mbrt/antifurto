@@ -16,6 +16,7 @@ MailNotificationController(const Configuration& c,
                            concurrency::TaskScheduler& scheduler)
     : notifier_(config::exeDir())
     , contacts_(c.mail.destinations.begin(), c.mail.destinations.end())
+    , senderMail_(c.mail.sender)
     , scheduler_(scheduler)
     , lastNotificationTime_(std::chrono::system_clock::now() - config::minNotificationDelay())
 {
@@ -102,7 +103,7 @@ void MailNotificationController::notificationWork()
     log::info() << "Notify via mail";
 
     try {
-        notifier_.send(contacts_, "Antifurto alert",
+        notifier_.send(contacts_, senderMail_, "Antifurto alert",
                        "Alarm! motion detected!");
     }
     catch (std::exception& e) {

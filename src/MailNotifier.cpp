@@ -11,11 +11,14 @@ MailNotifier::MailNotifier(std::string const& baseDir)
 
 void MailNotifier::
 send(const MailNotifier::ContactList& dest,
+     const std::string& sender,
      const std::string& subject,
      const std::string& body)
 {
     std::ostringstream params;
-    params << '\"' << subject << "\" \""
+    params << "antifurto"
+           << '\"' << sender << "\" \""
+           << '\"' << subject << "\" \""
            << body << "\" ";
     for (auto const& d : dest)
         params << ' ' << d;
