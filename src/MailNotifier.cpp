@@ -16,10 +16,10 @@ send(const MailNotifier::ContactList& dest,
      const std::string& body)
 {
     std::ostringstream params;
-    params << "antifurto"
-           << '\"' << sender << "\" \""
-           << '\"' << subject << "\" \""
-           << body << "\" ";
+    params << "antifurto "
+           << '\"' << sender << "\" "
+           << '\"' << subject << "\" "
+           << '\"' << body << "\" ";
     for (auto const& d : dest)
         params << ' ' << d;
     int retval = mailProcess_.run(params.str());
