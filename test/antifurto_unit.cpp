@@ -27,6 +27,10 @@ using namespace antifurto;
 namespace bfs = boost::filesystem;
 
 
+std::size_t refcount(cv::Mat const& m) {
+  return m.u ? (m.u->refcount) : 0;
+}
+
 struct test_error : public std::runtime_error
 { using std::runtime_error::runtime_error; };
 
@@ -55,7 +59,7 @@ BOOST_AUTO_TEST_CASE(pictureRefcount)
     Picture z { makeBlackImg() };
     Picture o { makeWhiteImg() };
 
-    auto checkRefcount = [](cv::Mat const& m) { BOOST_CHECK_EQUAL(*m.refcount, 1); };
+    auto checkRefcount = [](cv::Mat const& m) { BOOST_CHECK_EQUAL(refcount(m), 1); };
     auto checkEqual = [](cv::Mat const& a, cv::Mat const& b) {
         BOOST_CHECK(std::equal(a.begin<uchar>(), a.end<uchar>(), b.begin<uchar>()));
     };

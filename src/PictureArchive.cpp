@@ -7,7 +7,8 @@
 #include <chrono>
 #include <iomanip>
 
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;
 

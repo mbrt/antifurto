@@ -26,9 +26,7 @@ private:
     static void releaseCapture(CvCapture*& capture)
     { ::cvReleaseCapture(&capture); }
 
-    using Ptr = std::unique_ptr<
-        CvCapture,
-        decltype(&releaseCapture)>;
+    using Ptr = std::unique_ptr<CvCapture, decltype(&releaseCapture)>;
     Ptr capture_;
 };
 

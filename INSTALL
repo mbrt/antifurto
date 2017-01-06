@@ -121,7 +121,5 @@ cron script
 Build
 ----------------------------------------------------------------
 
-install zeromq dependencies:
-> sudo apt-get install libzmq3-dev
-install fcgi dependencies:
-> sudo apt-get install libfcgi-dev
+install dependencies:
+> sudo apt-get install boost-dev libzmq3-dev libfcgi-dev opencv-dev

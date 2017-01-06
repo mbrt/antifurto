@@ -45,11 +45,11 @@ if(NOT CROSS_COMPILE)
     set(Boost_USE_STATIC_LIBS ON)
     find_package(Boost COMPONENTS
                  unit_test_framework filesystem system program_options)
-    find_package(OpenCV REQUIRED core highgui imgproc)
+    find_package(OpenCV REQUIRED core highgui imgproc imgcodecs videoio)
     list(APPEND ANTIFURTO_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
 else()
     # find_package OpenCV does not work well when cross compiling
-    set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc)
+    set(OpenCV_LIBS opencv_core opencv_highgui opencv_imgproc opencv_imgcodecs opencv_videoio)
     set(picam_LIBS
         picam
         rt pthread

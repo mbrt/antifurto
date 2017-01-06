@@ -58,7 +58,10 @@ public:
     operator cv::_InputArray const() const
     { return data_; }
 
-    operator cv::_OutputArray const()
+    operator cv::_OutputArray()
+    { return data_; }
+
+    operator cv::_InputOutputArray()
     { return data_; }
 
 private:
