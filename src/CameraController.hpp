@@ -24,7 +24,7 @@ public:
     CameraController();
     ~CameraController();
 
-    /// Set the rate at wich the pictures has to be taken
+    /// Set the pictures capture rate
     void setDesiredPeriod(Registration const& r, Period period);
 
     /// Add an observer to the pictures flow

@@ -1,3 +1,15 @@
+Build
+----------------------------------------------------------------
+
+install dependencies:
+> sudo apt-get install boost-dev libzmq3-dev libfcgi-dev opencv-dev cmake g++
+
+build:
+> mkdir build
+> cd build
+> cmake ..
+> make
+
 Webserver install
 ----------------------------------------------------------------
 See https://wiki.ubuntu.com/Lighttpd+PHP
@@ -117,9 +129,3 @@ setup core file limit
 cron script
 - copy crontab script
 > sudo cp /path/to/project/config/antifurto_cron /etc/cron.d/antifurto
-
-Build
-----------------------------------------------------------------
-
-install dependencies:
-> sudo apt-get install boost-dev libzmq3-dev libfcgi-dev opencv-dev
