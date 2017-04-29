@@ -15,7 +15,7 @@ constexpr const char* serverAddress() {
 
 void makeRequest(zmq::message_t& request)
 {
-    int magic = 158;
+    int32_t magic = 158;
     request.rebuild(sizeof(magic));
     ::memcpy(request.data(), &magic, sizeof(magic));
 }

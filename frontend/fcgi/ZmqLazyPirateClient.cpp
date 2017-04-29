@@ -34,6 +34,7 @@ void ZmqLazyPirateClient::openSocket()
 {
     socket_.reset(new zmq::socket_t{context_, ZMQ_REQ});
     socket_->connect(address_.c_str());
+    // don't linger, send immediately
     int linger = 0;
     socket_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
 }

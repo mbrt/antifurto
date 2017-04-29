@@ -23,7 +23,7 @@ private:
     pid_t pid_;
 };
 
-/// This function fork the process, call the function in the child process,
+/// This function fork the process, calls the function in the child process,
 /// wait for completion and returns the function return value.
 ChildProcess forkAndCall(std::function<int()> f);
 

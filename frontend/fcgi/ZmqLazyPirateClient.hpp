@@ -16,13 +16,13 @@ public:
                         std::string serverAddress,
                         unsigned int timeout = 10000,
                         unsigned int retries = 3);
-    
+
     /// Performs a request-reply transition.
     /// @param request the request message to send to the server
     /// @param reply the message in which store the server reply
     /// @return true if a reply arrived within the timeout
     bool request(zmq::message_t& request, zmq::message_t& reply);
-    
+
 private:
     void openSocket();
 

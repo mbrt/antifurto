@@ -12,7 +12,7 @@ class StreamReader
 {
 public:
     using Range = std::pair<const char*, const char*>;
-    
+
     StreamReader(std::istream& in, std::size_t maxSize);
     std::size_t read(std::size_t count);
     Range getLastReadContents() const;

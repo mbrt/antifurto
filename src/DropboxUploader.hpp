@@ -8,7 +8,8 @@ namespace antifurto {
 
 class Configuration;
 
-/// This class manages notifications using WhatsApp
+/// This class uploads files to a Dropbox folder, by using a
+/// `dropbox_uploader.sh` script
 class DropboxUploader
 {
 public:

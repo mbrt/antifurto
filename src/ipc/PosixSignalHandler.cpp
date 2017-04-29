@@ -61,9 +61,9 @@ void PosixSignalHandler::setSignalHandlers()
     struct ::sigaction act;
     ::memset(&act, 0, sizeof(act));
     act.sa_sigaction = sigactionHandler;
-	::sigemptyset(&act.sa_mask);
-	act.sa_flags = SA_RESTART | SA_SIGINFO;
-    
+    ::sigemptyset(&act.sa_mask);
+    act.sa_flags = SA_RESTART | SA_SIGINFO;
+
     int s = 0;
     for (auto& h : handlerList_) {
         if (h)

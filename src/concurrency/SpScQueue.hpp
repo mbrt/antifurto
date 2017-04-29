@@ -13,11 +13,11 @@
 // #define SPSCQ_NO_BRANCH_OPT
 
 #if defined(__GNUC__) && !defined(SPSCQ_NO_BRANCH_OPT)
-#define SPSCQ_LIKELY(x)   __builtin_expect((x),1)
-#define SPSCQ_UNLIKELY(x) __builtin_expect((x),0)
+#   define SPSCQ_LIKELY(x)   __builtin_expect((x),1)
+#   define SPSCQ_UNLIKELY(x) __builtin_expect((x),0)
 #else
-#define SPSCQ_LIKELY(x)   x
-#define SPSCQ_UNLIKELY(x) x
+#   define SPSCQ_LIKELY(x)   x
+#   define SPSCQ_UNLIKELY(x) x
 #endif
 
 #include "binsem.hpp"
